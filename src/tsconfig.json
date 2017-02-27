@@ -1,5 +1,6 @@
 {
   "compilerOptions": {
+    "baseUrl": "",
     "declaration": false,
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
@@ -13,5 +14,10 @@
     "typeRoots": [
       "../node_modules/@types"
     ]
-  }
+  },
+  "exclude": [
+    "../node_modules",
+    "../typings/main",
+    "../typings/main.d.ts"
+  ]
 }
