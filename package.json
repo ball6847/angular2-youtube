@@ -11,7 +11,7 @@
     "e2e": "protractor",
     "build": "ng build --prod",
     "build-gh": "ng build --prod --base-href /angular2-youtube/",
-    "deploy-gh": "git checkout build-gh-pages && npm run build-gh && git commit -am \"update github pages\" && npm run deploy-gh"
+    "deploy-gh": "git checkout build-gh-pages && npm run build-gh && git commit -am \"update github pages\" && (git push origin :gh-pages; git subtree push --prefix dist origin gh-pages)"
   },
   "private": true,
   "dependencies": {
