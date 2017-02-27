@@ -4,8 +4,8 @@ import { PlaylistService } from '../shared';
 
 @Component({
   selector: 'dl-video-playlist-item',
-  templateUrl: 'video-playlist-item.component.html',
-  styleUrls: ['video-playlist-item.component.css']
+  styleUrls: ['./video-playlist-item.component.css'],
+  templateUrl: './video-playlist-item.component.html'
 })
 export class VideoPlaylistItemComponent {
   @Input()

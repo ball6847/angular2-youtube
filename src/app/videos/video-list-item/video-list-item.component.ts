@@ -16,6 +16,9 @@ export class VideoListItemComponent {
 
   onClick() {
     this.playlist.add(this.video);
+    // add more detailed for video
+
+
     // this.appState.activeVideo = this.video;
   }
 

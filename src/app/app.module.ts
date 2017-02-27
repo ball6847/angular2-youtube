@@ -11,6 +11,7 @@ import { VideoListItemComponent } from "./videos/video-list-item/video-list-item
 import { VideoDetailComponent } from "./videos/video-detail/video-detail.component";
 import { VideosComponent } from "./videos/videos.component";
 import { VideoPlaylistComponent } from "./videos/video-playlist/video-playlist.component";
+import { VideoPlaylistControlComponent } from "./videos/video-playlist-control/video-playlist-control.component";
 import { VideoPlaylistItemComponent } from "./videos/video-playlist-item/video-playlist-item.component";
 import { VideoService } from "./videos/shared/video.service";
 import { PlaylistService } from "./videos/shared/playlist.service";
@@ -34,6 +35,7 @@ import { Ng2PaginationModule } from "ng2-pagination";
     VideoDetailComponent,
     YoutubeSafeUrlPipe,
     VideoPlaylistComponent,
+    VideoPlaylistControlComponent,
     VideoPlaylistItemComponent
   ],
   bootstrap: [

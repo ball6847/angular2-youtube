@@ -1,2 +1,4 @@
 <!--component html goes here -->
-<div class="title"><a href="javascript:" (click)="playlist.play(video)">{{video.title}}</a></div>
+<div class="title">
+  <a href="javascript:" (click)="playlist.play(video)">{{ video.title }}</a> {{ video.duration.text }}
+</div>
