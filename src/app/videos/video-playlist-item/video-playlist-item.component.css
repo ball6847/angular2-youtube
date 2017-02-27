@@ -1,0 +1,15 @@
+.playlist-item .duration {
+  width: 5em;
+  text-align: right;
+  padding-right: 6px;
+
+}
+.playlist-item {
+  line-height: 23px;
+}
+
+.playlist-item a {
+  display: block;
+  white-space: nowrap;
+  overflow: hidden;
+}

@@ -1,7 +1,7 @@
 <!--component html goes here -->
 
-<ul>
-  <li *ngFor="let video of playlist.items() | async">
-    <dl-video-playlist-item [video]="video"></dl-video-playlist-item>
+<ul id="video-playlist">
+  <li *ngFor="let video of playlist.items() | async; let i = index" [class.playing]="i === playlist.index()">
+    <dl-video-playlist-item [video]="video" [index]="i"></dl-video-playlist-item>
   </li>
 </ul>

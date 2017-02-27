@@ -12,17 +12,30 @@ export class PlaylistService {
   // @TODO: use firebase later
   private _items: Video[] = [];
   private _items$ = new ReplaySubject<Video[]>(1);
+  private _index: number;
   private shuffle = false;
 
   constructor(private videoService: VideoService, private appState: AppState) {
+  }
+
+  index() {
+    return this._index;
   }
 
   items(): ReplaySubject<Video[]> {
     return this._items$;
   }
 
-  play(video: Video) {
-    this.appState.activeVideo = video;
+  play(index: number) {
+    let video: Video = this._items[index];
+    this._index = index;
+    if (video == this.appState.activeVideo) {
+      // we need to force replay
+      // so we need youtube player api, not just an iframe
+      // @TODO use player api
+    } else {
+      this.appState.activeVideo = video;
+    }
   }
 
   next() {

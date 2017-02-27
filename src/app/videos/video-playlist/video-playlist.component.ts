@@ -1,5 +1,7 @@
 import { Component } from '@angular/core';
 import { PlaylistService } from '../shared/playlist.service';
+import { AppState } from "../../shared/app-state.service";
+
 
 @Component({
   selector: 'dl-video-playlist',
@@ -7,5 +9,5 @@ import { PlaylistService } from '../shared/playlist.service';
   templateUrl: './video-playlist.component.html',
 })
 export class VideoPlaylistComponent {
-  constructor(private playlist: PlaylistService) { }
+  constructor(private playlist: PlaylistService, private appState: AppState) { }
 }

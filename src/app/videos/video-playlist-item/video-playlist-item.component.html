@@ -1,4 +1,11 @@
-<!--component html goes here -->
-<div class="title">
-  <a href="javascript:" (click)="playlist.play(video)">{{ video.title }}</a> {{ video.duration.text }}
+<div class="playlist-item clearfix">
+  <button (click)="playlist.remove(index)" type="button" class="close" aria-label="Close">
+    <span aria-hidden="true">&times;</span>
+  </button>
+
+  <span class="duration pull-right">{{ video.duration.text }}</span>
+
+  <span class="title">
+    <a href="javascript:" (click)="playlist.play(index)">{{ video.title }}</a>
+  </span>
 </div>

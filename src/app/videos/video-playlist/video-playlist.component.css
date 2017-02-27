@@ -1,0 +1,11 @@
+#video-playlist {
+  font-size: 13px;
+  list-style-position: inside;
+  list-style-type: none;
+  padding: 0;
+}
+
+#video-playlist li.playing {
+  font-weight: bold;
+  text-decoration: underline;
+}
