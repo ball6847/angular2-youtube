@@ -6,7 +6,8 @@
   </ul>
 </div>
 <div *ngIf="appState.videoList.length > 0" class="pagination-centered">
-  <pagination-controls #api (pageChange)="p = $event">
+  <!-- <pagination-controls (pageChange)="p = $event"></pagination-controls> -->
+  <pagination-template #api="paginationApi" (pageChange)="p = $event">
     <nav>
       <ul class="pagination">
         <li class="page-item" [class.disabled]="api.isFirstPage()">
@@ -28,8 +29,5 @@
         </li>
       </ul>
     </nav>
-  </pagination-controls>
+  </pagination-template>
 </div>
-
-
-

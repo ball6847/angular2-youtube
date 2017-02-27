@@ -12,13 +12,14 @@ import { VideoDetailComponent } from "./videos/video-detail/video-detail.compone
 import { VideosComponent } from "./videos/videos.component";
 import { VideoService } from "./videos/shared/video.service";
 import { YoutubeSafeUrlPipe } from "./shared/youtube-safe-url.pipe";
-import { PaginationControlsCmp, PaginatePipe, PaginationService } from "ng2-pagination";
+import { Ng2PaginationModule } from "ng2-pagination";
 
 
 @NgModule({
   imports: [
     BrowserModule,
-    HttpModule
+    HttpModule,
+    Ng2PaginationModule
   ],
   declarations: [
     AppComponent,
@@ -28,17 +29,14 @@ import { PaginationControlsCmp, PaginatePipe, PaginationService } from "ng2-pagi
     VideoListComponent,
     VideoListItemComponent,
     VideoDetailComponent,
-    PaginationControlsCmp,
-    YoutubeSafeUrlPipe,
-    PaginatePipe
+    YoutubeSafeUrlPipe
   ],
   bootstrap: [
     AppComponent
   ],
   providers: [
     AppState,
-    VideoService,
-    PaginationService
+    VideoService
   ]
 })
 export class AppModule {
