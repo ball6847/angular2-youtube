@@ -1,2 +1,7 @@
 <!--component html goes here -->
-video-playlist
+
+<ul>
+  <li *ngFor="let video of playlist.items() | async">
+    <dl-video-playlist-item [video]="video"></dl-video-playlist-item>
+  </li>
+</ul>

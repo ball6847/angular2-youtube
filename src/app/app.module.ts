@@ -13,6 +13,7 @@ import { VideosComponent } from "./videos/videos.component";
 import { VideoPlaylistComponent } from "./videos/video-playlist/video-playlist.component";
 import { VideoPlaylistItemComponent } from "./videos/video-playlist-item/video-playlist-item.component";
 import { VideoService } from "./videos/shared/video.service";
+import { PlaylistService } from "./videos/shared/playlist.service";
 import { YoutubeSafeUrlPipe } from "./shared/youtube-safe-url.pipe";
 import { Ng2PaginationModule } from "ng2-pagination";
 
@@ -40,7 +41,8 @@ import { Ng2PaginationModule } from "ng2-pagination";
   ],
   providers: [
     AppState,
-    VideoService
+    VideoService,
+    PlaylistService
   ]
 })
 export class AppModule {

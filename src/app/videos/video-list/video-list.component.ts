@@ -11,14 +11,14 @@ import { AppState } from "../../shared/app-state.service";
 })
 export class VideoListComponent implements OnInit {
 
-  videoList:Video[] = [];
+  videoList: Video[] = [];
 
-  constructor(private videoService:VideoService, private appState:AppState) {
+  constructor(private videoService: VideoService, private appState: AppState) {
   }
 
 
   ngOnInit() {
-    this.videoService.fetchVideos('typescript')
+    this.videoService.fetchVideos('')
       .subscribe(data => {
         this.appState.videoList = data.items.map(item => {
           return new Video(
@@ -30,7 +30,7 @@ export class VideoListComponent implements OnInit {
             moment(item.snippet.publishedAt).fromNow(),
             item.snippet.description)
         });
-        this.appState.activeVideo = this.appState.videoList[0];
+        // this.appState.activeVideo = this.appState.videoList[0];
       });
   }
 

@@ -1,6 +1,7 @@
-import {Component, Input} from "@angular/core";
-import {Video} from "../shared";
-import {AppState} from "../../shared/app-state.service";
+import { Component, Input } from "@angular/core";
+import { Video } from "../shared";
+import { AppState } from "../../shared/app-state.service";
+import { PlaylistService } from "../shared/playlist.service";
 
 @Component({
   selector: 'dl-video-list-item',
@@ -8,12 +9,14 @@ import {AppState} from "../../shared/app-state.service";
   styleUrls: ['video-list-item.component.css']
 })
 export class VideoListItemComponent {
-  @Input() video: Video;
+  @Input()
+  video: Video;
 
-  constructor(private appState: AppState) {}
+  constructor(private appState: AppState, private playlist: PlaylistService) { }
 
-  onClick(){
-    this.appState.activeVideo = this.video;
+  onClick() {
+    this.playlist.add(this.video);
+    // this.appState.activeVideo = this.video;
   }
 
 }
