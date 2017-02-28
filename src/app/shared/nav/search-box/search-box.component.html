@@ -1,17 +1,17 @@
 <div>
-  <form role="search">
+  <form role="search" action="javascript:">
     <div class="col-xs-12 col-md-10 pull-xs-right">
       <div class="form-group">
         <div class="input-group">
-                <span class="input-group-addon ">
-          <span class="fa fa-search"></span>
-        </span>
+          <span class="input-group-addon ">
+            <span class="fa fa-search"></span>
+          </span>
           <input type="text"
-                 class="form-control"
-                 placeholder="Search..."
-                 autofocus
-                 (keyup)="search(textBox.value)"
-                 #textBox>
+             class="form-control"
+             placeholder="Search..."
+             autofocus
+             (keyup)="search(textBox.value)"
+             #textBox>
         </div>
       </div>
     </div>

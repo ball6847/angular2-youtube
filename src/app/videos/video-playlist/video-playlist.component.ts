@@ -17,8 +17,8 @@ export class VideoPlaylistComponent {
     private playerService: YoutubePlayerService
   ) { }
 
-  play(video: Video) {
-    this.playerService.playVideo({ id: video.videoId }, this.appState.player);
+  play(index: number) {
+    this.playlistService.play(index);
   }
 
   dequeue(index: number) {

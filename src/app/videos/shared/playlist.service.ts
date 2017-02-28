@@ -18,8 +18,8 @@ export class PlaylistService {
   private player: YT.Player;
 
   constructor(
-    private videoService: VideoService,
     private appState: AppState,
+    private videoService: VideoService,
     private playerService: YoutubePlayerService,
   ) {
   }
@@ -45,7 +45,7 @@ export class PlaylistService {
       // @TODO use player api
     } else {
       this.appState.activeVideo = video;
-      // this.playerService.playVideo({ id: video.videoId }, this.player);
+      this.playerService.playVideo({ id: video.videoId }, this.appState.player);
     }
   }
 
