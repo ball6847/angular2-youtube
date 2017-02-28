@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
-import { VideoListComponent } from './video-list'
-import { VideoDetailComponent } from './video-detail'
+// import { VideoListComponent } from './video-list'
+// import { VideoDetailComponent } from './video-detail'
 
 @Component({
   selector: 'dl-videos',
@@ -8,8 +8,13 @@ import { VideoDetailComponent } from './video-detail'
   styleUrls: ['videos.component.css']
 })
 export class VideosComponent {
-  constructor() {}
 
+  private player: YT.Player;
 
+  constructor() { }
+
+  setupPlayer(player: YT.Player) {
+    this.player = player;
+  }
 
 }

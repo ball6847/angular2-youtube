@@ -1,7 +1,6 @@
-import { Component, Input } from "@angular/core";
+import { Component, Input, Output, EventEmitter } from "@angular/core";
 import { Video } from "../shared";
 import { AppState } from "../../shared/app-state.service";
-import { PlaylistService } from "../shared/playlist.service";
 
 @Component({
   selector: 'dl-video-list-item',
@@ -12,14 +11,13 @@ export class VideoListItemComponent {
   @Input()
   video: Video;
 
-  constructor(private appState: AppState, private playlist: PlaylistService) { }
+  @Output()
+  enqueue = new EventEmitter<Video>();
 
-  onClick() {
-    this.playlist.add(this.video);
-    // add more detailed for video
+  constructor(private appState: AppState) { }
 
-
-    // this.appState.activeVideo = this.video;
+  doEnqueue() {
+    this.enqueue.emit(this.video);
   }
 
 }

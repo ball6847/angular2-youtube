@@ -8,7 +8,8 @@ import { HeaderComponent } from "./shared/nav/header/header.component";
 import { SearchBoxComponent } from "./shared/nav/search-box/search-box.component";
 import { VideoListComponent } from "./videos/video-list/video-list.component";
 import { VideoListItemComponent } from "./videos/video-list-item/video-list-item.component";
-import { VideoDetailComponent } from "./videos/video-detail/video-detail.component";
+import { VideoPlayerComponent } from "./videos/video-player/video-player.component";
+import { YoutubePlayerComponent } from "./videos/video-player/youtube-player.component";
 import { VideosComponent } from "./videos/videos.component";
 import { VideoPlaylistComponent } from "./videos/video-playlist/video-playlist.component";
 import { VideoPlaylistControlComponent } from "./videos/video-playlist-control/video-playlist-control.component";
@@ -16,6 +17,7 @@ import { VideoPlaylistItemComponent } from "./videos/video-playlist-item/video-p
 import { VideoService } from "./videos/shared/video.service";
 import { PlaylistService } from "./videos/shared/playlist.service";
 import { YoutubeSafeUrlPipe } from "./shared/youtube-safe-url.pipe";
+import { YoutubePlayerModule } from 'ng2-youtube-player';
 import { Ng2PaginationModule } from "ng2-pagination";
 
 
@@ -23,7 +25,8 @@ import { Ng2PaginationModule } from "ng2-pagination";
   imports: [
     BrowserModule,
     HttpModule,
-    Ng2PaginationModule
+    Ng2PaginationModule,
+    YoutubePlayerModule
   ],
   declarations: [
     AppComponent,
@@ -32,7 +35,8 @@ import { Ng2PaginationModule } from "ng2-pagination";
     VideosComponent,
     VideoListComponent,
     VideoListItemComponent,
-    VideoDetailComponent,
+    VideoPlayerComponent,
+    YoutubePlayerComponent,
     YoutubeSafeUrlPipe,
     VideoPlaylistComponent,
     VideoPlaylistControlComponent,

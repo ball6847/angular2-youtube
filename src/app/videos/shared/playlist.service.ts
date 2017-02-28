@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { AppState } from "../../shared/app-state.service";
 import { Video } from "../shared/video.model";
 import { VideoService } from "../shared/video.service";
+import { YoutubePlayerService } from 'ng2-youtube-player';
 import { ReplaySubject } from 'rxjs/ReplaySubject';
 
 // @TODO use angular2-moment instead
@@ -14,8 +15,17 @@ export class PlaylistService {
   private _items$ = new ReplaySubject<Video[]>(1);
   private _index: number;
   private shuffle = false;
+  private player: YT.Player;
 
-  constructor(private videoService: VideoService, private appState: AppState) {
+  constructor(
+    private videoService: VideoService,
+    private appState: AppState,
+    private playerService: YoutubePlayerService,
+  ) {
+  }
+
+  setPlayer(player: YT.Player) {
+    this.player = player;
   }
 
   index() {
@@ -35,6 +45,7 @@ export class PlaylistService {
       // @TODO use player api
     } else {
       this.appState.activeVideo = video;
+      // this.playerService.playVideo({ id: video.videoId }, this.player);
     }
   }
 
@@ -46,7 +57,7 @@ export class PlaylistService {
 
   }
 
-  add(video: Video): void {
+  enqueue(video: Video): void {
     // get video's additional detail
     this.videoService.fetchVideo(video.videoId)
       .subscribe(v => {
@@ -62,7 +73,7 @@ export class PlaylistService {
       });
   }
 
-  remove(index: number): void {
+  dequeue(index: number): void {
     this._items.splice(index, 1);
     this._notify();
   }

@@ -1,7 +1,5 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { Video } from '../shared';
-import { PlaylistService } from '../shared';
-
 
 @Component({
   selector: 'dl-video-playlist-item',
@@ -15,6 +13,17 @@ export class VideoPlaylistItemComponent {
   @Input()
   index: number;
 
-  constructor(private playlist: PlaylistService) {
+  @Output()
+  play = new EventEmitter<Video>();
+
+  @Output()
+  remove = new EventEmitter<number>();
+
+  doPlay() {
+    this.play.emit(this.video);
+  }
+
+  doRemove() {
+    this.remove.emit(this.index);
   }
 }

@@ -1,5 +1,6 @@
 import { Component, OnInit } from "@angular/core";
 import { VideoService } from "../shared/video.service";
+import { PlaylistService } from "../shared/playlist.service";
 import { Video } from "../shared/video.model";
 import * as moment from "moment";
 import { AppState } from "../../shared/app-state.service";
@@ -13,8 +14,11 @@ export class VideoListComponent implements OnInit {
 
   videoList: Video[] = [];
 
-  constructor(private videoService: VideoService, private appState: AppState) {
-  }
+  constructor(
+    private videoService: VideoService,
+    private appState: AppState,
+    private playlistService: PlaylistService
+  ) { }
 
 
   ngOnInit() {
@@ -32,6 +36,10 @@ export class VideoListComponent implements OnInit {
         });
         // this.appState.activeVideo = this.appState.videoList[0];
       });
+  }
+
+  enqueue(video: Video) {
+    this.playlistService.enqueue(video);
   }
 
 

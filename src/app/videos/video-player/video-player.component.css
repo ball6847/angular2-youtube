@@ -1,10 +1,11 @@
-:host  >>> .embed-container {
+.embed-container {
   position: relative;
   padding-bottom: 56.25%;
   height: 0;
   overflow: hidden;
   background: black;
 }
+
 :host  >>> youtube-player iframe {
   position: absolute;
   top:0;
