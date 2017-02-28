@@ -50,11 +50,29 @@ export class PlaylistService {
   }
 
   next() {
+    let index = this._index + 1;
 
+    // @TODO: shuffle if needed
+
+    // reset if it's end of list
+    if (index >= this._items.length) {
+      index = 0;
+    }
+
+    this.play(index);
   }
 
   prev() {
+    let index = this._index - 1;
 
+    // @TODO: shuffle if needed
+
+    // reset if it's end of list
+    if (index < 0) {
+      index = this._items.length - 1;
+    }
+
+    this.play(index);
   }
 
   enqueue(video: Video): void {
