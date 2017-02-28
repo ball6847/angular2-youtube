@@ -7,6 +7,7 @@ export class AppState {
 
   videoList: Video[] = [];
   activeVideo: Video;
+  player: YT.Player;
 
   constructor() {
   }

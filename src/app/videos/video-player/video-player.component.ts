@@ -1,7 +1,5 @@
-import { Component, ElementRef, ViewChild } from "@angular/core";
-import { AppState } from "../../shared/app-state.service";
-// import { YoutubePlayerService } from 'ng2-youtube-player';
-
+import { Component } from "@angular/core";
+import { AppState } from '../../shared/app-state.service';
 
 @Component({
   selector: 'dl-video-player',
@@ -9,20 +7,9 @@ import { AppState } from "../../shared/app-state.service";
   styleUrls: ['./video-player.component.css']
 })
 export class VideoPlayerComponent {
-  player: YT.Player;
-
   constructor(private appState: AppState) { }
 
-  ngOnInit() {
-
-  }
-
-  savePlayer(player) {
-    this.player = player;
-    console.log('player instance', player);
-  }
-
-  onStateChange(event) {
-    console.log('player state', event.data);
+  setupPlayer(player: YT.Player) {
+    this.appState.player = player;
   }
 }

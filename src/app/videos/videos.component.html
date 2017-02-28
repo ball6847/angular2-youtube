@@ -3,11 +3,8 @@
     <dl-video-list></dl-video-list>
   </div>
   <div class="col-xs-6">
-    <!-- <dl-video-player></dl-video-player> -->
-    <div class="embed-container">
-      <youtube-player (ready)="setupPlayer($event)"></youtube-player>
-    </div>
+    <dl-video-player></dl-video-player>
     <dl-video-playlist-control></dl-video-playlist-control>
-    <dl-video-playlist [player]="player"></dl-video-playlist>
+    <dl-video-playlist></dl-video-playlist>
   </div>
 </div>

@@ -1,9 +1,3 @@
 <div class="embed-container">
-  <dl-youtube-player
-    *ngIf="appState.activeVideo"
-    height="315"
-    [videoId]="appState.activeVideo.videoId"
-    (ready)="savePlayer($event)"
-    (change)="onStateChange($event)"
-  ></dl-youtube-player>
+  <youtube-player (ready)="setupPlayer($event)"></youtube-player>
 </div>
