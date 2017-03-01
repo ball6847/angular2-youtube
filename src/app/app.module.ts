@@ -17,14 +17,15 @@ import { VideoService } from "./videos/shared/video.service";
 import { PlaylistService } from "./videos/shared/playlist.service";
 import { YoutubePlayerModule } from 'ng2-youtube-player';
 import { Ng2PaginationModule } from "ng2-pagination";
-
+import { DragulaModule } from 'ng2-dragula/ng2-dragula';
 
 @NgModule({
   imports: [
     BrowserModule,
     HttpModule,
     Ng2PaginationModule,
-    YoutubePlayerModule
+    YoutubePlayerModule,
+    DragulaModule
   ],
   declarations: [
     AppComponent,
