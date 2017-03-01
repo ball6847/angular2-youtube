@@ -1,7 +1,7 @@
 <!--component html goes here -->
 
-<ul id="video-playlist" [dragula]='"first-bag"' [dragulaModel]="items">
-  <li *ngFor="let video of items; let i = index" [class.playing]="i === playlistService.index()">
+<ul id="video-playlist" [dragula]="'playlist'" [dragulaModel]="items">
+  <li *ngFor="let video of items; let i = index" [class.playing]="video == nowPlayingVideo">
     <dl-video-playlist-item
       [video]="video"
       [index]="i"

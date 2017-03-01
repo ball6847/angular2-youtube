@@ -1,17 +1,22 @@
+
+interface VideoDuration {
+  text: string,
+  seconds: number
+}
+
 export class Video {
+  duration: VideoDuration;
+  playing: boolean = false;
 
-  duration: {
-    text: string,
-    seconds: number
-  };
-
-  constructor(public videoId: string,
+  constructor(
+    public videoId: string,
     public title: string,
     public thumbnailUrl: string,
     public channelTitle: string,
     public channelId: string,
     public publishedAt: string,
-    public description: string) {
+    public description: string
+  ) {
     this.videoId = videoId;
     this.title = title;
     this.thumbnailUrl = thumbnailUrl;

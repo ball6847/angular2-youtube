@@ -1,8 +1,6 @@
 import { Component } from '@angular/core';
 import { PlaylistService } from '../shared/playlist.service';
-import { YoutubePlayerService } from 'ng2-youtube-player';
 import { Video } from '../shared/video.model';
-import { AppState } from "../../shared/app-state.service";
 import { DragulaService } from 'ng2-dragula/ng2-dragula';
 
 @Component({
@@ -12,19 +10,23 @@ import { DragulaService } from 'ng2-dragula/ng2-dragula';
 })
 export class VideoPlaylistComponent {
   items: Video[];
+  nowPlayingVideo: Video;
 
   constructor(
-    private appState: AppState,
     private playlistService: PlaylistService,
-    private playerService: YoutubePlayerService,
     private dragulaService: DragulaService
-  ) {
-    this.dragulaService.setOptions('first-bag', {});
-  }
+  ) { }
 
   ngOnInit() {
-    this.playlistService.items()
+    this.dragulaService.setOptions('playlist', {});
+
+    this.playlistService.entries()
       .subscribe(items => this.items = items);
+
+    this.playlistService.nowPlaying()
+      .subscribe(video => {
+        this.nowPlayingVideo = video;
+      });
   }
 
   play(index: number) {
