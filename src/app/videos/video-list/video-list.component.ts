@@ -22,7 +22,7 @@ export class VideoListComponent implements OnInit {
 
 
   ngOnInit() {
-    this.videoService.fetchVideos('')
+    this.videoService.search('')
       .subscribe(data => {
         this.appState.videoList = data.items.map(item => {
           return new Video(
@@ -34,7 +34,6 @@ export class VideoListComponent implements OnInit {
             moment(item.snippet.publishedAt).fromNow(),
             item.snippet.description)
         });
-        // this.appState.activeVideo = this.appState.videoList[0];
       });
   }
 

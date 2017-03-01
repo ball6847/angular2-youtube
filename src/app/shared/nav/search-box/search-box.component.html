@@ -10,7 +10,7 @@
              class="form-control"
              placeholder="Search..."
              autofocus
-             (keyup)="search(textBox.value)"
+             (keyup)="searchTerm$.next($event.target.value)"
              #textBox>
         </div>
       </div>
