@@ -1,9 +1,29 @@
 <div class="video-playlist-loader">
-  <div class="btn-group btn-group-flat btn-group-no-focus" role="group">
-    <div class="btn-group" role="group">
-      <button type="button" class="btn btn-black" >
-        <i class="fa fa-plus"></i>
+  <div class="btn-group btn-group-flat" role="group">
+    <div class="btn-group dropup" dropdown>
+      <button *ngIf="!creating" id="single-button" type="button" class="btn btn-black" dropdownToggle>
+        <!-- <i class="fa fa-plus"></i> -->
+        Load playlist
       </button>
+      <ul dropdownMenu role="menu" aria-labelledby="single-button">
+        <li role="menuitem"><a class="dropdown-item" href="javascript:">Playlist 1</a></li>
+        <li role="menuitem"><a class="dropdown-item" href="javascript:">Playlist 2</a></li>
+        <li role="menuitem"><a class="dropdown-item" href="javascript:">Playlist 3</a></li>
+        <li class="divider dropdown-divider"></li>
+        <li role="menuitem"><a class="dropdown-item" (click)="creating = true" href="javascript:">Create new</a></li>
+      </ul>
+      <div *ngIf="creating" class="form-inline" >
+        <span class="btn btn-black">Create playlist</span>
+        <div class="input-group">
+          <input class="form-control form-control-sm" type="text" placeholder="name" autofocus>
+          <span class="input-group-btn">
+            <button type="button" class="btn btn-sm btn-primary">ok</button>
+          </span>
+          <span class="input-group-btn">
+            <button type="button" class="btn btn-sm btn-danger" (click)="creating = false">cancel</button>
+          </span>
+        </div>
+      </div>
     </div>
   </div>
 </div>

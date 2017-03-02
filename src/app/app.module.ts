@@ -19,6 +19,7 @@ import { PlaylistService } from "./videos/shared/playlist.service";
 import { YoutubePlayerModule } from 'ng2-youtube-player';
 import { Ng2PaginationModule } from "ng2-pagination";
 import { DragulaModule } from 'ng2-dragula/ng2-dragula';
+import { DropdownModule } from 'ng2-bootstrap';
 
 @NgModule({
   imports: [
@@ -26,7 +27,8 @@ import { DragulaModule } from 'ng2-dragula/ng2-dragula';
     HttpModule,
     Ng2PaginationModule,
     YoutubePlayerModule,
-    DragulaModule
+    DragulaModule,
+    DropdownModule.forRoot()
   ],
   declarations: [
     AppComponent,
