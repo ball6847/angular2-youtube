@@ -3,9 +3,38 @@
   list-style-position: inside;
   list-style-type: none;
   padding: 0;
+  background: #000;
+  height: 440px;
+  overflow-y: auto;
 }
-
+#video-playlist li {
+  /*padding: 5px;*/
+  padding: 2px 8px 2px 12px;
+  border-bottom: 1px solid #111;
+  background: #000;
+  color: #777;
+}
+#video-playlist li:hover {
+  background: #090909;
+  text-decoration: none;
+}
 #video-playlist li.playing {
   font-weight: bold;
   text-decoration: underline;
+}
+#video-playlist li.playing >>> a::before {
+  content: '\f0da';
+  font-family: FontAwesome;
+  display: inline-block;
+  margin-right: 5px;
+  color: green;
+}
+:host >>> button.close {
+  color: #777;
+}
+
+#video-playlist li >>> a:hover,
+#video-playlist li >>> a:focus {
+  color: #0275d8;
+  text-decoration: none;
 }
