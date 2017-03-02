@@ -14,11 +14,12 @@
   color: #777;
 }
 #video-playlist li:hover {
-  background: #090909;
+  background: rgba(9,9,9, .1);
   text-decoration: none;
 }
 #video-playlist li.playing {
   font-weight: bold;
+  background: rgba(9,9,9, .3);
   text-decoration: underline;
 }
 #video-playlist li.playing >>> a::before {
