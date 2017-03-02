@@ -5,9 +5,11 @@
     </button>
   </div>
   <div class="btn-group" role="group">
-    <button type="button" class="btn btn-primary active">
-      <i class="fa fa-play"></i>
-      <!-- <i class="fa fa-pause"></i> -->
+    <button type="button" class="btn btn-primary" (click)="togglePlay()">
+      <i class="fa"
+        [class.fa-play]="!state.playing"
+        [class.fa-pause]="state.playing"
+        ></i>
     </button>
   </div>
   <div class="btn-group" role="group">

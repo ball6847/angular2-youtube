@@ -29,7 +29,7 @@ export class VideoPlaylistControlComponent {
   }
 
   togglePlay() {
-
+    this.playlistService.togglePlay();
   }
 
   toggleShuffle() {

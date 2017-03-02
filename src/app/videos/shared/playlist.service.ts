@@ -8,38 +8,8 @@ import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 // @TODO use angular2-moment instead
 import * as moment from 'moment';
 
-export class PlaylistEntriesObservable extends BehaviorSubject<Video[]> {
-  constructor() {
-    super([]);
-  }
-}
-
-export class PlaylistNowPlayingObservable extends BehaviorSubject<Video> {
-  constructor() {
-    super(undefined);
-  }
-}
-
-export class PlaylistStateObservable extends BehaviorSubject<PlaylistState> {
-  constructor() {
-    super({
-      playing: false,
-      loop: false,
-      shuffle: false
-    });
-  }
-}
-
-export interface PlaylistState {
-  playing: boolean;
-  shuffle: boolean;
-  loop: boolean;
-}
-
 @Injectable()
 export class PlaylistService {
-  private player: YT.Player;
-
   // @TODO: use firebase
   private entries$ = new PlaylistEntriesObservable();
   private nowPlaying$ = new PlaylistNowPlayingObservable();
@@ -61,10 +31,6 @@ export class PlaylistService {
     });
   }
 
-  setPlayer(player: YT.Player): void {
-    this.player = player;
-  }
-
   entries(): PlaylistEntriesObservable {
     return this.entries$;
   }
@@ -77,6 +43,8 @@ export class PlaylistService {
     return this.state$;
   }
 
+  // --------------------------------------------------------------------
+
   toggleShuffle(): void {
     const state = this.state$.getValue();
     state.shuffle = !state.shuffle;
@@ -88,6 +56,19 @@ export class PlaylistService {
     state.loop = !state.loop;
     this.state$.next(state);
   }
+
+  togglePlay(): void {
+    const state = this.state$.getValue();
+    state.playing = !state.playing;
+    this.state$.next(state);
+    if (state.playing) {
+      this.appState.player.playVideo();
+    } else {
+      this.appState.player.pauseVideo();
+    }
+  }
+
+  // --------------------------------------------------------------------
 
   play(index: number): void {
     if (this.outOfBound(index)) {
@@ -188,6 +169,23 @@ export class PlaylistService {
     return this.entries$.getValue().length;
   }
 
+  onPlayerStateChange(playerState: any): void {
+    const state = this.state$.getValue();
+    switch (playerState.data) {
+      case YT.PlayerState.PLAYING:
+        state.playing = true;
+        this.state$.next(state);
+        break;
+      case YT.PlayerState.PAUSED:
+        state.playing = false;
+        this.state$.next(state);
+        break;
+      case YT.PlayerState.ENDED:
+        this.next();
+        break;
+    }
+  }
+
   // -----------------------------------------------------------------------
 
   private getVideoByIndex(index: number): Video {
@@ -213,4 +211,34 @@ export class PlaylistService {
   private indexOf(entry: Video) {
     return Array.prototype.indexOf.call(this.entries$.getValue(), entry);
   }
+}
+
+// --------------------------------------------------------------------
+
+export class PlaylistEntriesObservable extends BehaviorSubject<Video[]> {
+  constructor() {
+    super([]);
+  }
+}
+
+export class PlaylistNowPlayingObservable extends BehaviorSubject<Video> {
+  constructor() {
+    super(undefined);
+  }
+}
+
+export class PlaylistStateObservable extends BehaviorSubject<PlaylistState> {
+  constructor() {
+    super({
+      playing: false,
+      loop: false,
+      shuffle: false
+    });
+  }
+}
+
+export interface PlaylistState {
+  playing: boolean;
+  shuffle: boolean;
+  loop: boolean;
 }

@@ -18,8 +18,6 @@ export class VideoPlayerComponent {
   }
 
   onStateChange(state) {
-    if (state.data == YT.PlayerState.ENDED) {
-      this.playlistService.next();
-    }
+    this.playlistService.onPlayerStateChange(state);
   }
 }
