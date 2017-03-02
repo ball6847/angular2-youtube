@@ -37,9 +37,11 @@ export class VideoListComponent implements OnInit {
       });
   }
 
+  onPageChanged(page) {
+    this.appState.search.page = page;
+  }
+
   enqueue(video: Video) {
     this.playlistService.enqueue(video);
   }
-
-
 }

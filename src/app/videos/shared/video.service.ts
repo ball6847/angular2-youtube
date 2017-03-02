@@ -17,7 +17,7 @@ export class VideoService {
   constructor(private http: Http, private appState: AppState) { }
 
   rxSearch(query: Observable<string>) {
-    return query.debounceTime(400)
+    return query.debounceTime(200)
       .distinctUntilChanged()
       .switchMap(term => this.search(term));
   }

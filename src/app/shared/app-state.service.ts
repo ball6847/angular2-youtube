@@ -8,8 +8,7 @@ export class AppState {
   videoList: Video[] = [];
   activeVideo: Video;
   player: YT.Player;
-
-  constructor() {
-  }
-
+  search = {
+    page: 1
+  };
 }

@@ -18,6 +18,7 @@ export class SearchBoxComponent {
   ngOnInit() {
     this.videoService.rxSearch(this.searchTerm$)
       .subscribe(data => {
+        this.appState.search.page = 1;
         this.appState.videoList = data.items.map(item => {
           return new Video(
             item.id.videoId,
@@ -26,7 +27,7 @@ export class SearchBoxComponent {
             item.snippet.channelTitle,
             item.snippet.channelId,
             moment(item.snippet.publishedAt).fromNow(),
-            item.snippet.description)
+            item.snippet.description);
         });
       });
   }
