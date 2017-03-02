@@ -20,16 +20,30 @@ export class PlaylistNowPlayingObservable extends BehaviorSubject<Video> {
   }
 }
 
+export class PlaylistStateObservable extends BehaviorSubject<PlaylistState> {
+  constructor() {
+    super({
+      playing: false,
+      loop: false,
+      shuffle: false
+    });
+  }
+}
+
+export interface PlaylistState {
+  playing: boolean;
+  shuffle: boolean;
+  loop: boolean;
+}
 
 @Injectable()
 export class PlaylistService {
-  private shuffle = false;
-  private loop = true;
   private player: YT.Player;
 
   // @TODO: use firebase
   private entries$ = new PlaylistEntriesObservable();
   private nowPlaying$ = new PlaylistNowPlayingObservable();
+  private state$ = new PlaylistStateObservable();
 
   constructor(
     private appState: AppState,
@@ -59,12 +73,20 @@ export class PlaylistService {
     return this.nowPlaying$;
   }
 
-  setShuffle(shuffle: boolean): void {
-    this.shuffle = shuffle;
+  state(): PlaylistStateObservable {
+    return this.state$;
   }
 
-  setLoop(loop: boolean): void {
-    this.loop = loop;
+  toggleShuffle(): void {
+    const state = this.state$.getValue();
+    state.shuffle = !state.shuffle;
+    this.state$.next(state);
+  }
+
+  toggleLoop(): void {
+    const state = this.state$.getValue();
+    state.loop = !state.loop;
+    this.state$.next(state);
   }
 
   play(index: number): void {
@@ -87,15 +109,16 @@ export class PlaylistService {
   }
 
   next(): void {
+    const state = this.state$.getValue();
     // @TODO: check if currently in pause state
-    if (this.shuffle) {
+    if (state.shuffle) {
       return this.playRandom();
     }
     const video = this.nowPlaying$.getValue();
     let index = this.indexOf(video) + 1;
     // end of playlist, stop or back to first entry
     if (index >= this.totalEntries()) {
-      if (!this.loop) {
+      if (!state.loop) {
         return this.nowPlaying$.next(undefined);
       }
       index = 0;
@@ -104,8 +127,9 @@ export class PlaylistService {
   }
 
   prev(): void {
+    const state = this.state$.getValue();
     // @TODO: check if currently in pause state
-    if (this.shuffle) {
+    if (state.shuffle) {
       return this.playRandom();
     }
     const video = this.nowPlaying$.getValue();
