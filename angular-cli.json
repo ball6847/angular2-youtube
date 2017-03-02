@@ -18,8 +18,9 @@
       "tsconfig": "tsconfig.angular-cli.json",
       "prefix": "app",
       "styles": [
-        "styles.css",
-        "../node_modules/dragula/dist/dragula.css"
+        "../node_modules/bootstrap/dist/css/bootstrap.min.css",
+        "../node_modules/dragula/dist/dragula.css",
+        "styles.css"
       ],
       "scripts": [],
       "environments": {

@@ -12,6 +12,7 @@ import { VideoPlayerComponent } from "./videos/video-player/video-player.compone
 import { VideosComponent } from "./videos/videos.component";
 import { VideoPlaylistComponent } from "./videos/video-playlist/video-playlist.component";
 import { VideoPlaylistControlComponent } from "./videos/video-playlist-control/video-playlist-control.component";
+import { VideoPlaylistLoaderComponent } from "./videos/video-playlist-loader/video-playlist-loader.component";
 import { VideoPlaylistItemComponent } from "./videos/video-playlist-item/video-playlist-item.component";
 import { VideoService } from "./videos/shared/video.service";
 import { PlaylistService } from "./videos/shared/playlist.service";
@@ -37,6 +38,7 @@ import { DragulaModule } from 'ng2-dragula/ng2-dragula';
     VideoPlayerComponent,
     VideoPlaylistComponent,
     VideoPlaylistControlComponent,
+    VideoPlaylistLoaderComponent,
     VideoPlaylistItemComponent
   ],
   bootstrap: [

@@ -1,19 +1,15 @@
-<div>
-  <form role="search" action="javascript:">
-    <div class="col-xs-12 col-md-10 pull-xs-right">
-      <div class="form-group">
-        <div class="input-group">
-          <span class="input-group-addon ">
-            <span class="fa fa-search"></span>
-          </span>
-          <input type="text"
-             class="form-control"
-             placeholder="Search..."
-             autofocus
-             (keyup)="searchTerm$.next($event.target.value)"
-             #textBox>
-        </div>
-      </div>
+<form role="search" action="javascript:">
+  <div class="form-group">
+    <div class="input-group">
+      <span class="input-group-addon ">
+        <span class="fa fa-search"></span>
+      </span>
+      <input type="text"
+        class="form-control"
+        placeholder="Search..."
+        autofocus
+        (keyup)="searchTerm$.next($event.target.value)"
+        #textBox>
     </div>
-  </form>
-</div>
+  </div>
+</form>

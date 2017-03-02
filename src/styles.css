@@ -72,6 +72,10 @@ li.gu-mirror {
   border-color: #01549b;
 }
 
+.pagination {
+  font-size: 0.8rem;
+}
+
 @keyframes octocat-wave {
   0%, 100% {
     transform: rotate(0)

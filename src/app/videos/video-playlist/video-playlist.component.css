@@ -3,6 +3,7 @@
   list-style-position: inside;
   list-style-type: none;
   padding: 0;
+  margin: 0;
   height: 440px;
   overflow-y: auto;
   background: #000;
@@ -32,9 +33,11 @@
 :host >>> button.close {
   color: #777;
 }
-
+#video-playlist li >>> a {
+  color: #ccc;
+}
 #video-playlist li >>> a:hover,
 #video-playlist li >>> a:focus {
-  color: #0275d8;
+  color: #ccc;
   text-decoration: none;
 }
