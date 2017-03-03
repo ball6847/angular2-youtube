@@ -1,2 +1,2 @@
 export * from './shared';
-export * from './video.component';
+export * from './video-player';

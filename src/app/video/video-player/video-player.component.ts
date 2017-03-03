@@ -1,11 +1,11 @@
 import { Component } from "@angular/core";
-import { AppService } from '../app.service';
-import { PlaylistService } from '../playlist';
+import { AppService } from '../../app.service';
+import { PlaylistService } from '../../playlist';
 
 @Component({
   selector: 'video-player',
-  styleUrls: ['./video.component.css'],
-  templateUrl: './video.component.html'
+  styleUrls: ['./video-player.component.css'],
+  templateUrl: './video-player.component.html'
 })
 export class VideoComponent {
   constructor(
