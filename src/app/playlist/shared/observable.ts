@@ -1,5 +1,5 @@
 import { BehaviorSubject } from 'rxjs/BehaviorSubject';
-import { Playlist, PlaylistState } from './model';
+import { PlaylistInterface, PlaylistStateInterface } from './model';
 import { Video } from '../../video';
 
 export class PlaylistEntriesObservable extends BehaviorSubject<Video[]> {
@@ -14,17 +14,13 @@ export class PlaylistNowPlayingObservable extends BehaviorSubject<Video> {
   }
 }
 
-export class PlaylistStateObservable extends BehaviorSubject<PlaylistState> {
+export class PlaylistStateObservable extends BehaviorSubject<PlaylistStateInterface> {
   constructor() {
-    super({
-      playing: false,
-      loop: false,
-      shuffle: false
-    });
+    super(new PlaylistStateInterface());
   }
 }
 
-export class PlaylistTitleObservable extends BehaviorSubject<Playlist[]> {
+export class PlaylistTitleObservable extends BehaviorSubject<PlaylistInterface[]> {
   constructor() {
     super([]);
   }

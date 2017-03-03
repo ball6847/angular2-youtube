@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
 import { YoutubePlayerService } from 'ng2-youtube-player';
 import * as moment from 'moment';
-
 import { AppService } from "../../app.service";
 import { Video, VideoService } from "../../video";
 import {
@@ -9,6 +8,7 @@ import {
   PlaylistNowPlayingObservable,
   PlaylistStateObservable
 } from "./observable";
+import { PlaylistInterface } from './model';
 
 
 @Injectable()
@@ -48,6 +48,13 @@ export class PlaylistService {
   }
 
   // --------------------------------------------------------------------
+
+  load(playlist: PlaylistInterface) {
+    const state = this.state$.getValue();
+
+    state.playlist = playlist;
+    this.state$.next(state);
+  }
 
   toggleShuffle(): void {
     const state = this.state$.getValue();
@@ -101,55 +108,50 @@ export class PlaylistService {
     this.nowPlaying$.next(video);
   }
 
-
   next(): void {
     const state = this.state$.getValue();
-
     // @TODO: check if currently in pause state
     if (state.shuffle) {
       return this.playRandom();
     }
-
     const video = this.nowPlaying$.getValue();
     let index = this.indexOf(video) + 1;
-
     // end of playlist, stop or back to first entry
     if (index >= this.totalEntries()) {
       if (!state.loop) {
         return this.nowPlaying$.next(undefined);
       }
-
       index = 0;
     }
-
     this.play(index);
   }
 
 
   prev(): void {
     const state = this.state$.getValue();
-
     // @TODO: check if currently in pause state
     if (state.shuffle) {
       return this.playRandom();
     }
-
     const video = this.nowPlaying$.getValue();
     let index = this.indexOf(video) - 1;
-
     // reset if it's end of list
     if (index < 0) {
       index = this.totalEntries() - 1;
     }
-
     this.play(index);
   }
 
+  stop(): void {
+    const state = this.state$.getValue();
+    state.playing = false;
+    this.state$.next(state);
+    this.appService.player.stopVideo();
+  }
 
   enqueue(video: Video): void {
     const enqueue = (v) => {
       let d = moment.duration(v.contentDetails.duration);
-
       video.duration = {
         text: this.formatDuration(
           d.get('hours'),
@@ -158,17 +160,14 @@ export class PlaylistService {
         ),
         seconds: d.asSeconds()
       };
-
       // note, we use Object.assign() to avoid reference to the same videos in the playlist
       this.entries$.getValue()
         .push(Object.assign({}, video));
     }
-
     // get video's additional detail from youtube api before enlist
     this.videoService.fetchVideo(video.videoId)
       .subscribe(enqueue);
   }
-
 
   dequeue(index: number): void {
     const video = this.getVideoByIndex(index);

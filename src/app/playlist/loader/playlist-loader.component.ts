@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
-import { PlaylistStoreService, Playlist } from "../shared";
+import { PlaylistService } from "../shared";
+import { PlaylistStoreService, PlaylistInterface } from "../shared";
 
 @Component({
   selector: 'playlist-loader',
@@ -7,23 +8,23 @@ import { PlaylistStoreService, Playlist } from "../shared";
   templateUrl: './playlist-loader.component.html'
 })
 export class PlaylistLoaderComponent {
-  playlists: Playlist[];
+  playlists: PlaylistInterface[];
+  active: PlaylistInterface;
 
-  active: {
-    index: number,
-    playlist: Playlist
-  } = {
-    index: undefined,
-    playlist: undefined
-  };
-
-  constructor(private playlistStore: PlaylistStoreService) {
+  constructor(
+    private playlistStore: PlaylistStoreService,
+    private playlistService: PlaylistService
+  ) {
     this.playlistStore.getPlaylists()
       .subscribe(playlists => this.playlists = playlists);
+
+    this.playlistService.state()
+      .subscribe(state => this.active = state.playlist);
+
   }
 
-  selectPlaylist(playlist: Playlist) {
-
+  load(playlist: PlaylistInterface) {
+    this.playlistService.load(playlist);
   }
 
   addPlaylist(name: any, popover: any): void {
@@ -32,9 +33,7 @@ export class PlaylistLoaderComponent {
     }
 
     // persist on service
-    const playlist = new Playlist();
-    playlist.name = name.value;
-    this.playlistStore.addPlaylist(playlist);
+    this.playlistStore.addPlaylist(name.value);
 
     // set active state
     // this.selectPlaylist(this.playlists.length - 1);

@@ -1,12 +1,13 @@
 
 
-export class Playlist {
+export class PlaylistInterface {
   id: string;
   name: string;
 }
 
-export interface PlaylistState {
-  playing: boolean;
-  shuffle: boolean;
-  loop: boolean
+export class PlaylistStateInterface {
+  playing = false;
+  shuffle = false;
+  loop = false;
+  playlist = new PlaylistInterface();
 }
