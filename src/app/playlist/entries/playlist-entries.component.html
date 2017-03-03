@@ -1,0 +1,7 @@
+<!--component html goes here -->
+
+<ul id="video-playlist" [dragula]="'playlist'" [dragulaModel]="items">
+  <li *ngFor="let video of items; let i = index" [class.playing]="video == nowPlayingVideo">
+    <playlist-entry [video]="video" [index]="i" (play)="play($event)" (remove)="dequeue($event)"></playlist-entry>
+  </li>
+</ul>

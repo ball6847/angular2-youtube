@@ -1,9 +1,9 @@
 import { Component } from "@angular/core";
-import { VideoService } from "../../../videos/shared/video.service";
-import { AppState } from "../../app-state.service";
-import { Video } from "../../../videos/shared/video.model";
 import { Subject } from 'rxjs/Subject';
 import * as moment from 'moment';
+
+import { AppService } from "../../../app.service";
+import { Video, VideoService } from "../../../video";
 
 @Component({
   selector: 'dl-search-box',
@@ -13,13 +13,16 @@ import * as moment from 'moment';
 export class SearchBoxComponent {
   searchTerm$ = new Subject<string>();
 
-  constructor(private videoService: VideoService, private appState: AppState) { }
+  constructor(
+    private appService: AppService,
+    private videoService: VideoService
+  ) { }
 
   ngOnInit() {
     this.videoService.rxSearch(this.searchTerm$)
       .subscribe(data => {
-        this.appState.search.page = 1;
-        this.appState.videoList = data.items.map(item => {
+        this.appService.search.page = 1;
+        this.appService.videoList = data.items.map(item => {
           return new Video(
             item.id.videoId,
             item.snippet.title,

@@ -1,0 +1,35 @@
+<div class="video-playlist-loader"
+  [popover]="popTemplate"
+  popoverTitle="Enter playlist name:"
+  triggers=""
+  #pop="bs-popover">
+  <div class="btn-group btn-group-flat" role="group">
+    <div class="btn-group dropup" dropdown >
+      <button *ngIf="!creating" id="single-button" type="button" class="btn btn-black" dropdownToggle>
+        Playlist
+        <span *ngIf="active.playlist">: {{ active.playlist.name }}</span>
+      </button>
+      <ul dropdownMenu role="menu" aria-labelledby="single-button">
+        <li *ngFor="let playlist of playlists;" role="menuitem">
+          <a [class.active]="active.playlist.id == playlist.id" (click)="selectPlaylist(playlist)" class="dropdown-item" href="javascript:">{{ playlist.name }}</a>
+        </li>
+        <li [hidden]="!playlists.length" class="divider dropdown-divider"></li>
+        <li role="menuitem"><a class="dropdown-item" (click)="pop.show()" href="javascript:">Create new</a></li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<template #popTemplate>
+  <form action="javascript:" (submit)="addPlaylist(name, pop)">
+    <div class="input-group">
+      <input type="text" class="form-control" #name placeholder="my awesome list">
+      <span class="input-group-btn">
+        <button class="btn btn-primary" type="submit">create</button>
+      </span>
+      <span class="input-group-btn">
+        <button class="btn btn-danger" (click)="pop.hide()">dismiss</button>
+      </span>
+    </div>
+  </form>
+</template>
