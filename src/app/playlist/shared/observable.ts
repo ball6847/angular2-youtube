@@ -1,6 +1,6 @@
 import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 import { Playlist, PlaylistState } from './model';
-import { Video } from '../video/model';
+import { Video } from '../../video';
 
 export class PlaylistEntriesObservable extends BehaviorSubject<Video[]> {
   constructor() {
