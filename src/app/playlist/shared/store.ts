@@ -6,6 +6,7 @@ import { Video } from '../../video';
 import { PlaylistInterface, PlaylistStateInterface } from './model';
 import { PlaylistService } from './service';
 import { PlaylistTitleObservable } from './observable';
+import 'rxjs/add/operator/filter';
 
 @Injectable()
 export class PlaylistStoreService {
