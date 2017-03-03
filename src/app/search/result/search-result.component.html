@@ -1,13 +1,13 @@
 <div class="row">
   <ul class="list-group border">
     <li class="list-group-item"
-      [class.playing]="video === AppService.activeVideo"
-      *ngFor="let video of AppService.videoList | paginate: {itemsPerPage: 5, currentPage: AppService.search.page}">
+      [class.playing]="video === appService.activeVideo"
+      *ngFor="let video of appService.videoList | paginate: {itemsPerPage: 5, currentPage: appService.search.page}">
       <search-result-item [video]="video" (enqueue)="enqueue($event)"></search-result-item>
     </li>
   </ul>
 </div>
-<div *ngIf="AppService.videoList.length > 0" class="pagination-centered">
+<div *ngIf="appService.videoList.length > 0" class="pagination-centered">
   <pagination-template #api="paginationApi" (pageChange)="onPageChanged($event)">
     <nav>
       <ul class="pagination">
