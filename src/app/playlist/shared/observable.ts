@@ -2,17 +2,28 @@ import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 import { Playlist, PlaylistState } from './model';
 import { Video } from '../../video';
 
-export class PlaylistEntriesObservable extends BehaviorSubject<Video[]> {
+class BehaviorSubjectOfArray<T> extends BehaviorSubject<T[]> {
   constructor() {
     super([]);
   }
-}
 
-export class PlaylistNowPlayingObservable extends BehaviorSubject<Video> {
-  constructor() {
-    super(undefined);
+  add(item: T): void {
+    this.value.push(item);
+    this.next(this.value);
+  }
+
+  remove(item: T) {
+    const index = this.value.indexOf(item);
+    if (index != -1) {
+      this.value.splice(index, 1);
+      this.next(this.value);
+    }
   }
 }
+
+export class PlaylistEntriesObservable extends BehaviorSubjectOfArray<Video> { }
+export class PlaylistTitleObservable extends BehaviorSubjectOfArray<Playlist> { }
+
 
 export class PlaylistStateObservable extends BehaviorSubject<PlaylistState> {
   constructor() {
@@ -20,8 +31,8 @@ export class PlaylistStateObservable extends BehaviorSubject<PlaylistState> {
   }
 }
 
-export class PlaylistTitleObservable extends BehaviorSubject<Playlist[]> {
+export class PlaylistNowPlayingObservable extends BehaviorSubject<Video> {
   constructor() {
-    super([]);
+    super(undefined);
   }
 }

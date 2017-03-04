@@ -150,28 +150,25 @@ export class PlaylistService {
   }
 
   enqueue(video: Video): void {
-    const enqueue = (v) => {
-      let d = moment.duration(v.contentDetails.duration);
-      video.duration = {
-        text: this.formatDuration(
-          d.get('hours'),
-          d.get('minutes'),
-          d.get('seconds')
-        ),
-        seconds: d.asSeconds()
-      };
-      // note, we use Object.assign() to avoid reference to the same videos in the playlist
-      this.entries$.getValue()
-        .push(Object.assign({}, video));
-    }
     // get video's additional detail from youtube api before enlist
     this.videoService.fetchVideo(video.videoId)
-      .subscribe(enqueue);
+      .subscribe((v) => {
+        let d = moment.duration(v.contentDetails.duration);
+        video.duration = {
+          text: this.formatDuration(
+            d.get('hours'),
+            d.get('minutes'),
+            d.get('seconds')
+          ),
+          seconds: d.asSeconds()
+        };
+        // note, we use Object.assign() to avoid reference to the same videos in the playlist
+        this.entries$.add(Object.assign({}, video));
+      });
   }
 
   dequeue(index: number): void {
     const video = this.getVideoByIndex(index);
-    const entries = this.entries$.getValue();
     const playingVideo = this.nowPlaying$.getValue();
 
     // the video is playing and still have more videos to play, move to next song the remove
@@ -181,13 +178,12 @@ export class PlaylistService {
         this.next();
       }
 
-      entries.splice(index, 1);
-      return;
+      return this.entries$.remove(video);
     }
 
     // has one left, remove it first
     if (this.totalEntries() > 0) {
-      entries.splice(index, 1);
+      this.entries$.remove(video);
     }
 
     // load empty player
