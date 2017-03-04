@@ -8,7 +8,7 @@ import {
   PlaylistNowPlayingObservable,
   PlaylistStateObservable
 } from "./observable";
-import { PlaylistInterface } from './model';
+import { Playlist } from './model';
 
 
 @Injectable()
@@ -49,7 +49,7 @@ export class PlaylistService {
 
   // --------------------------------------------------------------------
 
-  load(playlist: PlaylistInterface) {
+  load(playlist: Playlist) {
     const state = this.state$.getValue();
 
     state.playlist = playlist;

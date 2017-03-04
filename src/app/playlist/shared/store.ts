@@ -3,7 +3,7 @@ import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 import * as UUID from 'uuid-js';
 
 import { Video } from '../../video';
-import { PlaylistInterface, PlaylistStateInterface } from './model';
+import { Playlist, PlaylistStateInterface } from './model';
 import { PlaylistService } from './service';
 import { PlaylistTitleObservable } from './observable';
 import 'rxjs/add/operator/filter';

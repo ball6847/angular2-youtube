@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { PlaylistService } from "../shared";
-import { PlaylistStoreService, PlaylistInterface } from "../shared";
+import { PlaylistStoreService, Playlist } from "../shared";
 
 @Component({
   selector: 'playlist-loader',
@@ -8,8 +8,8 @@ import { PlaylistStoreService, PlaylistInterface } from "../shared";
   templateUrl: './playlist-loader.component.html'
 })
 export class PlaylistLoaderComponent {
-  playlists: PlaylistInterface[];
-  active: PlaylistInterface;
+  playlists: Playlist[];
+  active: Playlist;
 
   constructor(
     private playlistStore: PlaylistStoreService,
@@ -23,7 +23,7 @@ export class PlaylistLoaderComponent {
 
   }
 
-  load(playlist: PlaylistInterface) {
+  load(playlist: Playlist) {
     this.playlistService.load(playlist);
   }
 
