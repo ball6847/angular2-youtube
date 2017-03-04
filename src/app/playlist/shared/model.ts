@@ -5,7 +5,7 @@ export class Playlist {
   name: string;
 }
 
-export class PlaylistStateInterface {
+export class PlaylistState {
   playing = false;
   shuffle = false;
   loop = false;

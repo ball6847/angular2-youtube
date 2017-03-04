@@ -3,7 +3,7 @@ import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 import * as UUID from 'uuid-js';
 
 import { Video } from '../../video';
-import { Playlist, PlaylistStateInterface } from './model';
+import { Playlist, PlaylistState } from './model';
 import { PlaylistService } from './service';
 import { PlaylistTitleObservable } from './observable';
 import 'rxjs/add/operator/filter';
@@ -12,7 +12,7 @@ import 'rxjs/add/operator/filter';
 export class PlaylistStoreService {
   private playlists$ = new PlaylistTitleObservable();
   private playlistCollection: Array<Video[]> = [];
-  private state: PlaylistStateInterface;
+  private state: PlaylistState;
 
   constructor(private playlistService: PlaylistService) {
     this.playlistService.state()
@@ -40,15 +40,12 @@ export class PlaylistStoreService {
 
   addPlaylist(name: string) {
     const playlists = this.playlists$.getValue();
-
     const playlist = {
       id: UUID.create().toString(),
       name: name
     };
-
     playlists.push(playlist);
     this.playlists$.next(playlists);
-
     this.playlistService.load(playlist);
   }
 

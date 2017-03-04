@@ -11,16 +11,11 @@ export class PlaylistLoaderComponent {
   playlists: Playlist[];
   active: Playlist;
 
-  constructor(
-    private playlistStore: PlaylistStoreService,
-    private playlistService: PlaylistService
-  ) {
+  constructor(private playlistStore: PlaylistStoreService, private playlistService: PlaylistService) {
     this.playlistStore.getPlaylists()
       .subscribe(playlists => this.playlists = playlists);
-
     this.playlistService.state()
       .subscribe(state => this.active = state.playlist);
-
   }
 
   load(playlist: Playlist) {
@@ -31,13 +26,8 @@ export class PlaylistLoaderComponent {
     if (!name.value) {
       return;
     }
-
     // persist on service
     this.playlistStore.addPlaylist(name.value);
-
-    // set active state
-    // this.selectPlaylist(this.playlists.length - 1);
-
     // reset form and hide popover
     name.value = "";
     popover.hide();
