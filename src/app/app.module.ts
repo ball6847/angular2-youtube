@@ -1,6 +1,7 @@
 import { NgModule } from "@angular/core";
 import { BrowserModule } from "@angular/platform-browser";
 import { HttpModule } from "@angular/http";
+
 import { YoutubePlayerModule } from 'ng2-youtube-player';
 import { Ng2PaginationModule } from "ng2-pagination";
 import { DragulaModule } from 'ng2-dragula/ng2-dragula';
@@ -16,8 +17,14 @@ import {
   PlaylistEntryComponent,
   PlaylistControlComponent,
   PlaylistLoaderComponent,
-  PlaylistService
+  PlaylistService,
+  Playlist
 } from "./playlist";
+// import { PlaylistReducer } from './playlist/shared/reducer';
+
+import { StoreModule } from '@ngrx/store';
+import { StoreDevtoolsModule } from '@ngrx/store-devtools';
+import * as store from './app.store';
 
 
 @NgModule({
@@ -28,7 +35,9 @@ import {
     YoutubePlayerModule,
     DragulaModule,
     DropdownModule.forRoot(),
-    PopoverModule.forRoot()
+    PopoverModule.forRoot(),
+    StoreModule.provideStore(store.AppReducer),
+    StoreDevtoolsModule.instrumentOnlyWithExtension()
   ],
   declarations: [
     AppComponent,

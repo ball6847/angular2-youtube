@@ -7,11 +7,7 @@ import { PlaylistService } from '../shared';
   templateUrl: './playlist-control.component.html'
 })
 export class PlaylistControlComponent {
-  state = {
-    playing: false,
-    loop: false,
-    shuffle: false
-  };
+  state;
 
   constructor(private playlistService: PlaylistService) { }
 

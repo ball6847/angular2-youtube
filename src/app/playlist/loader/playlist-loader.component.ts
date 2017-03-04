@@ -8,11 +8,14 @@ import { Playlist } from "../shared";
   templateUrl: './playlist-loader.component.html'
 })
 export class PlaylistLoaderComponent {
-  playlists: Playlist[];
+  playlists: Playlist[] = [];
   active: Playlist;
 
   constructor(private playlistService: PlaylistService) {
-    this.playlistService.list()
+  }
+
+  ngOnInit() {
+    this.playlistService.playlists()
       .subscribe(playlists => this.playlists = playlists);
 
     this.playlistService.playlist()
@@ -23,7 +26,7 @@ export class PlaylistLoaderComponent {
     this.playlistService.load(playlist);
   }
 
-  addPlaylist(name: any, popover: any): void {
+  create(name: any, popover: any) {
     if (!name.value) {
       return;
     }
@@ -34,5 +37,22 @@ export class PlaylistLoaderComponent {
     // reset form and hide popover
     name.value = "";
     popover.hide();
+  }
+
+  rename(name: any, popover: any) {
+    if (!name.value) {
+      return;
+    }
+
+    // persist on service
+    this.playlistService.rename(this.active, name.value);
+
+    // reset form and hide popover
+    name.value = "";
+    popover.hide();
+  }
+
+  delete(playlist: Playlist) {
+    this.playlistService.delete(playlist);
   }
 }

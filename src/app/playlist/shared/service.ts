@@ -1,4 +1,6 @@
 import { Injectable } from '@angular/core';
+import { Store } from '@ngrx/store';
+import { Observable } from 'rxjs/Observable';
 import { YoutubePlayerService } from 'ng2-youtube-player';
 import * as moment from 'moment';
 import * as UUID from 'uuid-js';
@@ -11,23 +13,35 @@ import {
   PlaylistListObservable,
   PlaylistObservable
 } from "./observable";
-import { Playlist } from './model';
+import { Playlist, PlaylistState } from './model';
+import { AppState } from '../../app.store';
 
 
 @Injectable()
 export class PlaylistService {
   // @TODO: use firebase
-  private list$ = new PlaylistListObservable();
-  private playlist$ = new PlaylistObservable();
+  private playlists$: Observable<Playlist[]>;
+  private playlist$: Observable<Playlist>;
+  private playlistState$: Observable<PlaylistState>;
   private entries$ = new PlaylistEntriesObservable();
   private nowPlaying$ = new PlaylistNowPlayingObservable();
-  private state$ = new PlaylistStateObservable();
+  private _state: PlaylistState;
 
   constructor(
+    private store: Store<AppState>,
     private appService: AppService,
     private videoService: VideoService,
     private playerService: YoutubePlayerService
   ) {
+    this.playlists$ = store.select('playlists') as Observable<Playlist[]>;
+    this.playlist$ = store.select('activePlaylist') as Observable<Playlist>;
+    this.playlistState$ = store.select('playlistControlState') as Observable<PlaylistState>;
+
+    // we also need tracking of state inside of service
+    this.playlistState$
+      .subscribe(state => this._state = Object.assign({}, state));
+
+
     // always mark video as playing when nowPlaying changed
     this.nowPlaying$.subscribe(video => {
       this.entries$.getValue()
@@ -40,8 +54,8 @@ export class PlaylistService {
     });
   }
 
-  list() {
-    return this.list$;
+  playlists(): Observable<Playlist[]> {
+    return this.playlists$;
   }
 
   create(name: string) {
@@ -50,12 +64,20 @@ export class PlaylistService {
     playlist.id = UUID.create().toString();
     playlist.name = name;
 
-    this.list$.push(playlist);
+    this.store.dispatch({ type: 'PLAYLIST_CREATED', payload: playlist });
+
     this.load(playlist);
   }
 
-  delete(): void {
-    return;
+  rename(playlist: Playlist, name: string) {
+    playlist.name = name;
+
+    this.store.dispatch({ type: 'PLAYLIST_UPDATED', payload: playlist });
+  }
+
+  delete(playlist: Playlist): void {
+    this.store.dispatch({ type: 'PLAYLIST_DELETED', payload: playlist });
+    this.store.dispatch({ type: 'PLAYLIST_ACTIVE_CHANGED', payload: undefined });
   }
 
   entries(): PlaylistEntriesObservable {
@@ -66,42 +88,36 @@ export class PlaylistService {
     return this.nowPlaying$;
   }
 
-  state(): PlaylistStateObservable {
-    return this.state$;
+  state(): Observable<PlaylistState> {
+    return this.playlistState$;
   }
 
-  playlist(): PlaylistObservable {
+  playlist(): Observable<Playlist> {
     return this.playlist$;
   }
 
   // --------------------------------------------------------------------
 
   load(playlist: Playlist) {
-    this.playlist$.next(playlist);
+    this.store.dispatch({ type: 'PLAYLIST_ACTIVE_CHANGED', payload: playlist });
     this.entries$.next(playlist.entries);
   }
 
   toggleShuffle(): void {
-    const state = this.state$.getValue();
-
-    state.shuffle = !state.shuffle;
-    this.state$.next(state);
+    this._state.shuffle = !this._state.shuffle;
+    this._dispatchState();
   }
 
   toggleLoop(): void {
-    const state = this.state$.getValue();
-
-    state.loop = !state.loop;
-    this.state$.next(state);
+    this._state.loop = !this._state.loop;
+    this._dispatchState();
   }
 
   togglePlay(): void {
-    const state = this.state$.getValue();
+    this._state.playing = !this._state.playing;
+    this._dispatchState();
 
-    state.playing = !state.playing;
-    this.state$.next(state);
-
-    if (state.playing) {
+    if (this._state.playing) {
       this.appService.player.playVideo();
     } else {
       this.appService.player.pauseVideo();
@@ -134,16 +150,15 @@ export class PlaylistService {
   }
 
   next(): void {
-    const state = this.state$.getValue();
     // @TODO: check if currently in pause state
-    if (state.shuffle) {
+    if (this._state.shuffle) {
       return this.playRandom();
     }
     const video = this.nowPlaying$.getValue();
     let index = this.indexOf(video) + 1;
     // end of playlist, stop or back to first entry
     if (index >= this.totalEntries()) {
-      if (!state.loop) {
+      if (!this._state.loop) {
         return this.nowPlaying$.next(undefined);
       }
       index = 0;
@@ -153,9 +168,8 @@ export class PlaylistService {
 
 
   prev(): void {
-    const state = this.state$.getValue();
     // @TODO: check if currently in pause state
-    if (state.shuffle) {
+    if (this._state.shuffle) {
       return this.playRandom();
     }
     const video = this.nowPlaying$.getValue();
@@ -168,17 +182,17 @@ export class PlaylistService {
   }
 
   stop(): void {
-    const state = this.state$.getValue();
-    state.playing = false;
-    this.state$.next(state);
+    this._state.playing = false;
+    this.store.dispatch({ type: 'PLAYLIST_CONTROL_STATE_CHANGED', payload: this._state });
+
     this.appService.player.stopVideo();
   }
 
   enqueue(video: Video): void {
     // no active playlist available, create it on-the-fly
-    if (!this.playlist$.value.id) {
-      this.create('Untitled');
-    }
+    // if (!this.playlist$.value.id) {
+    //   this.create('Untitled');
+    // }
 
     // get video's additional detail from youtube api before enlist
     this.videoService.fetchVideo(video.videoId)
@@ -228,16 +242,17 @@ export class PlaylistService {
   }
 
   onPlayerStateChange(playerState: any): void {
-    const state = this.state$.getValue();
-
     switch (playerState.data) {
       case YT.PlayerState.PLAYING:
-        state.playing = true;
-        this.state$.next(state);
+        // youtube emit play event on next video
+        if (this._state.playing != true) {
+          this._state.playing = true;
+          this._dispatchState();
+        }
         break;
       case YT.PlayerState.PAUSED:
-        state.playing = false;
-        this.state$.next(state);
+        this._state.playing = false;
+        this._dispatchState();
         break;
       case YT.PlayerState.ENDED:
         this.next();
@@ -246,6 +261,10 @@ export class PlaylistService {
   }
 
   // -----------------------------------------------------------------------
+
+  private _dispatchState() {
+    this.store.dispatch({ type: 'PLAYLIST_CONTROL_STATE_CHANGED', payload: this._state });
+  }
 
   private getVideoByIndex(index: number): Video {
     return this.entries$.getValue()[index];
