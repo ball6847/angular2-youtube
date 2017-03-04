@@ -1,12 +1,15 @@
 import { Injectable } from '@angular/core';
 import { YoutubePlayerService } from 'ng2-youtube-player';
 import * as moment from 'moment';
+import * as UUID from 'uuid-js';
 import { AppService } from "../../app.service";
 import { Video, VideoService } from "../../video";
 import {
   PlaylistEntriesObservable,
   PlaylistNowPlayingObservable,
-  PlaylistStateObservable
+  PlaylistStateObservable,
+  PlaylistListObservable,
+  PlaylistObservable
 } from "./observable";
 import { Playlist } from './model';
 
@@ -14,6 +17,8 @@ import { Playlist } from './model';
 @Injectable()
 export class PlaylistService {
   // @TODO: use firebase
+  private list$ = new PlaylistListObservable();
+  private playlist$ = new PlaylistObservable();
   private entries$ = new PlaylistEntriesObservable();
   private nowPlaying$ = new PlaylistNowPlayingObservable();
   private state$ = new PlaylistStateObservable();
@@ -21,7 +26,7 @@ export class PlaylistService {
   constructor(
     private appService: AppService,
     private videoService: VideoService,
-    private playerService: YoutubePlayerService,
+    private playerService: YoutubePlayerService
   ) {
     // always mark video as playing when nowPlaying changed
     this.nowPlaying$.subscribe(video => {
@@ -33,6 +38,24 @@ export class PlaylistService {
         video.playing = true;
       }
     });
+  }
+
+  list() {
+    return this.list$;
+  }
+
+  create(name: string) {
+    const playlist = new Playlist();
+
+    playlist.id = UUID.create().toString();
+    playlist.name = name;
+
+    this.list$.push(playlist);
+    this.load(playlist);
+  }
+
+  delete(): void {
+    return;
   }
 
   entries(): PlaylistEntriesObservable {
@@ -47,13 +70,15 @@ export class PlaylistService {
     return this.state$;
   }
 
+  playlist(): PlaylistObservable {
+    return this.playlist$;
+  }
+
   // --------------------------------------------------------------------
 
   load(playlist: Playlist) {
-    const state = this.state$.getValue();
-
-    state.playlist = playlist;
-    this.state$.next(state);
+    this.playlist$.next(playlist);
+    this.entries$.next(playlist.entries);
   }
 
   toggleShuffle(): void {
@@ -150,6 +175,10 @@ export class PlaylistService {
   }
 
   enqueue(video: Video): void {
+    // var playlists = this.playlistStore.getPlaylists().getValue();
+
+    // console.log(playlists)
+
     // get video's additional detail from youtube api before enlist
     this.videoService.fetchVideo(video.videoId)
       .subscribe((v) => {
@@ -163,7 +192,7 @@ export class PlaylistService {
           seconds: d.asSeconds()
         };
         // note, we use Object.assign() to avoid reference to the same videos in the playlist
-        this.entries$.add(Object.assign({}, video));
+        this.entries$.push(Object.assign({}, video));
       });
   }
 

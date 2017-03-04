@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { PlaylistService } from "../shared";
-import { PlaylistStoreService, Playlist } from "../shared";
+import { PlaylistStore, Playlist } from "../shared";
 
 @Component({
   selector: 'playlist-loader',
@@ -11,11 +11,12 @@ export class PlaylistLoaderComponent {
   playlists: Playlist[];
   active: Playlist;
 
-  constructor(private playlistStore: PlaylistStoreService, private playlistService: PlaylistService) {
-    this.playlistStore.getPlaylists()
+  constructor(private playlistService: PlaylistService) {
+    this.playlistService.list()
       .subscribe(playlists => this.playlists = playlists);
-    this.playlistService.state()
-      .subscribe(state => this.active = state.playlist);
+
+    this.playlistService.playlist()
+      .subscribe(playlist => this.active = playlist);
   }
 
   load(playlist: Playlist) {
@@ -26,8 +27,10 @@ export class PlaylistLoaderComponent {
     if (!name.value) {
       return;
     }
+
     // persist on service
-    this.playlistStore.addPlaylist(name.value);
+    this.playlistService.create(name.value);
+
     // reset form and hide popover
     name.value = "";
     popover.hide();

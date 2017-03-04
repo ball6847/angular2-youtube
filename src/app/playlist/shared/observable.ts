@@ -7,7 +7,7 @@ class BehaviorSubjectOfArray<T> extends BehaviorSubject<T[]> {
     super([]);
   }
 
-  add(item: T): void {
+  push(item: T): void {
     this.value.push(item);
     this.next(this.value);
   }
@@ -22,8 +22,13 @@ class BehaviorSubjectOfArray<T> extends BehaviorSubject<T[]> {
 }
 
 export class PlaylistEntriesObservable extends BehaviorSubjectOfArray<Video> { }
-export class PlaylistTitleObservable extends BehaviorSubjectOfArray<Playlist> { }
+export class PlaylistListObservable extends BehaviorSubjectOfArray<Playlist> { }
 
+export class PlaylistObservable extends BehaviorSubject<Playlist> {
+  constructor() {
+    super(new Playlist());
+  }
+}
 
 export class PlaylistStateObservable extends BehaviorSubject<PlaylistState> {
   constructor() {

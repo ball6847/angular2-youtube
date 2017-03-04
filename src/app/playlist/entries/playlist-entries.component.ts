@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { DragulaService } from 'ng2-dragula/ng2-dragula';
 
-import { PlaylistService } from '../shared';
+import { Playlist, PlaylistService } from '../shared';
 import { Video } from '../../video';
 
 @Component({
@@ -10,7 +10,7 @@ import { Video } from '../../video';
   templateUrl: './playlist-entries.component.html',
 })
 export class PlaylistEntriesComponent {
-  items: Video[];
+  playlist: Playlist;
   nowPlayingVideo: Video;
 
   constructor(
@@ -21,8 +21,8 @@ export class PlaylistEntriesComponent {
   ngOnInit() {
     this.dragulaService.setOptions('playlist', {});
 
-    this.playlistService.entries()
-      .subscribe(items => this.items = items);
+    this.playlistService.playlist()
+      .subscribe(playlist => this.playlist = playlist);
 
     this.playlistService.nowPlaying()
       .subscribe(video => {

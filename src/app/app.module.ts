@@ -16,8 +16,7 @@ import {
   PlaylistEntryComponent,
   PlaylistControlComponent,
   PlaylistLoaderComponent,
-  PlaylistService,
-  PlaylistStoreService
+  PlaylistService
 } from "./playlist";
 
 
@@ -49,8 +48,7 @@ import {
   providers: [
     AppService,
     VideoService,
-    PlaylistService,
-    PlaylistStoreService
+    PlaylistService
   ]
 })
 export class AppModule { }
