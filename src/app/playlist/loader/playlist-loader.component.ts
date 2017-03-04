@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { PlaylistService } from "../shared";
-import { PlaylistStore, Playlist } from "../shared";
+import { Playlist } from "../shared";
 
 @Component({
   selector: 'playlist-loader',

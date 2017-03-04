@@ -175,13 +175,14 @@ export class PlaylistService {
   }
 
   enqueue(video: Video): void {
-    // var playlists = this.playlistStore.getPlaylists().getValue();
-
-    // console.log(playlists)
+    // no active playlist available, create it on-the-fly
+    if (!this.playlist$.value.id) {
+      this.create('Untitled');
+    }
 
     // get video's additional detail from youtube api before enlist
     this.videoService.fetchVideo(video.videoId)
-      .subscribe((v) => {
+      .subscribe(v => {
         let d = moment.duration(v.contentDetails.duration);
         video.duration = {
           text: this.formatDuration(
