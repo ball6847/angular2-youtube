@@ -68,6 +68,7 @@ export function PlaylistEntriesReducer(state: Video[] = [], { type, payload }: A
 
 
 
+
 // @TODO scope in domain
 export interface PlaylistAppState {
   list: Playlist[],

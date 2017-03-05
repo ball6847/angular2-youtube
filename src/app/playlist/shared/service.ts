@@ -170,25 +170,25 @@ export class PlaylistService {
   next(): void {
     if (this.state.shuffle)
       return this.playRandom();
-    const video = this.nowPlaying$.getValue();
+    const video = this.getPlayingVideo();
     let index = this.entries.indexOf(video) + 1;
     if (index >= this.entries.length) {
-      if (!this.state.loop)
-        return this.nowPlaying$.next(undefined);
+      // if (!this.state.loop)
+      //   return this.nowPlaying$.next(undefined);
       index = 0;
     }
-    this.play(video);
+    this.play(this.entries[index]);
   }
 
   //@TODO change to ngrx/store
   prev(): void {
     if (this.state.shuffle)
       return this.playRandom();
-    const video = this.nowPlaying$.getValue();
+    const video = this.getPlayingVideo();
     let index = this.entries.indexOf(video) - 1;
     if (index < 0)
       index = this.entries.length - 1;
-    this.play(video);
+    this.play(this.entries[index]);
   }
 
   stop(): void {
@@ -254,6 +254,11 @@ export class PlaylistService {
 
   // -----------------------------------------------------------------------
   // internal utils
+
+  private getPlayingVideo() {
+    const videos = this.entries.filter(video => video.playing);
+    return videos.length ? videos[0] : null;
+  }
 
   private dispatchState() {
     this.store.dispatch({ type: 'PLAYLIST_CONTROL_STATE_CHANGED', payload: this.state });

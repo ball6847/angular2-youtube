@@ -16,5 +16,5 @@ export const AppReducer = {
   playlistList: playlistStore.PlaylistListReducer,
   playlistActive: playlistStore.PlaylistActiveReducer,
   playlistState: playlistStore.PlaylistControlStateReducer,
-  playlistEntries: playlistStore.PlaylistEntriesReducer
+  playlistEntries: playlistStore.PlaylistEntriesReducer,
 };
