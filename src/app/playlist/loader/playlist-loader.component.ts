@@ -1,6 +1,8 @@
 import { Component } from '@angular/core';
+import { Observable } from 'rxjs/Observable';
 import { PlaylistService } from "../shared";
 import { Playlist } from "../shared";
+import 'rxjs/add/operator/take';
 
 @Component({
   selector: 'playlist-loader',
@@ -8,51 +10,45 @@ import { Playlist } from "../shared";
   templateUrl: './playlist-loader.component.html'
 })
 export class PlaylistLoaderComponent {
-  playlists: Playlist[] = [];
-  active: Playlist;
+  list$: Observable<Playlist[]>
+  active$: Observable<Playlist>;
 
-  constructor(private playlistService: PlaylistService) {
-  }
+  constructor(private playlistService: PlaylistService) { }
 
   ngOnInit() {
-    this.playlistService.playlists()
-      .subscribe(playlists => this.playlists = playlists);
-
-    this.playlistService.playlist()
-      .subscribe(playlist => this.active = playlist);
+    this.list$ = this.playlistService.getList();
+    this.active$ = this.playlistService.getActive()
   }
 
   load(playlist: Playlist) {
-    this.playlistService.load(playlist);
+    this.playlistService.loadPlaylist(playlist);
   }
 
   create(name: any, popover: any) {
-    if (!name.value) {
+    if (!name.value)
       return;
-    }
-
-    // persist on service
-    this.playlistService.create(name.value);
-
-    // reset form and hide popover
+    this.playlistService.createPlaylist(name.value);
     name.value = "";
     popover.hide();
   }
 
-  rename(name: any, popover: any) {
-    if (!name.value) {
-      return;
-    }
-
-    // persist on service
-    this.playlistService.rename(this.active, name.value);
-
-    // reset form and hide popover
-    name.value = "";
-    popover.hide();
+  rename(playlist$: Observable<Playlist>, name: any, popover: any) {
+    playlist$
+      .take(1)
+      .subscribe(playlist => {
+        if (!name.value)
+          return;
+        this.playlistService.renamePlaylist(playlist, name.value);
+        name.value = "";
+        popover.hide();
+      });
   }
 
-  delete(playlist: Playlist) {
-    this.playlistService.delete(playlist);
+  delete(playlist$: Observable<Playlist>) {
+    playlist$
+      .take(1)
+      .subscribe(playlist => {
+        this.playlistService.deletePlaylist(playlist);
+      });
   }
 }

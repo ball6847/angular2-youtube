@@ -1,15 +1,20 @@
 import { Action, ActionReducer } from '@ngrx/store';
 import { Playlist, PlaylistState } from './playlist';
+import { Video } from './video';
 import * as playlistStore from './playlist/shared/reducer';
 
+
+
 export interface AppState {
-  playlists: Playlist[],
-  activePlaylist: Playlist,
-  playlistControlState: PlaylistState
+  playlistList: Playlist[],
+  playlistActive: Playlist,
+  playlistState: PlaylistState,
+  playlistEntries: Video[]
 };
 
 export const AppReducer = {
-  playlists: playlistStore.PlaylistListReducer,
-  activePlaylist: playlistStore.PlaylistActiveReducer,
-  playlistControlState: playlistStore.PlaylistControlStateReducer
+  playlistList: playlistStore.PlaylistListReducer,
+  playlistActive: playlistStore.PlaylistActiveReducer,
+  playlistState: playlistStore.PlaylistControlStateReducer,
+  playlistEntries: playlistStore.PlaylistEntriesReducer
 };

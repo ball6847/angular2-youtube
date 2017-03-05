@@ -7,13 +7,12 @@ import { PlaylistService } from '../shared';
   templateUrl: './playlist-control.component.html'
 })
 export class PlaylistControlComponent {
-  state;
+  state$;
 
   constructor(private playlistService: PlaylistService) { }
 
   ngOnInit() {
-    this.playlistService.state()
-      .subscribe(state => this.state = state);
+    this.state$ = this.playlistService.getState()
   }
 
   next() {

@@ -16,16 +16,22 @@ import {
 import { Playlist, PlaylistState } from './model';
 import { AppState } from '../../app.store';
 
-
 @Injectable()
 export class PlaylistService {
   // @TODO: use firebase
-  private playlists$: Observable<Playlist[]>;
-  private playlist$: Observable<Playlist>;
-  private playlistState$: Observable<PlaylistState>;
-  private entries$ = new PlaylistEntriesObservable();
+  private list$: Observable<Playlist[]>;
+  private active$: Observable<Playlist>;
+  private state$: Observable<PlaylistState>;
+  private entries$: Observable<Video[]>;
+
+  // internal data we need to work with
+  private list: Playlist[];
+  private active: Playlist;
+  private entries: Video[];
+  private state: PlaylistState;
+
+  // @TODO, change to ngrx store
   private nowPlaying$ = new PlaylistNowPlayingObservable();
-  private _state: PlaylistState;
 
   constructor(
     private store: Store<AppState>,
@@ -33,91 +39,111 @@ export class PlaylistService {
     private videoService: VideoService,
     private playerService: YoutubePlayerService
   ) {
-    this.playlists$ = store.select('playlists') as Observable<Playlist[]>;
-    this.playlist$ = store.select('activePlaylist') as Observable<Playlist>;
-    this.playlistState$ = store.select('playlistControlState') as Observable<PlaylistState>;
+    // pick state fro store
+    this.list$ = store.select('playlistList') as Observable<Playlist[]>;
+    this.active$ = store.select('playlistActive') as Observable<Playlist>;
+    this.state$ = store.select('playlistState') as Observable<PlaylistState>;
+    this.entries$ = store.select('playlistEntries') as Observable<Video[]>;
 
     // we also need tracking of state inside of service
-    this.playlistState$
-      .subscribe(state => this._state = Object.assign({}, state));
+    this.state$
+      .subscribe(state => this.state = Object.assign({}, state));
+    this.active$
+      .subscribe(playlist => this.active = playlist);
+    this.entries$
+      .subscribe(entries => {
+        this.entries = entries;
+        if (this.active && this.active.entries != entries) {
+          this.active.entries = entries;
+          // this will cause duplicate dispatchtion but nothing serius here
+          this.store.dispatch({ type: 'PLAYLIST_UPDATED', payload: this.active });
+        }
+      });
 
 
     // always mark video as playing when nowPlaying changed
-    this.nowPlaying$.subscribe(video => {
-      this.entries$.getValue()
-        .map(v => v.playing = false);
-
-      // initialValue can be undefined
-      if (video) {
-        video.playing = true;
-      }
-    });
+    // this.nowPlaying$.subscribe(video => {
+    //   this.entries$.getValue()
+    //     .map(v => v.playing = false);
+    //
+    //   // initialValue can be undefined
+    //   if (video) {
+    //     video.playing = true;
+    //   }
+    // });
   }
 
-  playlists(): Observable<Playlist[]> {
-    return this.playlists$;
+  // --------------------------------------------------------------------
+  // all observables
+
+  getList(): Observable<Playlist[]> {
+    return this.list$;
   }
 
-  create(name: string) {
-    const playlist = new Playlist();
+  getEntries(): Observable<Video[]> {
+    return this.entries$;
+  }
 
-    playlist.id = UUID.create().toString();
-    playlist.name = name;
+  getState(): Observable<PlaylistState> {
+    return this.state$;
+  }
 
+  getActive(): Observable<Playlist> {
+    return this.active$;
+  }
+
+  // @TODO change to ngrx/store
+  getNowPlaying(): PlaylistNowPlayingObservable {
+    return this.nowPlaying$;
+  }
+
+  // --------------------------------------------------------------------
+  // working with playlist collections
+
+  createPlaylist(name: string) {
+    const playlist: Playlist = {
+      id: UUID.create().toString(),
+      name: name,
+      entries: []
+    };
     this.store.dispatch({ type: 'PLAYLIST_CREATED', payload: playlist });
-
-    this.load(playlist);
+    this.loadPlaylist(playlist);
   }
 
-  rename(playlist: Playlist, name: string) {
-    playlist.name = name;
-
-    this.store.dispatch({ type: 'PLAYLIST_UPDATED', payload: playlist });
+  renamePlaylist(playlist: Playlist, name: string) {
+    const newPlaylist = Object.assign({}, playlist, { name: name });
+    this.store.dispatch({ type: 'PLAYLIST_UPDATED', payload: newPlaylist });
+    this.store.dispatch({ type: 'PLAYLIST_ACTIVE_CHANGED', payload: newPlaylist });
   }
 
-  delete(playlist: Playlist): void {
+  deletePlaylist(playlist: Playlist): void {
     this.store.dispatch({ type: 'PLAYLIST_DELETED', payload: playlist });
     this.store.dispatch({ type: 'PLAYLIST_ACTIVE_CHANGED', payload: undefined });
   }
 
-  entries(): PlaylistEntriesObservable {
-    return this.entries$;
-  }
-
-  nowPlaying(): PlaylistNowPlayingObservable {
-    return this.nowPlaying$;
-  }
-
-  state(): Observable<PlaylistState> {
-    return this.playlistState$;
-  }
-
-  playlist(): Observable<Playlist> {
-    return this.playlist$;
-  }
-
   // --------------------------------------------------------------------
+  // working with activePlaylist and playlistControl
 
-  load(playlist: Playlist) {
+  loadPlaylist(playlist: Playlist) {
     this.store.dispatch({ type: 'PLAYLIST_ACTIVE_CHANGED', payload: playlist });
-    this.entries$.next(playlist.entries);
+    this.store.dispatch({ type: 'PLAYLIST_ENTRIES_LOADED', payload: playlist.entries });
   }
 
   toggleShuffle(): void {
-    this._state.shuffle = !this._state.shuffle;
-    this._dispatchState();
+    this.state.shuffle = !this.state.shuffle;
+    this.dispatchState();
   }
 
   toggleLoop(): void {
-    this._state.loop = !this._state.loop;
-    this._dispatchState();
+    this.state.loop = !this.state.loop;
+    this.dispatchState();
   }
 
   togglePlay(): void {
-    this._state.playing = !this._state.playing;
-    this._dispatchState();
+    this.state.playing = !this.state.playing;
+    this.dispatchState();
 
-    if (this._state.playing) {
+    if (this.state.playing) {
       this.appService.player.playVideo();
     } else {
       this.appService.player.pauseVideo();
@@ -126,133 +152,99 @@ export class PlaylistService {
 
   // --------------------------------------------------------------------
 
-  play(index: number): void {
-    if (this.outOfBound(index)) {
-      return;
-    }
-
-    const video = this.getVideoByIndex(index);
-
+  //@TODO change to ngrx/store
+  play(video: Video): void {
+    this.store.dispatch({ type: 'PLAYLIST_ENTRIES_CHILD_ACTIVATED', payload: video });
     this.playerService.playVideo({ id: video.videoId }, this.appService.player);
     this.nowPlaying$.next(video);
   }
 
   playRandom(): void {
-    if (this.totalEntries() === 0) {
+    if (!this.entries.length)
       return;
-    }
-
-    const entries = this.entries$.getValue();
-    const video = entries[Math.floor(Math.random() * entries.length)];
-
-    this.playerService.playVideo({ id: video.videoId }, this.appService.player);
-    this.nowPlaying$.next(video);
+    const video = this.entries[Math.floor(Math.random() * this.entries.length)];
+    this.play(video);
   }
 
+  //@TODO change to ngrx/store
   next(): void {
-    // @TODO: check if currently in pause state
-    if (this._state.shuffle) {
+    if (this.state.shuffle)
       return this.playRandom();
-    }
     const video = this.nowPlaying$.getValue();
-    let index = this.indexOf(video) + 1;
-    // end of playlist, stop or back to first entry
-    if (index >= this.totalEntries()) {
-      if (!this._state.loop) {
+    let index = this.entries.indexOf(video) + 1;
+    if (index >= this.entries.length) {
+      if (!this.state.loop)
         return this.nowPlaying$.next(undefined);
-      }
       index = 0;
     }
-    this.play(index);
+    this.play(video);
   }
 
-
+  //@TODO change to ngrx/store
   prev(): void {
-    // @TODO: check if currently in pause state
-    if (this._state.shuffle) {
+    if (this.state.shuffle)
       return this.playRandom();
-    }
     const video = this.nowPlaying$.getValue();
-    let index = this.indexOf(video) - 1;
-    // reset if it's end of list
-    if (index < 0) {
-      index = this.totalEntries() - 1;
-    }
-    this.play(index);
+    let index = this.entries.indexOf(video) - 1;
+    if (index < 0)
+      index = this.entries.length - 1;
+    this.play(video);
   }
 
   stop(): void {
-    this._state.playing = false;
-    this.store.dispatch({ type: 'PLAYLIST_CONTROL_STATE_CHANGED', payload: this._state });
-
+    this.state.playing = false;
+    this.store.dispatch({ type: 'PLAYLIST_CONTROL_STATE_CHANGED', payload: this.state });
     this.appService.player.stopVideo();
   }
 
   enqueue(video: Video): void {
-    // no active playlist available, create it on-the-fly
-    // if (!this.playlist$.value.id) {
-    //   this.create('Untitled');
-    // }
-
-    // get video's additional detail from youtube api before enlist
-    this.videoService.fetchVideo(video.videoId)
+    const vdo = Object.assign({}, video);
+    if (!this.active)
+      this.createPlaylist('Untitled');
+    this.videoService.fetchVideo(vdo.videoId)
       .subscribe(v => {
         let d = moment.duration(v.contentDetails.duration);
-        video.duration = {
-          text: this.formatDuration(
-            d.get('hours'),
-            d.get('minutes'),
-            d.get('seconds')
-          ),
+        vdo.duration = {
+          text: this.formatDuration(d.get('hours'), d.get('minutes'), d.get('seconds')),
           seconds: d.asSeconds()
         };
-        // note, we use Object.assign() to avoid reference to the same videos in the playlist
-        this.entries$.push(Object.assign({}, video));
+        vdo.uuid = UUID.create().toString();
+        this.store.dispatch({ type: "PLAYLIST_ENTRIES_CHILD_ADDED", payload: vdo });
       });
   }
 
-  dequeue(index: number): void {
-    const video = this.getVideoByIndex(index);
+  // @TODO change to ngrx/store
+  dequeue(video: Video): void {
     const playingVideo = this.nowPlaying$.getValue();
-
-    // the video is playing and still have more videos to play, move to next song the remove
-    if (this.totalEntries() > 1) {
-      // go to next entry before the entry itself deleted
-      if (video === playingVideo) {
-        this.next();
-      }
-
-      return this.entries$.remove(video);
+    // have many video left, also move to next entry before removing
+    if (this.entries.length > 1) {
+      if (video.uuid === playingVideo.uuid) this.next();
+      this.store.dispatch({ type: "PLAYLIST_ENTRIES_CHILD_REMOVED", payload: video });
+      return;
     }
-
-    // has one left, remove it first
-    if (this.totalEntries() > 0) {
-      this.entries$.remove(video);
-    }
-
-    // load empty player
+    // this is the only one left
+    if (this.entries.length > 0)
+      this.store.dispatch({ type: "PLAYLIST_ENTRIES_CHILD_REMOVED", payload: video });
+    // load null player
     this.playerService.playVideo({ id: { videoId: null } }, this.appService.player);
-
-    // reset nowPlaying to nothing
     this.nowPlaying$.next(undefined);
   }
 
-  totalEntries(): number {
-    return this.entries$.getValue().length;
-  }
+  // --------------------------------------------------------------------
+  // state sync handler with youtube player
 
   onPlayerStateChange(playerState: any): void {
     switch (playerState.data) {
       case YT.PlayerState.PLAYING:
         // youtube emit play event on next video
-        if (this._state.playing != true) {
-          this._state.playing = true;
-          this._dispatchState();
+        if (this.state.playing != true) {
+          this.state.playing = true;
+          this.dispatchState();
         }
         break;
       case YT.PlayerState.PAUSED:
-        this._state.playing = false;
-        this._dispatchState();
+        this.state.playing = false;
+        this.dispatchState();
         break;
       case YT.PlayerState.ENDED:
         this.next();
@@ -261,35 +253,21 @@ export class PlaylistService {
   }
 
   // -----------------------------------------------------------------------
+  // internal utils
 
-  private _dispatchState() {
-    this.store.dispatch({ type: 'PLAYLIST_CONTROL_STATE_CHANGED', payload: this._state });
-  }
-
-  private getVideoByIndex(index: number): Video {
-    return this.entries$.getValue()[index];
-  }
-
-  private outOfBound(index: number): boolean {
-    return index >= this.totalEntries();
+  private dispatchState() {
+    this.store.dispatch({ type: 'PLAYLIST_CONTROL_STATE_CHANGED', payload: this.state });
   }
 
   private formatDuration(h: number, m: number, s: number): string {
     let duration = [];
-
     if (h) {
       duration.push(h);
       duration.push(('00' + m).slice(-2));
     } else {
       duration.push(m)
     }
-
     duration.push(('00' + s).slice(-2))
-
     return duration.join(':');
-  }
-
-  private indexOf(entry: Video) {
-    return Array.prototype.indexOf.call(this.entries$.getValue(), entry);
   }
 }

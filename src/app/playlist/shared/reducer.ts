@@ -1,5 +1,6 @@
 import { Action } from '@ngrx/store';
 import { Playlist, PlaylistState } from './model';
+import { Video } from '../../video';
 
 export function PlaylistListReducer(state: Playlist[] = [], { type, payload }: Action): Playlist[] {
   switch (type) {
@@ -20,8 +21,7 @@ export function PlaylistListReducer(state: Playlist[] = [], { type, payload }: A
 export function PlaylistActiveReducer(state: Playlist, { type, payload }: Action): Playlist {
   switch (type) {
     case 'PLAYLIST_ACTIVE_CHANGED':
-      return Object.assign({}, payload);
-
+      return payload;
     default:
       return state;
   }
@@ -42,3 +42,44 @@ export function PlaylistControlStateReducer(state: PlaylistState = defaultState,
       return state;
   }
 }
+
+export function PlaylistEntriesReducer(state: Video[] = [], { type, payload }: Action): Video[] {
+  switch (type) {
+    case 'PLAYLIST_ENTRIES_LOADED':
+      return payload;
+
+    case 'PLAYLIST_ENTRIES_CHILD_ADDED':
+      return [...state, payload];
+
+    case 'PLAYLIST_ENTRIES_CHILD_REMOVED':
+      return state.filter(video => video.uuid !== payload.uuid);
+
+    case 'PLAYLIST_ENTRIES_CHILD_ACTIVATED':
+      return state
+        .map(video => {
+          // this video is playing, others not
+          return Object.assign({}, video, { playing: (video.uuid === payload.uuid) });
+        });
+
+    default:
+      return state;
+  }
+}
+
+
+
+// @TODO scope in domain
+export interface PlaylistAppState {
+  list: Playlist[],
+  active: Playlist,
+  state: PlaylistState,
+  entries: Video[]
+}
+
+
+const PlaylistReducer = {
+  list: PlaylistListReducer,
+  active: PlaylistActiveReducer,
+  state: PlaylistControlStateReducer,
+  entries: PlaylistEntriesReducer
+};

@@ -7,6 +7,7 @@ interface VideoDuration {
 export class Video {
   duration: VideoDuration;
   playing: boolean = false;
+  uuid: string;
 
   constructor(
     public videoId: string,

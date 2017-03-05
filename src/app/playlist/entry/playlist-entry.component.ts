@@ -8,15 +8,14 @@ import { Video } from '../../video';
 })
 export class PlaylistEntryComponent {
   @Input() video: Video;
-  @Input() index: number;
-  @Output() play = new EventEmitter<number>();
-  @Output() remove = new EventEmitter<number>();
+  @Output() play = new EventEmitter<Video>();
+  @Output() remove = new EventEmitter<Video>();
 
   doPlay() {
-    this.play.emit(this.index);
+    this.play.emit(this.video);
   }
 
   doRemove() {
-    this.remove.emit(this.index);
+    this.remove.emit(this.video);
   }
 }

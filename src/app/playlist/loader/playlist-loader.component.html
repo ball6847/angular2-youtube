@@ -5,20 +5,20 @@
     <div class="btn-group dropup" dropdown >
       <button *ngIf="!creating" id="single-button" type="button" class="btn btn-black" dropdownToggle>
         Playlist
-        <span *ngIf="active">: {{ active.name }}</span>
+        <span *ngIf="active$ | async">: {{ (active$ | async)?.name }}</span>
       </button>
       <ul dropdownMenu role="menu" aria-labelledby="single-button">
-        <li *ngFor="let playlist of playlists;" role="menuitem">
-          <a [class.active]="active == playlist" (click)="load(playlist)" class="dropdown-item" href="javascript:">{{ playlist.name }}</a>
+        <li *ngFor="let playlist of list$ | async" role="menuitem">
+          <a [class.active]="(active$ | async)?.id == playlist.id" (click)="load(playlist)" class="dropdown-item" href="javascript:">{{ playlist.name }}</a>
         </li>
-        <li [hidden]="!playlists.length" class="divider dropdown-divider"></li>
-        <li *ngIf="active" role="menuitem">
-          <a class="dropdown-item" href="javascript:" (click)="popForRename.show()"><i class="fa fa-pencil"></i> Rename "{{ active.name }}"</a>
+        <li [hidden]="!(list$ | async)?.length" class="divider dropdown-divider"></li>
+        <li *ngIf="(active$ | async)?.id" role="menuitem">
+          <a class="dropdown-item" href="javascript:" (click)="popForRename.show()"><i class="fa fa-pencil"></i> Rename "{{ (active$ | async)?.name }}"</a>
         </li>
-        <li *ngIf="active" role="menuitem">
-          <a class="dropdown-item" href="javascript:" (click)="delete(active)"><i class="fa fa-trash"></i> Delete "{{ active.name }}"</a>
+        <li *ngIf="(active$ | async)?.id" role="menuitem">
+          <a class="dropdown-item" href="javascript:" (click)="delete(active$)"><i class="fa fa-trash"></i> Delete "{{ (active$ | async)?.name }}"</a>
         </li>
-        <li *ngIf="active" class="divider dropdown-divider"></li>
+        <li *ngIf="(active$ | async)?.id" class="divider dropdown-divider"></li>
         <li role="menuitem"><a class="dropdown-item" (click)="popForCreate.show()" href="javascript:">Create new</a></li>
       </ul>
     </div>
@@ -39,9 +39,9 @@
   </form>
 </template>
 <template #popTemplateForRename>
-  <form *ngIf="active" action="javascript:" (submit)="rename(name, popForRename)">
+  <form *ngIf="(active$ | async)?.id" action="javascript:" (submit)="rename(active$, name, popForRename)">
     <div class="input-group">
-      <input type="text" class="form-control" #name [value]="active.name" placeholder="my awesome list">
+      <input type="text" class="form-control" #name [value]="(active$ | async)?.name" placeholder="my awesome list">
       <span class="input-group-btn">
         <button class="btn btn-primary" type="submit">rename</button>
       </span>

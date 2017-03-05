@@ -1,40 +1,33 @@
 import { Component } from '@angular/core';
 import { DragulaService } from 'ng2-dragula/ng2-dragula';
-
-import { Playlist, PlaylistService } from '../shared';
+import { Observable } from 'rxjs/Observable';
+import { PlaylistService, PlaylistNowPlayingObservable } from '../shared';
 import { Video } from '../../video';
 
+// @TODO change to ngrx
 @Component({
   selector: 'playlist-entries',
   styleUrls: ['./playlist-entries.component.css'],
   templateUrl: './playlist-entries.component.html',
 })
 export class PlaylistEntriesComponent {
-  playlist: Playlist;
-  nowPlayingVideo: Video;
+  entries$: Observable<Video[]>;
+  nowPlayingVideo$: PlaylistNowPlayingObservable;
 
-  constructor(
-    private playlistService: PlaylistService,
-    private dragulaService: DragulaService
-  ) { }
+  constructor(private playlistService: PlaylistService, dragulaService: DragulaService) {
+    dragulaService.setOptions('playlist', {});
+  }
 
   ngOnInit() {
-    this.dragulaService.setOptions('playlist', {});
-
-    this.playlistService.playlist()
-      .subscribe(playlist => this.playlist = playlist);
-
-    this.playlistService.nowPlaying()
-      .subscribe(video => {
-        this.nowPlayingVideo = video;
-      });
+    this.entries$ = this.playlistService.getEntries();
+    this.nowPlayingVideo$ = this.playlistService.getNowPlaying();
   }
 
-  play(index: number) {
-    this.playlistService.play(index);
+  play(video: Video) {
+    this.playlistService.play(video);
   }
 
-  dequeue(index: number) {
-    this.playlistService.dequeue(index);
+  dequeue(video: Video) {
+    this.playlistService.dequeue(video);
   }
 }
