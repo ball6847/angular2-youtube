@@ -2,18 +2,12 @@ import { Injectable } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { Observable } from 'rxjs/Observable';
 import { YoutubePlayerService } from 'ng2-youtube-player';
-import * as moment from 'moment';
-import * as UUID from 'uuid-js';
 import { AppService } from "../../app.service";
 import { Video, VideoService } from "../../video";
-import {
-  PlaylistEntriesObservable,
-  PlaylistStateObservable,
-  PlaylistListObservable,
-  PlaylistObservable
-} from "./observable";
 import { Playlist, PlaylistState } from './model';
 import { AppState } from '../../app.store';
+import * as moment from 'moment';
+import * as UUID from 'uuid-js';
 import 'rxjs/add/operator/skip';
 
 @Injectable()
@@ -29,7 +23,6 @@ export class PlaylistService {
   private active: Playlist;
   private entries: Video[];
   private state: PlaylistState;
-  private testSelect;
 
   constructor(
     private store: Store<AppState>,
@@ -37,15 +30,26 @@ export class PlaylistService {
     private videoService: VideoService,
     private playerService: YoutubePlayerService
   ) {
-    // pick state fro store
-    this.list$ = store.select('playlistList') as Observable<Playlist[]>;
-    this.active$ = store.select('playlistActive') as Observable<Playlist>;
-    this.state$ = store.select('playlistState') as Observable<PlaylistState>;
-    this.entries$ = store.select('playlistEntries') as Observable<Video[]>;
-    
+    this.provideStore();
+    this.setupSubscriptions();
+
+    // always start with no active video
+    this.store.dispatch({ type: 'PLAYLIST_ENTRIES_CLEAR_ACTIVATED', payload: null });
+  }
+
+  // --------------------------------------------------------------------
+
+  private provideStore() {
+    this.list$ = this.store.select('playlistList') as Observable<Playlist[]>;
+    this.active$ = this.store.select('playlistActive') as Observable<Playlist>;
+    this.state$ = this.store.select('playlistState') as Observable<PlaylistState>;
+    this.entries$ = this.store.select('playlistEntries') as Observable<Video[]>;
+  }
+
+  private setupSubscriptions() {
     // play video as video changed, or clear playing video
     // also skip first emit, since we are not ready yet
-    store.select(s => s.playlistState.video)
+    this.store.select(s => s.playlistState.video)
       .skip(1)
       .subscribe(video => {
         const v = video ? video : { videoId: null };
@@ -53,10 +57,13 @@ export class PlaylistService {
       });
 
     // we also need tracking of state inside of service
+    
     this.state$
       .subscribe(state => this.state = Object.assign({}, state));
+    
     this.active$
       .subscribe(playlist => this.active = playlist);
+    
     this.entries$
       .subscribe(entries => {
         this.entries = entries;

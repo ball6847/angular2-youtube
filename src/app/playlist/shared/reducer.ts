@@ -57,6 +57,12 @@ export function PlaylistEntriesReducer(state: Video[] = [], { type, payload }: A
           // this video is playing, others not
           return Object.assign({}, video, { playing: (video.uuid === payload.uuid) });
         });
+    
+    case 'PLAYLIST_ENTRIES_CLEAR_ACTIVATED':
+      return state
+        .map(video => {
+          return Object.assign({}, video, { playing: false });
+        });
 
     default:
       return state;
