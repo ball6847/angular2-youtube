@@ -3,13 +3,11 @@ import { Playlist, PlaylistState } from './playlist';
 import { Video } from './video';
 import * as playlistStore from './playlist/shared/reducer';
 
-
-
 export interface AppState {
   playlistList: Playlist[],
   playlistActive: Playlist,
   playlistState: PlaylistState,
-  playlistEntries: Video[]
+  playlistEntries: Video[],
 };
 
 export const AppReducer = {

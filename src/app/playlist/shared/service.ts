@@ -8,13 +8,13 @@ import { AppService } from "../../app.service";
 import { Video, VideoService } from "../../video";
 import {
   PlaylistEntriesObservable,
-  PlaylistNowPlayingObservable,
   PlaylistStateObservable,
   PlaylistListObservable,
   PlaylistObservable
 } from "./observable";
 import { Playlist, PlaylistState } from './model';
 import { AppState } from '../../app.store';
+import 'rxjs/add/operator/skip';
 
 @Injectable()
 export class PlaylistService {
@@ -29,9 +29,7 @@ export class PlaylistService {
   private active: Playlist;
   private entries: Video[];
   private state: PlaylistState;
-
-  // @TODO, change to ngrx store
-  private nowPlaying$ = new PlaylistNowPlayingObservable();
+  private testSelect;
 
   constructor(
     private store: Store<AppState>,
@@ -44,6 +42,15 @@ export class PlaylistService {
     this.active$ = store.select('playlistActive') as Observable<Playlist>;
     this.state$ = store.select('playlistState') as Observable<PlaylistState>;
     this.entries$ = store.select('playlistEntries') as Observable<Video[]>;
+    
+    // play video as video changed, or clear playing video
+    // also skip first emit, since we are not ready yet
+    store.select(s => s.playlistState.video)
+      .skip(1)
+      .subscribe(video => {
+        const v = video ? video : { videoId: null };
+        this.playerService.playVideo({ id: v }, this.appService.player);
+      });
 
     // we also need tracking of state inside of service
     this.state$
@@ -53,24 +60,13 @@ export class PlaylistService {
     this.entries$
       .subscribe(entries => {
         this.entries = entries;
+        // push entries back to source playlist
+        // this will cause duplicate dispation but nothing serius here
         if (this.active && this.active.entries != entries) {
           this.active.entries = entries;
-          // this will cause duplicate dispatchtion but nothing serius here
           this.store.dispatch({ type: 'PLAYLIST_UPDATED', payload: this.active });
         }
       });
-
-
-    // always mark video as playing when nowPlaying changed
-    // this.nowPlaying$.subscribe(video => {
-    //   this.entries$.getValue()
-    //     .map(v => v.playing = false);
-    //
-    //   // initialValue can be undefined
-    //   if (video) {
-    //     video.playing = true;
-    //   }
-    // });
   }
 
   // --------------------------------------------------------------------
@@ -90,11 +86,6 @@ export class PlaylistService {
 
   getActive(): Observable<Playlist> {
     return this.active$;
-  }
-
-  // @TODO change to ngrx/store
-  getNowPlaying(): PlaylistNowPlayingObservable {
-    return this.nowPlaying$;
   }
 
   // --------------------------------------------------------------------
@@ -155,8 +146,7 @@ export class PlaylistService {
   //@TODO change to ngrx/store
   play(video: Video): void {
     this.store.dispatch({ type: 'PLAYLIST_ENTRIES_CHILD_ACTIVATED', payload: video });
-    this.playerService.playVideo({ id: video.videoId }, this.appService.player);
-    this.nowPlaying$.next(video);
+    this.store.dispatch({ type: 'PLAYLIST_CONTROL_STATE_VIDEO_CHANGED', payload: video });
   }
 
   playRandom(): void {
@@ -198,9 +188,9 @@ export class PlaylistService {
   }
 
   enqueue(video: Video): void {
-    const vdo = Object.assign({}, video);
     if (!this.active)
       this.createPlaylist('Untitled');
+    const vdo = Object.assign({}, video);
     this.videoService.fetchVideo(vdo.videoId)
       .subscribe(v => {
         let d = moment.duration(v.contentDetails.duration);
@@ -213,21 +203,15 @@ export class PlaylistService {
       });
   }
 
-  // @TODO change to ngrx/store
   dequeue(video: Video): void {
-    const playingVideo = this.nowPlaying$.getValue();
-    // have many video left, also move to next entry before removing
     if (this.entries.length > 1) {
-      if (video.uuid === playingVideo.uuid) this.next();
+      if (this.state.video && this.state.video.uuid === video.uuid) this.next();
       this.store.dispatch({ type: "PLAYLIST_ENTRIES_CHILD_REMOVED", payload: video });
       return;
     }
-    // this is the only one left
     if (this.entries.length > 0)
       this.store.dispatch({ type: "PLAYLIST_ENTRIES_CHILD_REMOVED", payload: video });
-    // load null player
-    this.playerService.playVideo({ id: { videoId: null } }, this.appService.player);
-    this.nowPlaying$.next(undefined);
+    this.store.dispatch({ type: 'PLAYLIST_CONTROL_STATE_VIDEO_CHANGED', payload: null });
   }
 
   // --------------------------------------------------------------------

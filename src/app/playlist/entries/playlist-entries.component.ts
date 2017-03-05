@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { DragulaService } from 'ng2-dragula/ng2-dragula';
 import { Observable } from 'rxjs/Observable';
-import { PlaylistService, PlaylistNowPlayingObservable } from '../shared';
+import { PlaylistService } from '../shared';
 import { Video } from '../../video';
 
 // @TODO change to ngrx
@@ -12,7 +12,6 @@ import { Video } from '../../video';
 })
 export class PlaylistEntriesComponent {
   entries$: Observable<Video[]>;
-  nowPlayingVideo$: PlaylistNowPlayingObservable;
 
   constructor(private playlistService: PlaylistService, dragulaService: DragulaService) {
     dragulaService.setOptions('playlist', {});
@@ -20,7 +19,6 @@ export class PlaylistEntriesComponent {
 
   ngOnInit() {
     this.entries$ = this.playlistService.getEntries();
-    this.nowPlayingVideo$ = this.playlistService.getNowPlaying();
   }
 
   play(video: Video) {

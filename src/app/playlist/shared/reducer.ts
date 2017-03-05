@@ -27,16 +27,13 @@ export function PlaylistActiveReducer(state: Playlist, { type, payload }: Action
   }
 }
 
-const defaultState: PlaylistState = {
-  playing: false,
-  loop: false,
-  shuffle: false
-};
-
-export function PlaylistControlStateReducer(state: PlaylistState = defaultState, { type, payload }: Action): PlaylistState {
+export function PlaylistControlStateReducer(state = new PlaylistState(), { type, payload }: Action): PlaylistState {
   switch (type) {
     case 'PLAYLIST_CONTROL_STATE_CHANGED':
       return payload;
+    
+    case 'PLAYLIST_CONTROL_STATE_VIDEO_CHANGED':
+      return Object.assign({}, state, { video: payload });
 
     default:
       return state;
