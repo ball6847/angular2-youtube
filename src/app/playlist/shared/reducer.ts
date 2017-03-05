@@ -62,22 +62,3 @@ export function PlaylistEntriesReducer(state: Video[] = [], { type, payload }: A
       return state;
   }
 }
-
-
-
-
-// @TODO scope in domain
-export interface PlaylistAppState {
-  list: Playlist[],
-  active: Playlist,
-  state: PlaylistState,
-  entries: Video[]
-}
-
-
-const PlaylistReducer = {
-  list: PlaylistListReducer,
-  active: PlaylistActiveReducer,
-  state: PlaylistControlStateReducer,
-  entries: PlaylistEntriesReducer
-};

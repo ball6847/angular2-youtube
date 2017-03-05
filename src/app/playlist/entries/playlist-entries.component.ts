@@ -4,7 +4,6 @@ import { Observable } from 'rxjs/Observable';
 import { PlaylistService } from '../shared';
 import { Video } from '../../video';
 
-// @TODO change to ngrx
 @Component({
   selector: 'playlist-entries',
   styleUrls: ['./playlist-entries.component.css'],
