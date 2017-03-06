@@ -4,7 +4,7 @@
       <span class="input-group-addon ">
         <span class="fa fa-search"></span>
       </span>
-      <input type="text" class="form-control" placeholder="Search..." autofocus #textBox
+      <input type="text" class="form-control" placeholder="Search..." focusme #textBox
         (keyup)="searchTerm$.next($event.target.value)">
     </div>
   </div>

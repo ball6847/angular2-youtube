@@ -28,7 +28,7 @@
 <template #popTemplateForCreate>
   <form action="javascript:" (submit)="create(name, popForCreate)">
     <div class="input-group">
-      <input type="text" class="form-control" #name placeholder="my awesome list">
+      <input type="text" class="form-control" #name placeholder="my awesome list" focusme>
       <span class="input-group-btn">
         <button class="btn btn-primary" type="submit">create</button>
       </span>
@@ -41,7 +41,7 @@
 <template #popTemplateForRename>
   <form *ngIf="(active$ | async)?.id" action="javascript:" (submit)="rename(active$, name, popForRename)">
     <div class="input-group">
-      <input type="text" class="form-control" #name [value]="(active$ | async)?.name" placeholder="my awesome list">
+      <input type="text" class="form-control" #name [value]="(active$ | async)?.name" placeholder="my awesome list" selectme>
       <span class="input-group-btn">
         <button class="btn btn-primary" type="submit">rename</button>
       </span>
