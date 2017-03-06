@@ -1,4 +1,4 @@
-import { Action, ActionReducer } from '@ngrx/store';
+import { Action } from '@ngrx/store';
 import { Video } from  '../video';
 
 // -------------------------------------------------------------
@@ -29,11 +29,10 @@ export class SearchResultPageAction implements Action {
 // -------------------------------------------------------------
 // reducers
 
-export function SearchResultReducer(state: Video[], { type, payload }: Action): Video[] {
+export function SearchResultReducer(state: Video[] = [], { type, payload }: Action): Video[] {
   switch (type) {
     case ACTION_TYPE_SEARCH_RESULT:
       return payload;
-
     default:
       return state;
   }
@@ -43,7 +42,6 @@ export function SearchResultPageReducer(state: number = 1, { type, payload }: Ac
   switch (type) {
     case ACTION_TYPE_SEARCH_RESULT_PAGE:
       return payload;
-
     default:
       return state;
   }
