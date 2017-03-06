@@ -20,3 +20,12 @@
 .description {
   font-size: 0.75rem;
 }
+
+:host {
+  width: 100%;
+  display: block;
+}
+
+:host .embed-container {
+  margin-bottom: 8px;
+}

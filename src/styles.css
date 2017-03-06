@@ -18,7 +18,7 @@
   width: auto;
 }
 
-dl-root:empty + .loading {
+app:empty + .loading {
   opacity: 1;
   z-index: 100;
 }
@@ -31,6 +31,9 @@ li.gu-mirror {
   list-style-type: none;
   font-size: 13px;
 }
+
+/* ----------------------------------------------------- */
+/* additional bs4 button addon */
 
 .btn-group-justified {
   display: table;
@@ -72,9 +75,47 @@ li.gu-mirror {
   border-color: #01549b;
 }
 
+
+/* ----------------------------------------------------- */
+/* bootstrap4 pagination override */
+
 .pagination {
   font-size: 0.8rem;
 }
+
+
+/* ----------------------------------------------------- */
+/* reponsive aspact ratio element */
+
+.embed-container {
+  position: relative;
+  height: 0;
+  overflow: hidden;
+  background-color:black;
+}
+
+.embed-container img {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width:100%;
+}
+
+.ratio-16-9 {
+  padding-bottom:56.25%;
+}
+
+.ratio-4-3 {
+  padding-bottom:75%;
+}
+
+.ratio-1-1 {
+  padding-bottom:100%;
+}
+
+
+/* ----------------------------------------------------- */
+/* animation stuff */
 
 @keyframes octocat-wave {
   0%, 100% {
