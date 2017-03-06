@@ -1,10 +1,9 @@
 import { Component, ChangeDetectionStrategy } from "@angular/core";
 import { Store } from "@ngrx/store";
 import { Observable } from "rxjs/Observable";
-import { AppState } from "../../app.store";
 import { PlaylistService } from "../../playlist";
 import { Video, VideoService } from "../../video";
-import { SearchResultAction, SearchResultPageAction } from "../store";
+import { SearchResultAction, SearchResultPageAction, ISearchResultState } from "../store";
 
 @Component({
   selector: "search-result",
@@ -17,7 +16,7 @@ export class SearchResultComponent {
   page$: Observable<number>;
 
   constructor(
-    private store: Store<AppState>,
+    private store: Store<ISearchResultState>,
     private videoService: VideoService,
     private playlistService: PlaylistService
   ) {}

@@ -1,6 +1,15 @@
 import { Action } from '@ngrx/store';
 import { Video } from  '../video';
 
+
+// -------------------------------------------------------------
+// state interface
+
+export interface ISearchResultState {
+  searchResult: Video[];
+  searchResultPage: number;
+}
+
 // -------------------------------------------------------------
 // action type
 
