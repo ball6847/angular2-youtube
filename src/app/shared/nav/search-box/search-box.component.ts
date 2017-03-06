@@ -1,9 +1,8 @@
 import { Component } from "@angular/core";
 import { Store } from "@ngrx/store";
 import { Subject } from "rxjs/Subject";
-import { AppState } from "../../../app.store";
 import { Video, VideoService } from "../../../video";
-import { SearchResultAction } from "../../../search/store";
+import { SearchResultAction, ISearchResultState } from "../../../search/store";
 
 @Component({
   selector: "search-box",
@@ -13,7 +12,7 @@ import { SearchResultAction } from "../../../search/store";
 export class SearchBoxComponent {
   searchTerm$ = new Subject<string>();
 
-  constructor(private store: Store<AppState>, private videoService: VideoService) {}
+  constructor(private store: Store<ISearchResultState>, private videoService: VideoService) {}
 
   ngOnInit() {
     this.videoService.rxSearch(this.searchTerm$)
