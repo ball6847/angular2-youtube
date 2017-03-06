@@ -1,6 +1,6 @@
 import { Component } from "@angular/core";
 import { AppService } from '../../app.service';
-import { PlaylistService } from '../../playlist';
+// import { PlaylistService } from '../../playlist';
 
 @Component({
   selector: 'video-player',
@@ -10,7 +10,7 @@ import { PlaylistService } from '../../playlist';
 export class VideoComponent {
   constructor(
     private appService: AppService,
-    private playlistService: PlaylistService
+    // private playlistService: PlaylistService
   ) { }
 
   setupPlayer(player: YT.Player) {
@@ -18,6 +18,6 @@ export class VideoComponent {
   }
 
   onStateChange(state) {
-    this.playlistService.onPlayerStateChange(state);
+    // this.playlistService.onPlayerStateChange(state);
   }
 }

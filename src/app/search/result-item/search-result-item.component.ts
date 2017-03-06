@@ -1,5 +1,5 @@
 import { Component, Input, Output, EventEmitter, ChangeDetectionStrategy } from "@angular/core";
-import { Video } from "../../video";
+import { ISearchResultVideo } from "../interfaces";
 
 @Component({
   selector: "search-result-item",
@@ -8,10 +8,10 @@ import { Video } from "../../video";
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class SearchResultItemComponent {
-  @Input() video: Video;
-  @Output() onEnqueue = new EventEmitter<Video>();
-
-  enqueue(video: Video) {
-    this.onEnqueue.emit(video);
+  @Input() video: ISearchResultVideo;
+  @Output() onItemClick = new EventEmitter<ISearchResultVideo>();
+  
+  onClick(video: ISearchResultVideo) {
+    this.onItemClick.emit(video);
   }
 }

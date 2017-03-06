@@ -1,9 +1,15 @@
-import { Component, ChangeDetectionStrategy } from "@angular/core";
-import { Store } from "@ngrx/store";
+import { Component, Output, EventEmitter, ChangeDetectionStrategy } from "@angular/core";
 import { Observable } from "rxjs/Observable";
-import { PlaylistService } from "../../playlist";
-import { Video, VideoService } from "../../video";
-import { SearchResultAction, SearchResultPageAction, ISearchResultState } from "../store";
+import { Store } from "@ngrx/store";
+import { SearchResultPageAction, SearchResultAction } from "../store";
+import { ISearchResultState, ISearchResultVideo } from "../interfaces";
+
+// @TODO: move to shared service, create YoutubeAPIModule
+import { VideoService } from "../../video/shared/service";
+
+// @TODO: maybe use store.dispatch and let the service subcribe for its changes, but we will need PlaylistEnqueueEntryAction instead?
+import { PlaylistService } from "../../playlist/shared/service"
+
 
 @Component({
   selector: "search-result",
@@ -12,7 +18,7 @@ import { SearchResultAction, SearchResultPageAction, ISearchResultState } from "
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class SearchResultComponent {
-  videos$: Observable<Video[]>;
+  videos$: Observable<ISearchResultVideo[]>;
   page$: Observable<number>;
 
   constructor(
@@ -24,14 +30,14 @@ export class SearchResultComponent {
   ngOnInit() {
     this.videos$ = this.store.select(state => state.searchResult);
     this.page$ = this.store.select(state => state.searchResultPage);
-    
+
     this.videoService.search()
-      .subscribe((videos: Video[]) => {
+      .subscribe((videos: ISearchResultVideo[]) => {
         this.store.dispatch(new SearchResultAction(videos));
       });
   }
 
-  enqueue(video: Video) {
+  enqueue(video) {
     this.playlistService.enqueue(video);
   }
 

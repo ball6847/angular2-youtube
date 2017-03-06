@@ -1,14 +1,6 @@
 import { Action } from '@ngrx/store';
-import { Video } from  '../video';
+import { ISearchResultState, ISearchResultVideo } from "./interfaces";
 
-
-// -------------------------------------------------------------
-// state interface
-
-export interface ISearchResultState {
-  searchResult: Video[];
-  searchResultPage: number;
-}
 
 // -------------------------------------------------------------
 // action type
@@ -22,7 +14,7 @@ const ACTION_TYPE_SEARCH_RESULT_PAGE = 'SEARCH_RESULT_PAGE';
 export class SearchResultAction implements Action {
   readonly type = ACTION_TYPE_SEARCH_RESULT;
   readonly payload;
-  constructor(videos: Video[]) {
+  constructor(videos: ISearchResultVideo[]) {
     this.payload = videos;
   }
 }
@@ -38,7 +30,7 @@ export class SearchResultPageAction implements Action {
 // -------------------------------------------------------------
 // reducers
 
-export function SearchResultReducer(state: Video[] = [], { type, payload }: Action): Video[] {
+export function SearchResultReducer(state: ISearchResultVideo[] = [], { type, payload }: Action): ISearchResultVideo[] {
   switch (type) {
     case ACTION_TYPE_SEARCH_RESULT:
       return payload;

@@ -15,7 +15,7 @@
       "main": "main.ts",
       "polyfills": "polyfills.ts",
       "test": "test.ts",
-      "tsconfig": "tsconfig.angular-cli.json",
+      "tsconfig": "tsconfig.json",
       "prefix": "app",
       "styles": [
         "../node_modules/font-awesome/css/font-awesome.min.css",

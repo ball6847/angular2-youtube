@@ -2,7 +2,7 @@
   <ul class="list-group border">
     <li class="list-group-item"
       *ngFor="let video of videos$ | async | paginate: { itemsPerPage: 5, currentPage: (page$ | async) }">
-      <search-result-item [video]="video" (onEnqueue)="enqueue($event)"></search-result-item>
+      <search-result-item [video]="video" (onItemClick)="enqueue($event)"></search-result-item>
     </li>
   </ul>
 </div>
