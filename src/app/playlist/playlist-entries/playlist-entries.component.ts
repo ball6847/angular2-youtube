@@ -1,8 +1,12 @@
 import { Component } from '@angular/core';
-import { DragulaService } from 'ng2-dragula/ng2-dragula';
 import { Observable } from 'rxjs/Observable';
+import { DragulaService } from 'ng2-dragula/ng2-dragula';
+import { Store } from '@ngrx/store';
+import { IApplicationState } from '../../shared/interfaces';
 import { PlaylistService } from '../shared';
 import { Video } from '../../video';
+import { PlaylistEntriesReorderAction } from '../shared/actions';
+
 
 @Component({
   selector: 'playlist-entries',
@@ -10,14 +14,34 @@ import { Video } from '../../video';
   templateUrl: './playlist-entries.component.html',
 })
 export class PlaylistEntriesComponent {
-  entries$: Observable<Video[]>;
+  entries: Video[];
 
-  constructor(private playlistService: PlaylistService, dragulaService: DragulaService) {
-    dragulaService.setOptions('playlist', {});
-  }
+
+  constructor(
+    private store: Store<IApplicationState>,
+    private playlistService: PlaylistService,
+    private dragulaService: DragulaService
+  ) {}
 
   ngOnInit() {
-    this.entries$ = this.playlistService.getEntries();
+    // please note, we cannot use Observable from getEntries() rightaway
+    // since we need one model to keep track of dragula action
+    // we can then dispatch those value back to store
+    this.playlistService.getEntries()
+      .subscribe(videos => {
+        this.entries = videos.slice();
+      });
+
+    // prepare dragulaService, we need this setOptions call
+    // otherwise dropModel event won't work as we expected
+    this.dragulaService.setOptions('playlist', {});
+
+    // when dragula update model
+    // dispatch the reordered action to store
+    this.dragulaService.dropModel
+      .subscribe(() => {
+        this.store.dispatch(new PlaylistEntriesReorderAction(this.entries));
+      });
   }
 
   play(video: Video) {

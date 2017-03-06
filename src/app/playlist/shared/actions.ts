@@ -1,19 +1,15 @@
 import { Action } from '@ngrx/store';
 import { Playlist } from './interfaces';
+import { Video } from '../../video';
 
 
-export const CREATE = 'CREATE';
-export const CREATE_FAILED = 'CREATE_FAILED';
-export const CREATE_FULFILLED = 'CREATE_FULFILLED';
+export const PLAYLIST_ENTRIES_REORDER = 'PLAYLIST_ENTRIES_REORDER';
 
-export const DELETE = 'DELETE';
-export const DELETE_FAILED = 'DELETE_FAILED';
-export const DELETE_FULFILLED = 'DELETE_FULFILLED';
 
-export const FETCH = 'FETCH';
-export const FETCH_FAILED = 'FETCH_FAILED';
-export const FETCH_FULFILLED = 'FETCH_FULFILLED';
-
-export const UPDATE = 'UPDATE';
-export const UPDATE_FAILED = 'UPDATE_FAILED';
-export const UPDATE_FULFILLED = 'UPDATE_FULFILLED';
+export class PlaylistEntriesReorderAction implements Action {
+    readonly type = PLAYLIST_ENTRIES_REORDER;
+    readonly payload;
+    constructor(videos: Video[]) {
+        this.payload = videos;
+    }
+}

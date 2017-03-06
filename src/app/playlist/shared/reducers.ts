@@ -2,6 +2,10 @@ import { Action } from '@ngrx/store';
 import { Playlist, PlaylistState } from './interfaces';
 import { Video } from '../../video';
 
+import {
+  PLAYLIST_ENTRIES_REORDER
+} from './actions';
+
 export function PlaylistListReducer(state: Playlist[] = [], { type, payload }: Action): Playlist[] {
   switch (type) {
     case 'PLAYLIST_CREATED':
@@ -43,6 +47,9 @@ export function PlaylistControlStateReducer(state = new PlaylistState(), { type,
 export function PlaylistEntriesReducer(state: Video[] = [], { type, payload }: Action): Video[] {
   switch (type) {
     case 'PLAYLIST_ENTRIES_LOADED':
+      return payload;
+    
+    case PLAYLIST_ENTRIES_REORDER:
       return payload;
 
     case 'PLAYLIST_ENTRIES_CHILD_ADDED':
