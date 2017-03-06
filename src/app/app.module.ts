@@ -10,9 +10,14 @@ import { DropdownModule, PopoverModule } from 'ng2-bootstrap';
 import { AppComponent } from "./app.component";
 import { AppService } from "./app.service";
 import { HeaderComponent } from "./shared/nav/header/header.component";
-import { SearchBoxComponent } from "./shared/nav/search-box/search-box.component";
 import { VideoComponent, VideoService } from "./video";
-import { SearchResultComponent, SearchResultItemComponent } from "./search"
+
+import {
+  SearchResultComponent,
+  SearchResultItemComponent,
+  SearchBoxComponent
+} from "./search"
+
 import {
   PlaylistEntriesComponent,
   PlaylistEntryComponent,
@@ -22,7 +27,7 @@ import {
   Playlist
 } from "./playlist";
 
-import { AppReducer } from './app.store';
+import { AppReducer } from './shared/reducers';
 
 
 @NgModule({

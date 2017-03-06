@@ -2,13 +2,13 @@ import { Injectable } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { Observable } from 'rxjs/Observable';
 import { YoutubePlayerService } from 'ng2-youtube-player';
-import { AppService } from "../../app.service";
-import { Video, VideoService } from "../../video";
-import { Playlist, PlaylistState } from './model';
-import { AppState } from '../../app.store';
+import { AppService } from "../../../app.service";
+import { Video, VideoService } from "../../../video";
+import { Playlist, PlaylistState } from '../interfaces';
+import { IApplicationState } from '../../../shared/interfaces';
 import * as moment from 'moment';
 import * as UUID from 'uuid-js';
-import '../../operators';
+import '../../../operators';
 
 @Injectable()
 export class PlaylistService {
@@ -25,7 +25,7 @@ export class PlaylistService {
   private state: PlaylistState;
 
   constructor(
-    private store: Store<AppState>,
+    private store: Store<IApplicationState>,
     private appService: AppService,
     private videoService: VideoService,
     private playerService: YoutubePlayerService

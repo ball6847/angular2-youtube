@@ -1,14 +1,19 @@
 import { Component, Output, EventEmitter, ChangeDetectionStrategy } from "@angular/core";
 import { Observable } from "rxjs/Observable";
 import { Store } from "@ngrx/store";
-import { SearchResultPageAction, SearchResultAction } from "../store";
-import { ISearchResultState, ISearchResultVideo } from "../interfaces";
+
+import {
+  SearchResultPageAction,
+  SearchResultAction,
+  ISearchResultState,
+  ISearchResultVideo
+} from "../shared";
 
 // @TODO: move to shared service, create YoutubeAPIModule
-import { VideoService } from "../../video/shared/service";
+import { VideoService } from "../../video/shared";
 
 // @TODO: maybe use store.dispatch and let the service subcribe for its changes, but we will need PlaylistEnqueueEntryAction instead?
-import { PlaylistService } from "../../playlist/shared/service"
+import { PlaylistService } from "../../playlist/shared"
 
 
 @Component({

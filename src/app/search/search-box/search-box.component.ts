@@ -1,8 +1,8 @@
 import { Component } from "@angular/core";
 import { Store } from "@ngrx/store";
 import { Subject } from "rxjs/Subject";
-import { Video, VideoService } from "../../../video";
-import { SearchResultAction, ISearchResultState } from "../../../search";
+import { Video, VideoService } from "../../video";
+import { SearchResultAction, ISearchResultState } from "../shared";
 
 @Component({
   selector: "search-box",

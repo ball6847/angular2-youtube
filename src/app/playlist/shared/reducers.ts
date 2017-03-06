@@ -1,5 +1,5 @@
 import { Action } from '@ngrx/store';
-import { Playlist, PlaylistState } from './model';
+import { Playlist, PlaylistState } from './interfaces';
 import { Video } from '../../video';
 
 export function PlaylistListReducer(state: Playlist[] = [], { type, payload }: Action): Playlist[] {

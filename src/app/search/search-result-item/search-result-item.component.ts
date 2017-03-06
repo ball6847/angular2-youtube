@@ -1,5 +1,5 @@
 import { Component, Input, Output, EventEmitter, ChangeDetectionStrategy } from "@angular/core";
-import { ISearchResultVideo } from "../interfaces";
+import { ISearchResultVideo } from "../shared";
 
 @Component({
   selector: "search-result-item",
