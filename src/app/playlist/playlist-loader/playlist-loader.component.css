@@ -5,14 +5,18 @@
   background: black;
   color: white;
 }
-.dropdown-toggle::after {
-  /*display: none;*/
-}
-.video-playlist-loader input {
+
+:host input input {
   border-radius: 0px;
-  border: 1px solid #fff;
 }
 
-:host >>> .popover {
+:host .popover {
   max-width: 100%;
+}
+
+:host .btn,
+:host .dropdown-menu,
+:host >>> .popover-title,
+:host input {
+  font-size: 0.84rem;
 }
