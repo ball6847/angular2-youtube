@@ -150,7 +150,6 @@ export class PlaylistService {
 
   // --------------------------------------------------------------------
 
-  //@TODO change to ngrx/store
   play(video: Video): void {
     this.store.dispatch({ type: 'PLAYLIST_ENTRIES_CHILD_ACTIVATED', payload: video });
     this.store.dispatch({ type: 'PLAYLIST_CONTROL_STATE_VIDEO_CHANGED', payload: video });
@@ -163,7 +162,6 @@ export class PlaylistService {
     this.play(video);
   }
 
-  //@TODO change to ngrx/store
   next(): void {
     if (this.state.shuffle)
       return this.playRandom();
@@ -177,7 +175,6 @@ export class PlaylistService {
     this.play(this.entries[index]);
   }
 
-  //@TODO change to ngrx/store
   prev(): void {
     if (this.state.shuffle)
       return this.playRandom();
