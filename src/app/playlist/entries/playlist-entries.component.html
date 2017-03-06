@@ -1,7 +1,5 @@
-<!--component html goes here -->
-
 <ul id="video-playlist" [dragula]="'playlist'" [dragulaModel]="items">
   <li *ngFor="let video of entries$ | async" [class.playing]="video.playing">
-    <playlist-entry [video]="video" (play)="play($event)" (remove)="dequeue($event)"></playlist-entry>
+    <playlist-entry [video]="video" (onPlay)="play($event)" (onRemove)="dequeue($event)"></playlist-entry>
   </li>
 </ul>

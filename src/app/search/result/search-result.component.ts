@@ -1,48 +1,42 @@
-import { Component, OnInit } from "@angular/core";
-import * as moment from "moment";
-
-import { AppService } from "../../app.service";
+import { Component, ChangeDetectionStrategy } from "@angular/core";
+import { Store } from "@ngrx/store";
+import { Observable } from "rxjs/Observable";
+import { AppState } from "../../app.store";
 import { PlaylistService } from "../../playlist";
 import { Video, VideoService } from "../../video";
-
+import { SearchResultAction, SearchResultPageAction } from "../store";
 
 @Component({
-  selector: 'search-result',
-  styleUrls: ['./search-result.component.css'],
-  templateUrl: './search-result.component.html'
+  selector: "search-result",
+  styleUrls: ["./search-result.component.css"],
+  templateUrl: "./search-result.component.html",
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class SearchResultComponent implements OnInit {
-
-  videoList: Video[] = [];
+export class SearchResultComponent {
+  videos$: Observable<Video[]>;
+  page$: Observable<number>;
 
   constructor(
+    private store: Store<AppState>,
     private videoService: VideoService,
-    private appService: AppService,
     private playlistService: PlaylistService
-  ) { }
-
+  ) {}
 
   ngOnInit() {
-    this.videoService.search('')
-      .subscribe(data => {
-        this.appService.videoList = data.items.map(item => {
-          return new Video(
-            item.id.videoId,
-            item.snippet.title,
-            item.snippet.thumbnails.high.url,
-            item.snippet.channelTitle,
-            item.snippet.channelId,
-            moment(item.snippet.publishedAt).fromNow(),
-            item.snippet.description)
-        });
+    this.videos$ = this.store.select(state => state.searchResult);
+    this.page$ = this.store.select(state => state.searchResultPage);
+    
+    this.videoService.search()
+      .subscribe((videos: Video[]) => {
+        this.store.dispatch(new SearchResultAction(videos));
       });
-  }
-
-  onPageChanged(page) {
-    this.appService.search.page = page;
   }
 
   enqueue(video: Video) {
     this.playlistService.enqueue(video);
+  }
+
+  onPageChanged(page: number) {
+    this.store.dispatch(new SearchResultPageAction(page));
   }
 }

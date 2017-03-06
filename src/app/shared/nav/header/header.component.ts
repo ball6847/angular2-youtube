@@ -1,13 +1,8 @@
 import { Component } from "@angular/core";
-import { SearchBoxComponent } from '../search-box/search-box.component'
 
 @Component({
   selector: 'dl-header',
-  templateUrl: 'header.component.html',
-  styleUrls: ['header.component.css']
+  styleUrls: ['./header.component.css'],
+  templateUrl: './header.component.html'
 })
-export class HeaderComponent {
-
-  constructor() {}
-
-}
+export class HeaderComponent {}

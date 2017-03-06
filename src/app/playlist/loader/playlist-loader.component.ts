@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { Observable } from 'rxjs/Observable';
 import { PlaylistService } from "../shared";
 import { Playlist } from "../shared";
-import 'rxjs/add/operator/take';
+import '../../operators';
 
 @Component({
   selector: 'playlist-loader',

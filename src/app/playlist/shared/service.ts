@@ -8,7 +8,7 @@ import { Playlist, PlaylistState } from './model';
 import { AppState } from '../../app.store';
 import * as moment from 'moment';
 import * as UUID from 'uuid-js';
-import 'rxjs/add/operator/skip';
+import '../../operators';
 
 @Injectable()
 export class PlaylistService {

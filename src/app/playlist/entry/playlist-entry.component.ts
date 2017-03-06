@@ -1,21 +1,22 @@
-import { Component, Input, Output, EventEmitter } from '@angular/core';
+import { Component, Input, Output, EventEmitter, ChangeDetectionStrategy } from '@angular/core';
 import { Video } from '../../video';
 
 @Component({
   selector: 'playlist-entry',
   styleUrls: ['./playlist-entry.component.css'],
-  templateUrl: './playlist-entry.component.html'
+  templateUrl: './playlist-entry.component.html',
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class PlaylistEntryComponent {
   @Input() video: Video;
-  @Output() play = new EventEmitter<Video>();
-  @Output() remove = new EventEmitter<Video>();
+  @Output() onPlay = new EventEmitter<Video>();
+  @Output() onRemove = new EventEmitter<Video>();
 
-  doPlay() {
-    this.play.emit(this.video);
+  play(video: Video) {
+    this.onPlay.emit(video);
   }
 
-  doRemove() {
-    this.remove.emit(this.video);
+  remove(video: Video) {
+    this.onRemove.emit(video);
   }
 }
