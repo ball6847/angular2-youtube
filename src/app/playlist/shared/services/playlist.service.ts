@@ -159,7 +159,12 @@ export class PlaylistService {
   playRandom(): void {
     if (!this.entries.length)
       return;
-    const video = this.entries[Math.floor(Math.random() * this.entries.length)];
+    const playingVideo = this.getPlayingVideo();
+    // to do a realistic shuffle we need to remove playingVideo from the list
+    // or just keep them all if there is no video playing
+    // @TODO: we may need to keep track a list of recently playing videos, to get more realistic result
+    let entries = this.entries.filter(item => !playingVideo || playingVideo.uuid != item.uuid);
+    const video = entries[Math.floor(Math.random()*entries.length)];
     this.play(video);
   }
 
