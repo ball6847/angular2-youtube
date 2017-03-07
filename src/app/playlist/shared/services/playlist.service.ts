@@ -1,15 +1,22 @@
 import { Injectable } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { Observable } from 'rxjs/Observable';
-import { YoutubePlayerService } from 'ng2-youtube-player';
+import { YoutubePlayerService } from 'ng2-youtube-player/ng2-youtube-player';
+import { tassign } from 'tassign';
 import { AppService } from "../../../app.service";
 import { Video, VideoService } from "../../../video";
-import { Playlist, PlaylistState } from '../interfaces';
 import { IApplicationState } from '../../../shared/interfaces';
+import { Playlist, PlaylistState } from '../interfaces';
 import * as _ from 'lodash';
 import * as moment from 'moment';
 import * as UUID from 'uuid-js';
 import '../../../operators';
+
+// Actions comsumed by this service
+import {
+  PlaylistStateChangeAction
+} from '../reducers'
+
 
 @Injectable()
 export class PlaylistService {
@@ -31,11 +38,14 @@ export class PlaylistService {
     private videoService: VideoService,
     private playerService: YoutubePlayerService
   ) {
+    // always start with no active video, state.playing = false
+    this.store.dispatch({ type: 'PLAYLIST_ENTRIES_CLEAR_ACTIVATED', payload: null });
+    this.store.dispatch(
+      new PlaylistStateChangeAction({ playing: false, video: null })
+    );
+
     this.provideStore();
     this.setupSubscriptions();
-
-    // always start with no active video
-    this.store.dispatch({ type: 'PLAYLIST_ENTRIES_CLEAR_ACTIVATED', payload: null });
   }
 
   // --------------------------------------------------------------------
@@ -58,16 +68,20 @@ export class PlaylistService {
       });
 
     // we also need tracking of state inside of service
-    
+
     this.state$
       .subscribe(state => this.state = Object.assign({}, state));
-    
+
     this.active$
       .subscribe(playlist => this.active = playlist);
-    
+
     this.entries$
       .subscribe(entries => {
         this.entries = entries;
+        // no entries, means no play
+        this.store.dispatch(
+          new PlaylistStateChangeAction({ playing: false })
+        );
         // push entries back to source playlist
         // this will cause duplicate dispation but nothing serius here
         if (this.active && this.active.entries != entries) {
@@ -139,7 +153,17 @@ export class PlaylistService {
   }
 
   togglePlay(): void {
-    this.state.playing = !this.state.playing;
+    if (!this.entries.length) return;
+
+    const video = this.getPlayingVideo();
+
+    if (!video && this.entries.length) {
+      return this.next();
+    }
+
+    // toggle playig video, or set state to not play
+    // this.state.playing = video ? !this.state.playing : false;
+    this.state.playing = video ? !this.state.playing : false;
     this.dispatchState();
 
     if (this.state.playing) {
@@ -152,13 +176,15 @@ export class PlaylistService {
   // --------------------------------------------------------------------
 
   play(video: Video): void {
+    if (!this.entries.length) return;
     this.store.dispatch({ type: 'PLAYLIST_ENTRIES_CHILD_ACTIVATED', payload: video });
-    this.store.dispatch({ type: 'PLAYLIST_CONTROL_STATE_VIDEO_CHANGED', payload: video });
+    this.store.dispatch(
+      new PlaylistStateChangeAction({ video: video })
+    );
   }
 
   playRandom(): void {
-    if (!this.entries.length)
-      return;
+    if (!this.entries.length) return;
     const playingVideo = this.getPlayingVideo();
     // to do a realistic shuffle we need to remove playingVideo from the list
     // or just keep them all if there is no video playing
@@ -169,6 +195,7 @@ export class PlaylistService {
   }
 
   next(): void {
+    if (!this.entries.length) return;
     if (this.state.shuffle)
       return this.playRandom();
     // play video next to the currently playing video
@@ -182,6 +209,7 @@ export class PlaylistService {
   }
 
   prev(): void {
+    if (!this.entries.length) return;
     if (this.state.shuffle)
       return this.playRandom();
     // play video right before the currently playing video
@@ -193,9 +221,10 @@ export class PlaylistService {
   }
 
   stop(): void {
-    this.state.playing = false;
-    this.store.dispatch({ type: 'PLAYLIST_CONTROL_STATE_CHANGED', payload: this.state });
     this.appService.player.stopVideo();
+    this.store.dispatch(
+      new PlaylistStateChangeAction({ playing: false })
+    );
   }
 
   enqueue(video: Video): void {
@@ -222,7 +251,10 @@ export class PlaylistService {
     }
     if (this.entries.length > 0)
       this.store.dispatch({ type: "PLAYLIST_ENTRIES_CHILD_REMOVED", payload: video });
-    this.store.dispatch({ type: 'PLAYLIST_CONTROL_STATE_VIDEO_CHANGED', payload: null });
+
+    this.store.dispatch(
+      new PlaylistStateChangeAction({ video: null })
+    );
   }
 
   // --------------------------------------------------------------------
@@ -255,13 +287,14 @@ export class PlaylistService {
   }
 
   private getPlayingVideoIndex(): number {
-    if (!this.state.video)
-      return -1;
+    if (!this.state.video) return -1;
     return _.findIndex(this.entries, { uuid: this.state.video.uuid });
   }
 
   private dispatchState() {
-    this.store.dispatch({ type: 'PLAYLIST_CONTROL_STATE_CHANGED', payload: this.state });
+    this.store.dispatch(
+      new PlaylistStateChangeAction(this.state)
+    );
   }
 
   private formatDuration(h: number, m: number, s: number): string {

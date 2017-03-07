@@ -5,7 +5,7 @@ import { Store } from '@ngrx/store';
 import { IApplicationState } from '../../shared/interfaces';
 import { PlaylistService } from '../shared';
 import { Video } from '../../video';
-import { PlaylistEntriesReorderAction } from '../shared/actions';
+import { PlaylistEntriesReorderAction } from '../shared/reducers';
 
 
 @Component({
