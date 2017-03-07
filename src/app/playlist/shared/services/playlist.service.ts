@@ -54,8 +54,6 @@ export class PlaylistService {
     this._setupSubscriptions();
   }
 
-
-
   /**
    * Get all playlist in store as observable
    */
@@ -151,17 +149,16 @@ export class PlaylistService {
    * Play or pause currently playing video
    */
   public togglePlay(): void {
-    if (!this.entries.length) return;
+    if (!this.entries.length)
+      return;
 
-    const video = this._getPlayingVideo();
-
-    if (!video && this.entries.length) {
+    if (!this.state.video && this.entries.length) {
       return this.next();
     }
 
     // toggle playig video, or set state to not play
     // this.state.playing = video ? !this.state.playing : false;
-    this.state.playing = video ? !this.state.playing : false;
+    this.state.playing = this.state.video ? !this.state.playing : false;
     this._dispatchState();
 
     if (this.state.playing) {
@@ -195,12 +192,10 @@ export class PlaylistService {
     if (!this.entries.length)
       return;
 
-    const playingVideo = this._getPlayingVideo();
-
     // to do a realistic shuffle we need to remove playingVideo from the list
     // or just keep them all if there is no video playing
     // @TODO: we may need to keep track a list of recently playing videos, to get more realistic result
-    let entries = this.entries.filter(item => !playingVideo || playingVideo.uuid != item.uuid);
+    let entries = this.entries.filter(item => !this.state.video || this.state.video.uuid != item.uuid);
     const video = entries[Math.floor(Math.random()*entries.length)];
     this.play(video);
   }
@@ -393,7 +388,9 @@ export class PlaylistService {
    * Useful for determining which video to play next
    */
   private _getPlayingVideoIndex(): number {
-    if (!this.state.video) return -1;
+    if (!this.state.video)
+      return -1;
+
     return _.findIndex(this.entries, { uuid: this.state.video.uuid });
   }
 
