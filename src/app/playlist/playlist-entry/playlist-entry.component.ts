@@ -2,7 +2,7 @@ import { Component, Input, Output, EventEmitter, ChangeDetectionStrategy } from 
 import { Video } from '../../video';
 
 @Component({
-  selector: 'playlist-entry',
+  selector: '[playlist-entry]',
   styleUrls: ['./playlist-entry.component.css'],
   templateUrl: './playlist-entry.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush

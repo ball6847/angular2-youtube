@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ElementRef, OnInit, AfterContentInit } from '@angular/core';
 import { Observable } from 'rxjs/Observable';
 import { DragulaService } from 'ng2-dragula/ng2-dragula';
 import { Store } from '@ngrx/store';
@@ -13,14 +13,14 @@ import { PlaylistEntriesReorderAction } from '../shared/actions';
   styleUrls: ['./playlist-entries.component.css'],
   templateUrl: './playlist-entries.component.html',
 })
-export class PlaylistEntriesComponent {
+export class PlaylistEntriesComponent implements OnInit, AfterContentInit {
   entries: Video[];
-
 
   constructor(
     private store: Store<IApplicationState>,
     private playlistService: PlaylistService,
-    private dragulaService: DragulaService
+    private dragulaService: DragulaService,
+    private elementRef: ElementRef
   ) {}
 
   ngOnInit() {
@@ -31,10 +31,14 @@ export class PlaylistEntriesComponent {
       .subscribe(videos => {
         this.entries = videos.slice();
       });
+  }
 
+  ngAfterContentInit() {
     // prepare dragulaService, we need this setOptions call
     // otherwise dropModel event won't work as we expected
-    this.dragulaService.setOptions('playlist', {});
+    this.dragulaService.setOptions('playlist', {
+      mirrorContainer: this.elementRef.nativeElement
+    });
 
     // when dragula update model
     // dispatch the reordered action to store

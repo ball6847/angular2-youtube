@@ -1,9 +1,9 @@
-<div class="playlist-item clearfix">
-  <button (click)="remove(video)" type="button" class="close" aria-label="Close">
-    <span aria-hidden="true">&times;</span>
-  </button>
-  <span class="duration pull-right">{{ video.duration.text }}</span>
-  <span class="title">
-    <a href="javascript:" (click)="play(video)">{{ video.title }}</a>
-  </span>
-</div>
+<button (click)="remove(video)" type="button" class="close" aria-label="Close">
+  <span aria-hidden="true">&times;</span>
+</button>
+<span class="title">
+  <a href="javascript:" (click)="play(video)">
+    <span>{{ video.title }}</span>
+    <span class="duration pull-right">{{ video.duration.text }}</span>
+  </a>
+</span>

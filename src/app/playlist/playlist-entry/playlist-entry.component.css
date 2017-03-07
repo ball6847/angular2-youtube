@@ -1,15 +1,55 @@
-.playlist-item .duration {
+:host {
+  line-height: 23px;
+  padding-right: 8px;
+  border-bottom: 1px solid #2b2b2b;
+}
+
+:host:hover {
+  background: rgba(9,9,9, .1);
+  text-decoration: none;
+}
+
+:host.playing {
+  font-weight: bold;
+  background: rgba(9,9,9, .3);
+  text-decoration: underline;
+}
+
+:host.playing a::before {
+  content: '\f0da';
+  font-family: FontAwesome;
+  display: inline-block;
+  margin-right: 5px;
+  color: green;
+}
+
+.duration {
   width: 5em;
   text-align: right;
-  padding-right: 6px;
-
-}
-.playlist-item {
-  line-height: 23px;
+  padding: 2px 6px 0 0;
+  color: #777;
 }
 
-.playlist-item a {
+:host.playing .duration {
+  color: #fff;
+}
+
+a {
   display: block;
   white-space: nowrap;
   overflow: hidden;
+  color: #ccc;
+  padding: 1px 0 2px 12px;
+}
+
+a:hover,
+a:focus {
+  color: #ccc;
+  text-decoration: none;
+}
+
+button.close {
+  color: #777;
+  font-size: 0.85rem;
+  line-height: 1.85em;
 }
