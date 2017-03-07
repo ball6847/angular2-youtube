@@ -18,5 +18,5 @@
 :host .dropdown-menu,
 :host >>> .popover-title,
 :host input {
-  font-size: 0.84rem;
+  font-size: 0.85rem;
 }
