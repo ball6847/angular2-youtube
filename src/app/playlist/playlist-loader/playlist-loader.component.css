@@ -1,16 +1,10 @@
-.video-playlist-loader {
+:host {
   background: black;
-}
-.btn-black {
-  background: black;
-  color: white;
+  display: block;
+  width: 100%;
 }
 
-:host input input {
-  border-radius: 0px;
-}
-
-:host .popover {
+:host >>> .popover {
   max-width: 100%;
 }
 
@@ -18,5 +12,5 @@
 :host .dropdown-menu,
 :host >>> .popover-title,
 :host input {
-  font-size: 0.85rem;
+  font-size: 0.84rem;
 }

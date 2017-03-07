@@ -75,6 +75,15 @@ li.gu-mirror {
   border-color: #01549b;
 }
 
+.btn-black {
+  background: black;
+  color: white;
+}
+
+.btn {
+  cursor: pointer;
+}
+
 
 /* ----------------------------------------------------- */
 /* bootstrap4 pagination override */

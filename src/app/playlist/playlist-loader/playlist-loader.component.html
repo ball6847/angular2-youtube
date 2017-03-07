@@ -1,52 +1,61 @@
-<div class="video-playlist-loader">
-  <div [popover]="popTemplateForCreate" popoverTitle="Enter playlist name:" triggers="" #popForCreate="bs-popover"></div>
-  <div [popover]="popTemplateForRename" popoverTitle="Enter new playlist name:" triggers="" #popForRename="bs-popover"></div>
-  <div class="btn-group btn-group-flat" role="group">
-    <div class="btn-group dropup" dropdown >
-      <a href="javascript:" *ngIf="!creating" id="single-button" class="btn btn-black" dropdownToggle>
-        Playlist
-        <span *ngIf="active$ | async">: {{ (active$ | async)?.name }}</span>
-      </a>
-      <ul dropdownMenu role="menu" aria-labelledby="single-button">
-        <li *ngFor="let playlist of list$ | async" role="menuitem">
-          <a [class.active]="(active$ | async)?.id == playlist.id" (click)="load(playlist)" class="dropdown-item" href="javascript:">{{ playlist.name }}</a>
-        </li>
-        <li [hidden]="!(list$ | async)?.length" class="divider dropdown-divider"></li>
-        <li *ngIf="(active$ | async)?.id" role="menuitem">
-          <a class="dropdown-item" href="javascript:" (click)="popForRename.show()"><i class="fa fa-pencil"></i> Rename "{{ (active$ | async)?.name }}"</a>
-        </li>
-        <li *ngIf="(active$ | async)?.id" role="menuitem">
-          <a class="dropdown-item" href="javascript:" (click)="delete(active$)"><i class="fa fa-trash"></i> Delete "{{ (active$ | async)?.name }}"</a>
-        </li>
-        <li *ngIf="(active$ | async)?.id" class="divider dropdown-divider"></li>
-        <li role="menuitem"><a class="dropdown-item" (click)="popForCreate.show()" href="javascript:">Create new</a></li>
-      </ul>
-    </div>
+<div [popover]="popTemplateForCreate" popoverTitle="Enter playlist name:" triggers="" #popForCreate="bs-popover"></div>
+<div [popover]="popTemplateForRename" popoverTitle="Enter new playlist name:" triggers="" #popForRename="bs-popover"></div>
+
+<div class="btn-group btn-group-flat" role="group">
+  <div class="btn-group dropup" dropdown >
+    <span *ngIf="!creating" id="single-button" class="btn btn-black" dropdownToggle>
+      Playlist <span *ngIf="active$ | async">: {{ (active$ | async)?.name }}</span>
+    </span>
+    <ul dropdownMenu role="menu" aria-labelledby="single-button">
+      <li *ngFor="let playlist of list$ | async" role="menuitem">
+        <a [class.active]="(active$ | async)?.id == playlist.id" (click)="load(playlist)" class="dropdown-item" href="javascript:">{{ playlist.name }}</a>
+      </li>
+      <li [hidden]="!(list$ | async)?.length" class="divider dropdown-divider"></li>
+      <li *ngIf="(active$ | async)?.id" role="menuitem">
+        <a class="dropdown-item" href="javascript:" (click)="popForRename.show()">
+          <i class="fa fa-pencil"></i> Rename "{{ (active$ | async)?.name }}"
+        </a>
+      </li>
+      <li *ngIf="(active$ | async)?.id" role="menuitem">
+        <a class="dropdown-item" href="javascript:" (click)="delete(active$)">
+          <i class="fa fa-trash"></i> Delete "{{ (active$ | async)?.name }}"
+        </a>
+      </li>
+      <li *ngIf="(active$ | async)?.id" class="divider dropdown-divider"></li>
+      <li role="menuitem">
+        <a class="dropdown-item" (click)="popForCreate.show()" href="javascript:">Create new</a>
+      </li>
+    </ul>
   </div>
 </div>
+
+<!-- Templates for Popover: CreatePlaylist -->
 
 <template #popTemplateForCreate>
   <form action="javascript:" (submit)="create(name, popForCreate)">
     <div class="input-group">
       <input type="text" class="form-control" #name placeholder="my awesome list" focusme>
       <span class="input-group-btn">
-        <button class="btn btn-primary" type="submit">create</button>
+        <button class="btn btn-primary" type="submit" title="confirm"><i class="fa fa-check-circle"></i></button>
       </span>
       <span class="input-group-btn">
-        <button class="btn btn-danger" (click)="popForCreate.hide()">cancel</button>
+        <button class="btn btn-danger" (click)="popForCreate.hide()" title="cancel"><i class="fa fa-times-circle"></i></button>
       </span>
     </div>
   </form>
 </template>
+
+<!-- Templates for Popover: RenamePlaylist -->
+
 <template #popTemplateForRename>
   <form *ngIf="(active$ | async)?.id" action="javascript:" (submit)="rename(active$, name, popForRename)">
     <div class="input-group">
       <input type="text" class="form-control" #name [value]="(active$ | async)?.name" placeholder="my awesome list" selectme>
       <span class="input-group-btn">
-        <button class="btn btn-primary" type="submit">rename</button>
+        <button class="btn btn-primary" type="submit" title="confirm"><i class="fa fa-check-circle"></i></button>
       </span>
       <span class="input-group-btn">
-        <button class="btn btn-danger" (click)="popForRename.hide()">cancel</button>
+        <button class="btn btn-danger" (click)="popForRename.hide()" title="cancel"><i class="fa fa-times-circle"></i></button>
       </span>
     </div>
   </form>
