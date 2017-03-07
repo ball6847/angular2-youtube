@@ -14,7 +14,7 @@ import { PlaylistEntriesReorderAction } from '../shared/actions';
   templateUrl: './playlist-entries.component.html',
 })
 export class PlaylistEntriesComponent implements OnInit, AfterContentInit {
-  entries: Video[];
+  entries: Video[] = [];
 
   constructor(
     private store: Store<IApplicationState>,
@@ -44,7 +44,8 @@ export class PlaylistEntriesComponent implements OnInit, AfterContentInit {
     // dispatch the reordered action to store
     this.dragulaService.dropModel
       .subscribe(() => {
-        this.store.dispatch(new PlaylistEntriesReorderAction(this.entries));
+        if (this.entries.length > 1)
+          this.store.dispatch(new PlaylistEntriesReorderAction(this.entries));
       });
   }
 
