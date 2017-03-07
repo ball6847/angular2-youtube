@@ -24,7 +24,7 @@ export class PlaylistEntriesComponent {
   ) {}
 
   ngOnInit() {
-    // please note, we cannot use Observable from getEntries() rightaway
+    // please note, we cannot directly bind Observable from getEntries() to component's property
     // since we need one model to keep track of dragula action
     // we can then dispatch those value back to store
     this.playlistService.getEntries()
