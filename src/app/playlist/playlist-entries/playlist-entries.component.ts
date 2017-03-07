@@ -14,7 +14,11 @@ import { PlaylistEntriesReorderAction } from '../shared/actions';
   templateUrl: './playlist-entries.component.html',
 })
 export class PlaylistEntriesComponent implements OnInit, AfterContentInit {
+  // currenly opening playlist entries
   entries: Video[] = [];
+
+  // currently playing video
+  video$: Observable<Video>;
 
   constructor(
     private store: Store<IApplicationState>,
@@ -24,6 +28,8 @@ export class PlaylistEntriesComponent implements OnInit, AfterContentInit {
   ) {}
 
   ngOnInit() {
+    this.video$ = this.store.select(state => state.playlistState.video);
+
     // please note, we cannot directly bind Observable from getEntries() to component's property
     // since we need one model to keep track of dragula action
     // we can then dispatch those value back to store

@@ -6,6 +6,7 @@ import { AppService } from "../../../app.service";
 import { Video, VideoService } from "../../../video";
 import { Playlist, PlaylistState } from '../interfaces';
 import { IApplicationState } from '../../../shared/interfaces';
+import * as _ from 'lodash';
 import * as moment from 'moment';
 import * as UUID from 'uuid-js';
 import '../../../operators';
@@ -165,8 +166,8 @@ export class PlaylistService {
   next(): void {
     if (this.state.shuffle)
       return this.playRandom();
-    const video = this.getPlayingVideo();
-    let index = this.entries.indexOf(video) + 1;
+    // play video next to the currently playing video
+    let index = this.getPlayingVideoIndex() + 1;
     if (index >= this.entries.length) {
       // if (!this.state.loop)
       //   return this.nowPlaying$.next(undefined);
@@ -178,8 +179,9 @@ export class PlaylistService {
   prev(): void {
     if (this.state.shuffle)
       return this.playRandom();
-    const video = this.getPlayingVideo();
-    let index = this.entries.indexOf(video) - 1;
+    // play video right before the currently playing video
+    let index = this.getPlayingVideoIndex() - 1;
+    // or, move to last entry of the list
     if (index < 0)
       index = this.entries.length - 1;
     this.play(this.entries[index]);
@@ -243,9 +245,14 @@ export class PlaylistService {
   // -----------------------------------------------------------------------
   // internal utils
 
-  private getPlayingVideo() {
-    const videos = this.entries.filter(video => video.playing);
-    return videos.length ? videos[0] : null;
+  private getPlayingVideo(): Video {
+    return this.state.video;
+  }
+
+  private getPlayingVideoIndex(): number {
+    if (!this.state.video)
+      return -1;
+    return _.findIndex(this.entries, { uuid: this.state.video.uuid });
   }
 
   private dispatchState() {
