@@ -2,7 +2,7 @@ import { Component } from "@angular/core";
 import { Store } from "@ngrx/store";
 import { Subject } from "rxjs/Subject";
 import { Video, VideoService } from "../../video";
-import { SearchResultAction, ISearchResultState } from "../shared";
+import { SearchResultAction, SearchResultPageAction, ISearchResultState } from "../shared";
 
 @Component({
   selector: "search-box",
@@ -17,6 +17,7 @@ export class SearchBoxComponent {
   ngOnInit() {
     this.videoService.rxSearch(this.searchTerm$)
       .subscribe((videos: Video[]) => {
+        this.store.dispatch(new SearchResultPageAction(1));
         this.store.dispatch(new SearchResultAction(videos));
       });
   }
