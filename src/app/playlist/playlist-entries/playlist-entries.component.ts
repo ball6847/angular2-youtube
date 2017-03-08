@@ -5,7 +5,7 @@ import { Store } from '@ngrx/store';
 import { IApplicationState } from '../../shared/interfaces';
 import { PlaylistService } from '../shared';
 import { Video } from '../../video';
-import { PlaylistEntriesReorderedAction } from '../shared/store';
+import { PlaylistActiveEntriesReorderedAction } from '../shared/store';
 
 
 @Component({
@@ -51,7 +51,7 @@ export class PlaylistEntriesComponent implements OnInit, AfterContentInit {
     this.dragulaService.dropModel
       .subscribe(() => {
         if (this.entries.length > 1)
-          this.store.dispatch(new PlaylistEntriesReorderedAction(this.entries));
+          this.store.dispatch(new PlaylistActiveEntriesReorderedAction(this.entries));
       });
   }
 
