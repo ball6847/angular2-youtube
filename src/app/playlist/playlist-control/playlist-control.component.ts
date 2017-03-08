@@ -1,10 +1,11 @@
-import { Component } from '@angular/core';
+import { Component, ChangeDetectionStrategy } from '@angular/core';
 import { PlaylistService } from '../shared';
 
 @Component({
   selector: 'playlist-control',
   styleUrls: ['./playlist-control.component.css'],
-  templateUrl: './playlist-control.component.html'
+  templateUrl: './playlist-control.component.html',
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class PlaylistControlComponent {
   state$;

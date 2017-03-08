@@ -1,4 +1,4 @@
-import { Component } from "@angular/core";
+import { Component, ChangeDetectionStrategy } from "@angular/core";
 import { Store } from "@ngrx/store";
 import { Subject } from "rxjs/Subject";
 import { Video, VideoService } from "../../video";
@@ -7,7 +7,8 @@ import { SearchResultAction, SearchResultPageAction, ISearchResultState } from "
 @Component({
   selector: "search-box",
   styleUrls: ["./search-box.component.css"],
-  templateUrl: "./search-box.component.html"
+  templateUrl: "./search-box.component.html",
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class SearchBoxComponent {
   searchTerm$ = new Subject<string>();

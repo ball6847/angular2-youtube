@@ -1,7 +1,6 @@
 import { Component, Output, EventEmitter, ChangeDetectionStrategy } from "@angular/core";
 import { Observable } from "rxjs/Observable";
 import { Store } from "@ngrx/store";
-
 import {
   SearchResultPageAction,
   SearchResultAction,

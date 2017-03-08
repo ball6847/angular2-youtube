@@ -1,11 +1,12 @@
-import { Component } from "@angular/core";
+import { Component, ChangeDetectionStrategy } from "@angular/core";
 import { AppService } from '../../app.service';
 import { PlaylistService } from '../../playlist';
 
 @Component({
   selector: 'video-player',
   styleUrls: ['./video-player.component.css'],
-  templateUrl: './video-player.component.html'
+  templateUrl: './video-player.component.html',
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class VideoComponent {
   constructor(
