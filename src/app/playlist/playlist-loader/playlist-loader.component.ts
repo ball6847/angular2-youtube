@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ChangeDetectionStrategy } from '@angular/core';
 import { Observable } from 'rxjs/Observable';
 import { PlaylistService } from "../shared";
 import { Playlist } from "../shared";
@@ -7,7 +7,8 @@ import '../../operators';
 @Component({
   selector: 'playlist-loader',
   styleUrls: ['./playlist-loader.component.css'],
-  templateUrl: './playlist-loader.component.html'
+  templateUrl: './playlist-loader.component.html',
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class PlaylistLoaderComponent {
   list$: Observable<Playlist[]>
