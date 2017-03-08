@@ -13,10 +13,11 @@
     "test": "ng test",
     "pree2e": "webdriver-manager update",
     "e2e": "protractor",
-    "build": "ng build --prod",
-    "build:gh": "ng build -prod --aot --baseHref /angular2-youtube/ --outputPath .gh-pages-build",
-    "deploy:gh": "npm run build:gh && npm run _push:gh",
-    "_push:gh": "GITCMD='git -C .gh-pages-build/' && $GITCMD init && $GITCMD remote add origin git@github.com:ball6847/angular2-youtube.git && $GITCMD checkout -b gh-pages && $GITCMD add -A && $GITCMD commit -m \"update gh-pages\" && $GITCMD push -f origin gh-pages"
+    "build": "ng build --prod --aot",
+    "build:gh": "ng build --prod --aot --baseHref /angular2-youtube/ --outputPath .gh-pages-build",
+    "deploy:gh": "npm run build:gh && npm run _init_gh && npm run _push_gh",
+    "_init_gh": "GITCMD='git -C .gh-pages-build/' && $GITCMD init && $GITCMD remote add origin git@github.com:ball6847/angular2-youtube.git",
+    "_push_gh": "GITCMD='git -C .gh-pages-build/' && $GITCMD checkout -b gh-pages && $GITCMD add -A && $GITCMD commit -m \"update gh-pages\" && $GITCMD push -f origin gh-pages"
   },
   "private": true,
   "dependencies": {
