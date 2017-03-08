@@ -12,6 +12,7 @@ const PLAYLIST_ACTIVE_ENTRIES_DEACTIVATED = 'PLAYLIST_ACTIVE_ENTRIES_DEACTIVATED
 const PLAYLIST_ACTIVE_ENTRY_ADDED = 'PLAYLIST_ACTIVE_ENTRY_ADDED';
 const PLAYLIST_ACTIVE_ENTRY_REMOVED = 'PLAYLIST_ACTIVE_ENTRY_REMOVED';
 const PLAYLIST_ACTIVE_ENTRY_ACTIVATED = 'PLAYLIST_ACTIVE_ENTRY_ACTIVATED';
+const PLAYLIST_ACTIVE_ENTRY_UPDATED = 'PLAYLIST_ACTIVE_ENTRY_UPDATED';
 
 // -------------------------------------------------------------------
 // BASE
@@ -49,6 +50,10 @@ export class PlaylistActiveEntryAddedAction extends PlaylistActiveEntryActionBas
   type = PLAYLIST_ACTIVE_ENTRY_ADDED;
 }
 
+export class PlaylistActiveEntryUpdatedAction extends PlaylistActiveEntryActionBase {
+  type = PLAYLIST_ACTIVE_ENTRY_UPDATED;
+}
+
 export class PlaylistActiveEntryRemovedAction extends PlaylistActiveEntryActionBase {
   type = PLAYLIST_ACTIVE_ENTRY_REMOVED;
 }
@@ -69,8 +74,8 @@ export class PlaylistActiveEntriesDeactivatedAction extends PlaylistActiveEntryA
 // REDUCER
 
 const defaultPlaylist: Playlist = {
-  id: '1',
-  name: "Untitled",
+  id: null,
+  name: null,
   entries: []
 };
 
@@ -96,10 +101,16 @@ export function PlaylistActiveReducer(state = defaultPlaylist, action: PlaylistA
         entries: [...state.entries, action.payload.entries[0]]
       });
 
+    case PLAYLIST_ACTIVE_ENTRY_UPDATED:
+      return tassign(state, {
+        entries: state.entries
+          .map(video => (video.uuid !== action.payload.entries[0].uuid) ? video : tassign(video, action.payload.entries[0]))
+      });
+
     case PLAYLIST_ACTIVE_ENTRY_REMOVED:
       return tassign(state, {
         entries: state.entries
-          .filter(video => video.uuid !== action.payload[0].uuid)
+          .filter(video => video.uuid !== action.payload.entries[0].uuid)
       });
 
     case PLAYLIST_ACTIVE_ENTRY_ACTIVATED:

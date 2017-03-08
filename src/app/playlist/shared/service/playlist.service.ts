@@ -19,8 +19,9 @@ import {
   PlaylistDeletedAction,
   PlaylistActivatedAction,
   PlaylistActiveEntryAddedAction,
-  PlaylistActiveEntryActivatedAction,
+  PlaylistActiveEntryUpdatedAction,
   PlaylistActiveEntryRemovedAction,
+  PlaylistActiveEntryActivatedAction,
   PlaylistActiveEntriesDeactivatedAction,
   PlaylistStateChangedAction
 } from '../store';
@@ -335,25 +336,31 @@ export class PlaylistService {
    * @param video
    */
   public enqueue(video: Video): void {
-    if (!this.active)
+    if (!this.active.id)
       this.createPlaylist('Untitled');
 
     // create copy of video
     let vdo = Object.assign({}, video);
+    vdo.uuid = UUID.create().toString();
+    vdo.duration = { text: '0.00', seconds: 0 };
 
+    // add entry to playlist immediately
+    this.store.dispatch(
+      new PlaylistActiveEntryAddedAction(vdo)
+    );
+
+    // and update it afterward
     this.videoService.fetchVideo(vdo.videoId)
       .subscribe(v => {
         let d = moment.duration(v.contentDetails.duration);
 
-        vdo.uuid = UUID.create().toString();
-
         vdo.duration = {
-          text: this._formatDuration(d.get('hours'), d.get('minutes'), d.get('seconds')),
+          text: this._formatDuration(d.get('hours'),  d.get('minutes'), d.get('seconds')),
           seconds: d.asSeconds()
         };
 
         this.store.dispatch(
-          new PlaylistActiveEntryAddedAction(vdo)
+          new PlaylistActiveEntryUpdatedAction(vdo)
         );
       });
   }

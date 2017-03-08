@@ -9,15 +9,13 @@ const reducer: ActionReducer<State<IApplicationState>> = compose(
   localStorageSync([
     'playlistList',
     'playlistActive',
-    'playlistState',
-    'playlistEntries'
+    'playlistState'
   ], true),
   combineReducers
 )({
   playlistList: playlist.PlaylistListReducer,
   playlistActive: playlist.PlaylistActiveReducer,
   playlistState: playlist.PlaylistControlStateReducer,
-  playlistEntries: playlist.PlaylistEntriesReducer,
   searchResult: search.SearchResultReducer,
   searchResultPage: search.SearchResultPageReducer
 });
