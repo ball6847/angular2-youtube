@@ -2,7 +2,7 @@ import { ActionReducer, State, combineReducers } from '@ngrx/store';
 import { compose } from '@ngrx/core/compose';
 import { localStorageSync } from 'ngrx-store-localstorage';
 import { IApplicationState } from '../shared/interfaces';
-import * as playlist from '../playlist/shared/reducers';
+import * as playlist from '../playlist/shared/store';
 import * as search from '../search/shared/reducers';
 
 const reducer: ActionReducer<State<IApplicationState>> = compose(

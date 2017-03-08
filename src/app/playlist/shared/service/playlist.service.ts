@@ -6,14 +6,25 @@ import { tassign } from 'tassign';
 import { AppService } from "../../../app.service";
 import { Video, VideoService } from "../../../video";
 import { IApplicationState } from '../../../shared/interfaces';
-import { Playlist, PlaylistState } from '../interfaces';
+import { Playlist, PlaylistState } from '../interface';
 import * as _ from 'lodash';
 import * as moment from 'moment';
 import * as UUID from 'uuid-js';
 import '../../../operators';
 
 // Actions comsumed by this service
-import { PlaylistStateChangeAction } from '../reducers'
+import {
+  PlaylistActivatedAction,
+  PlaylistCreatedAction,
+  PlaylistUpdatedAction,
+  PlaylistDeletedAction,
+  PlaylistEntriesChildAddedAction,
+  PlaylistEntriesChildRemovedAction,
+  PlaylistEntriesLoadedAction,
+  PlaylistEntriesChildActivatedAction,
+  PlaylistEntriesChildrenDeactivatedAction,
+  PlaylistStateChangedAction
+} from '../store';
 
 
 @Injectable()
@@ -47,9 +58,12 @@ export class PlaylistService {
     private playerService: YoutubePlayerService
   ) {
     // always start with no active video, state.playing = false
-    this.store.dispatch({ type: 'PLAYLIST_ENTRIES_CLEAR_ACTIVATED', payload: null });
     this.store.dispatch(
-      new PlaylistStateChangeAction({ playing: false, video: null })
+      new PlaylistEntriesChildrenDeactivatedAction()
+    );
+
+    this.store.dispatch(
+      new PlaylistStateChangedAction({ playing: false, video: null })
     );
 
     this._provideStore();
@@ -105,7 +119,10 @@ export class PlaylistService {
       entries: []
     };
 
-    this.store.dispatch({ type: 'PLAYLIST_CREATED', payload: playlist });
+    this.store.dispatch(
+      new PlaylistCreatedAction(playlist)
+    );
+
     this.loadPlaylist(playlist);
   }
 
@@ -118,9 +135,15 @@ export class PlaylistService {
    * @param name
    */
   public renamePlaylist(playlist: Playlist, name: string) {
-    const newPlaylist = Object.assign({}, playlist, { name: name });
-    this.store.dispatch({ type: 'PLAYLIST_UPDATED', payload: newPlaylist });
-    this.store.dispatch({ type: 'PLAYLIST_ACTIVE_CHANGED', payload: newPlaylist });
+    const newPlaylist = tassign(playlist, { name: name });
+
+    this.store.dispatch(
+      new PlaylistUpdatedAction(newPlaylist)
+    )
+
+    this.store.dispatch(
+      new PlaylistActivatedAction(newPlaylist)
+    );
   }
 
   // -------------------------------------------------------------------
@@ -131,8 +154,13 @@ export class PlaylistService {
    * @param playlist
    */
   public deletePlaylist(playlist: Playlist): void {
-    this.store.dispatch({ type: 'PLAYLIST_DELETED', payload: playlist });
-    this.store.dispatch({ type: 'PLAYLIST_ACTIVE_CHANGED', payload: undefined });
+    this.store.dispatch(
+      new PlaylistDeletedAction(playlist)
+    );
+
+    this.store.dispatch(
+      new PlaylistActivatedAction(null)
+    );
   }
 
   // -------------------------------------------------------------------
@@ -143,8 +171,13 @@ export class PlaylistService {
    * @param playlist
    */
   public loadPlaylist(playlist: Playlist) {
-    this.store.dispatch({ type: 'PLAYLIST_ACTIVE_CHANGED', payload: playlist });
-    this.store.dispatch({ type: 'PLAYLIST_ENTRIES_LOADED', payload: playlist.entries });
+    this.store.dispatch(
+      new PlaylistActivatedAction(playlist)
+    );
+
+    this.store.dispatch(
+      new PlaylistEntriesLoadedAction(playlist.entries)
+    );
   }
 
   // -------------------------------------------------------------------
@@ -204,9 +237,12 @@ export class PlaylistService {
     if (!this.entries.length)
       return;
 
-    this.store.dispatch({ type: 'PLAYLIST_ENTRIES_CHILD_ACTIVATED', payload: video });
     this.store.dispatch(
-      new PlaylistStateChangeAction({ video: video })
+      new PlaylistEntriesChildActivatedAction(video)
+    );
+
+    this.store.dispatch(
+      new PlaylistStateChangedAction({ video: video })
     );
   }
 
@@ -282,8 +318,9 @@ export class PlaylistService {
    */
   public stop(): void {
     this.appService.player.stopVideo();
+
     this.store.dispatch(
-      new PlaylistStateChangeAction({ playing: false })
+      new PlaylistStateChangedAction({ playing: false })
     );
   }
 
@@ -311,7 +348,9 @@ export class PlaylistService {
           seconds: d.asSeconds()
         };
 
-        this.store.dispatch({ type: "PLAYLIST_ENTRIES_CHILD_ADDED", payload: vdo });
+        this.store.dispatch(
+          new PlaylistEntriesChildAddedAction(vdo)
+        );
       });
   }
 
@@ -327,14 +366,18 @@ export class PlaylistService {
       if (this.state.video && this.state.video.uuid === video.uuid)
         this.next();
 
-      return this.store.dispatch({ type: "PLAYLIST_ENTRIES_CHILD_REMOVED", payload: video });
+      return this.store.dispatch(
+        new PlaylistEntriesChildRemovedAction(video)
+      );
     }
 
     if (this.entries.length > 0)
-      this.store.dispatch({ type: "PLAYLIST_ENTRIES_CHILD_REMOVED", payload: video });
+      this.store.dispatch(
+        new PlaylistEntriesChildRemovedAction(video)
+      );
 
     this.store.dispatch(
-      new PlaylistStateChangeAction({ video: null })
+      new PlaylistStateChangedAction({ video: null })
     );
   }
 
@@ -408,15 +451,15 @@ export class PlaylistService {
 
         // no entries, means no play
         this.store.dispatch(
-          new PlaylistStateChangeAction({ playing: false })
+          new PlaylistStateChangedAction({ playing: false })
         );
 
         // push entries back to source playlist
         // this will cause duplicate dispation but nothing serius here
-        if (this.active && this.active.entries != entries) {
-          this.active.entries = entries;
-          this.store.dispatch({ type: 'PLAYLIST_UPDATED', payload: this.active });
-        }
+        if (this.active && this.active.entries != entries)
+          this.store.dispatch(
+            new PlaylistUpdatedAction(this.active)
+          );
       });
   }
 
@@ -449,7 +492,7 @@ export class PlaylistService {
    */
   private _dispatchState() {
     this.store.dispatch(
-      new PlaylistStateChangeAction(this.state)
+      new PlaylistStateChangedAction(this.state)
     );
   }
 

@@ -1,3 +1,3 @@
-export * from './interfaces';
-export * from './reducers';
-export * from './services';
+export * from './interface';
+export * from './store';
+export * from './service';
