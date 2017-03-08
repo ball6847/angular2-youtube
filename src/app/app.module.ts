@@ -39,7 +39,6 @@ let DEV_MODULES: ModuleWithProviders[] = environment.production ? [] : [
 
 @NgModule({
   imports: [
-    ...DEV_MODULES,
     BrowserModule,
     HttpModule,
     Ng2PaginationModule,
@@ -47,7 +46,8 @@ let DEV_MODULES: ModuleWithProviders[] = environment.production ? [] : [
     DragulaModule,
     DropdownModule.forRoot(),
     PopoverModule.forRoot(),
-    StoreModule.provideStore(AppReducer)
+    StoreModule.provideStore(AppReducer),
+    ...DEV_MODULES
   ],
   declarations: [
     SelectMeDirective,

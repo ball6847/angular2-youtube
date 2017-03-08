@@ -10,7 +10,7 @@ const PLAYLIST_STATE_CHANGED = 'PLAYLIST_STATE_CHANGED';
 // -------------------------------------------------------------------
 // BASE
 
-abstract class PlaylistStateActionBase implements Action {
+export abstract class PlaylistStateActionBase implements Action {
   type: string;
   constructor(public payload: Partial<PlaylistState>) {}
 }

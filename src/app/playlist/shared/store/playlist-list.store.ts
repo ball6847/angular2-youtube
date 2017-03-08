@@ -11,7 +11,7 @@ const PLAYLIST_DELETED = 'PLAYLIST_DELETED';
 // -------------------------------------------------------------------
 // BASE
 
-abstract class PlaylistActionBase implements Action {
+export abstract class PlaylistActionBase implements Action {
   type: string;
   constructor(public payload: Playlist) {}
 }

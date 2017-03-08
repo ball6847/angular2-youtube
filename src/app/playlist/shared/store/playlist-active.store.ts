@@ -9,7 +9,7 @@ const PLAYLIST_ACTIVATED = 'PLAYLIST_ACTIVATED';
 // -------------------------------------------------------------------
 // BASE
 
-abstract class PlaylistActiveActionBase implements Action {
+export abstract class PlaylistActiveActionBase implements Action {
   type: string;
   constructor(public payload: Playlist) {}
 }

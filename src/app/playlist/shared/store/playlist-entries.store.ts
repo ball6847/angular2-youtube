@@ -15,12 +15,12 @@ const PLAYLIST_ENTRIES_CHILDREN_DEACTIVATED = 'PLAYLIST_ENTRIES_CHILDREN_DEACTIV
 // --------------------------------------------------------
 // BASE
 
-abstract class PlaylistEntriesActionBase implements Action {
+export abstract class PlaylistEntriesActionBase implements Action {
   type: string;
   constructor(public payload: Video[]) { }
 }
 
-abstract class PlaylistEntriesItemActionBase extends PlaylistEntriesActionBase {
+export abstract class PlaylistEntriesItemActionBase extends PlaylistEntriesActionBase {
   constructor(payload: Video) {
     super([payload]);
   }
