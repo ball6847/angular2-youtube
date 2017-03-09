@@ -1,5 +1,5 @@
 import { Action } from '@ngrx/store';
-import { Playlist } from '../interface';
+import { Playlist } from '../interfaces';
 
 // -------------------------------------------------------------------
 // TYPE

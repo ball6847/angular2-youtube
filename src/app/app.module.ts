@@ -12,21 +12,14 @@ import { SelectMeDirective } from './shared/directives/selectme'; // @TODO: publ
 import { FocusMeDirective } from './shared/directives/focusme';
 import { Ng2FirebaseAuthModule } from '../ng2-firebase-auth';
 import { FirebaseConfigModule } from '../firebase';
-import { AppComponent } from './app.component';
 import { AppService } from './app.service';
-import { HeaderComponent } from './shared/nav/header/header.component';
+import { AppComponent } from './app.component';
+import { HeaderComponent } from './shared/components';
 import { VideoComponent, VideoService } from './video';
 import { AppReducer } from './shared/reducers';
 import { SearchResultComponent, SearchResultItemComponent, SearchBoxComponent } from './search';
-
-import {
-  PlaylistEntriesComponent,
-  PlaylistEntryComponent,
-  PlaylistControlComponent,
-  PlaylistLoaderComponent,
-  PlaylistService,
-  Playlist
-} from './playlist';
+import { PlaylistEntriesComponent, PlaylistEntryComponent, PlaylistControlComponent, PlaylistLoaderComponent} from './playlist';
+import { PlaylistService, Playlist } from './playlist/shared';
 
 // -------------------------------------------------------------------
 

@@ -6,7 +6,7 @@ import { tassign } from 'tassign';
 import { AppService } from "../../../app.service";
 import { Video, VideoService } from "../../../video";
 import { IApplicationState } from '../../../shared/interfaces';
-import { Playlist, PlaylistState } from '../interface';
+import { Playlist, PlaylistState } from '../interfaces';
 import * as _ from 'lodash';
 import * as moment from 'moment';
 import * as UUID from 'uuid-js';
@@ -23,7 +23,7 @@ import {
   PlaylistActiveEntryActivatedAction,
   PlaylistActiveEntriesDeactivatedAction,
   PlaylistStateChangedAction
-} from '../store';
+} from '../stores';
 
 
 @Injectable()

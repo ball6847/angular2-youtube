@@ -1,7 +1,7 @@
 import { Action } from '@ngrx/store';
 import { tassign } from 'tassign';
 import { Video } from '../../../video';
-import { Playlist } from '../interface';
+import { Playlist } from '../interfaces';
 
 // -------------------------------------------------------------------
 // TYPE

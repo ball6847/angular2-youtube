@@ -1,6 +1,6 @@
 import { Action } from '@ngrx/store';
 import { tassign } from 'tassign';
-import { PlaylistState } from '../interface';
+import { PlaylistState } from '../interfaces';
 
 // -------------------------------------------------------------------
 // TYPE

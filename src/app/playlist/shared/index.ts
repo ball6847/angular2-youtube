@@ -1,3 +1,3 @@
-export * from './interface';
-export * from './store';
-export * from './service';
+export * from './interfaces';
+export * from './stores';
+export * from './services';
