@@ -2,7 +2,6 @@ import { Injectable } from '@angular/core';
 import { Http } from "@angular/http";
 import { Observable } from 'rxjs/Observable';
 import { Video } from './model';
-import '../../operators'
 
 // @TODO: we may need to cache on firebase or localstorage to save api calls
 // @TODO: create VideoServiceConfig instead of hard code apikey

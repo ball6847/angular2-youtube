@@ -10,7 +10,6 @@ import { Playlist, PlaylistState } from '../interface';
 import * as _ from 'lodash';
 import * as moment from 'moment';
 import * as UUID from 'uuid-js';
-import '../../../operators';
 
 // Actions comsumed by this service
 import {
@@ -460,25 +459,6 @@ export class PlaylistService {
           new PlaylistUpdatedAction(playlist)
         );
       });
-
-    // this.entries$
-    //   .subscribe(entries => {
-    //     // this.active.entries = entries;
-
-    //     // no entries, means no play
-    //     // if (!entries.length)
-    //     //   this.store.dispatch(
-    //     //     new PlaylistStateChangedAction({ playing: false })
-    //     //   );
-
-    //     // push entries back to source playlist
-    //     // this will cause duplicate dispation but nothing serius here
-
-    //     // if (this.active && this.active.entries != entries)
-    //       // this.store.dispatch(
-    //       //   new PlaylistUpdatedAction(this.active)
-    //       // );
-    //   });
   }
 
   // -------------------------------------------------------------------

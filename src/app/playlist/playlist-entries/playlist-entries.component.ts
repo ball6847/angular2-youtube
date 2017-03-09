@@ -6,7 +6,6 @@ import { IApplicationState } from '../../shared/interfaces';
 import { PlaylistService, Playlist } from '../shared';
 import { Video } from '../../video';
 import { PlaylistActiveEntriesReorderedAction } from '../shared/store';
-import '../../operators';
 
 
 @Component({

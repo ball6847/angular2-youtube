@@ -2,7 +2,6 @@ import { Component, ChangeDetectionStrategy } from '@angular/core';
 import { Observable } from 'rxjs/Observable';
 import { PlaylistService } from "../shared";
 import { Playlist } from "../shared";
-import '../../operators';
 
 @Component({
   selector: 'playlist-loader',
