@@ -10,15 +10,15 @@ import { DragulaModule } from 'ng2-dragula/ng2-dragula';
 import { DropdownModule, PopoverModule } from 'ng2-bootstrap';
 import { SelectMeDirective } from './shared/directives/selectme'; // @TODO: publish npm module
 import { FocusMeDirective } from './shared/directives/focusme';
+import { Ng2FirebaseAuthModule } from '../ng2-firebase-auth';
+import { FirebaseConfigModule } from '../firebase';
 import { AppComponent } from './app.component';
 import { AppService } from './app.service';
 import { HeaderComponent } from './shared/nav/header/header.component';
 import { VideoComponent, VideoService } from './video';
-import {
-  SearchResultComponent,
-  SearchResultItemComponent,
-  SearchBoxComponent
-} from './search';
+import { AppReducer } from './shared/reducers';
+import { SearchResultComponent, SearchResultItemComponent, SearchBoxComponent } from './search';
+
 import {
   PlaylistEntriesComponent,
   PlaylistEntryComponent,
@@ -27,7 +27,6 @@ import {
   PlaylistService,
   Playlist
 } from './playlist';
-import { AppReducer } from './shared/reducers';
 
 // -------------------------------------------------------------------
 
@@ -41,6 +40,8 @@ let DEV_MODULES: ModuleWithProviders[] = environment.production ? [] : [
   imports: [
     BrowserModule,
     HttpModule,
+    FirebaseConfigModule,
+    Ng2FirebaseAuthModule,
     Ng2PaginationModule,
     YoutubePlayerModule,
     DragulaModule,
