@@ -1,13 +1,23 @@
 <nav role="navigation">
-  <div class="container">
-    <div class="row">
+  <div [ngSwitch]="(auth$ | async) !== null" class="container">
+    <div *ngSwitchCase="true" class="row">
       <div class="col-md-2 hidden-sm-down">
         <a href="/" class="navbar-brand hidden-xs-down">
           <img src="assets/logo.png">
         </a>
       </div>
-      <div class="col-12 col-md-10">
+      <div class="col-12 col-md-8">
         <search-box></search-box>
+      </div>
+      <div class="col-md-2">
+        <firebase-signout (success)="gotoLogin()"></firebase-signout>
+      </div>
+    </div>
+    <div *ngSwitchCase="false" class="row">
+      <div class="col text-center">
+        <a href="/" class="navbar-brand">
+          <img src="assets/logo.png">
+        </a>
       </div>
     </div>
   </div>

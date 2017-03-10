@@ -1,0 +1,4 @@
+<ng-container [ngSwitch]="(auth$ | async) !== null">
+  <button *ngSwitchCase="false" (click)="signInWithFacebook()" class="btn btn-block btn-primary"><i class="fa fa-facebook-square"></i> Login</button>
+  <button *ngSwitchCase="true" (click)="signOut()" class="btn btn-block btn-danger">Logout</button>
+</ng-container>

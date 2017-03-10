@@ -1,4 +1,6 @@
-import { Component, ChangeDetectionStrategy } from "@angular/core";
+import { Component, ChangeDetectionStrategy, Input } from "@angular/core";
+import { Router } from '@angular/router';
+import { AngularFireAuth } from 'angularfire2';
 
 @Component({
   selector: 'dl-header',
@@ -6,4 +8,14 @@ import { Component, ChangeDetectionStrategy } from "@angular/core";
   templateUrl: './header.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class HeaderComponent {}
+export class HeaderComponent {
+  private auth$;
+
+  constructor(auth: AngularFireAuth, private router: Router) {
+    this.auth$ = auth;
+  }
+
+  gotoLogin() {
+    this.router.navigate(['/login']);
+  }
+}

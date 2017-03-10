@@ -3,21 +3,41 @@ import { NgModule } from '@angular/core';
 import { AuthGuard } from './guards/auth-guard';
 import { UnauthGuard } from './guards/unauth-guard';
 import { AuthService } from './services/auth-service';
+import {
+  FirebaseFacebookSigninComponent,
+  FirebaseGithubSigninComponent,
+  FirebaseGoogleSigninComponent,
+  FirebaseTwitterSigninComponent,
+  FirebaseSignoutComponent
+} from './components';
 
 
 @NgModule({
-  declarations: [],
   imports: [
     CommonModule
+  ],
+  declarations: [
+    FirebaseFacebookSigninComponent,
+    FirebaseGithubSigninComponent,
+    FirebaseGoogleSigninComponent,
+    FirebaseTwitterSigninComponent,
+    FirebaseSignoutComponent
   ],
   providers: [
     AuthGuard,
     AuthService,
     UnauthGuard
+  ],
+  exports: [
+    FirebaseFacebookSigninComponent,
+    FirebaseGithubSigninComponent,
+    FirebaseGoogleSigninComponent,
+    FirebaseTwitterSigninComponent,
+    FirebaseSignoutComponent
   ]
 })
-export class Ng2FirebaseAuthModule {}
+export class FirebaseAuthModule {}
 
-export { AuthGuard };
 export { AuthService };
+export { AuthGuard };
 export { UnauthGuard };

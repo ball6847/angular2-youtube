@@ -7,7 +7,7 @@ export class AuthService {
   private authState: FirebaseAuthState = null;
 
   constructor(public auth$: AngularFireAuth) {
-    auth$.subscribe((state: FirebaseAuthState) => {
+    auth$.subscribe(state => {
       this.authState = state;
     });
   }
@@ -21,15 +21,17 @@ export class AuthService {
   }
 
   signIn(provider: number): Promise<FirebaseAuthState> {
-    return this.auth$.login({provider})
+    return this.auth$
+      .login({ provider })
       .catch(error => console.log('ERROR @ AuthService#signIn() :', error));
   }
 
   signInAnonymously(): Promise<FirebaseAuthState> {
-    return this.auth$.login({
-      provider: AuthProviders.Anonymous,
-      method: AuthMethods.Anonymous
-    })
+    return this.auth$
+      .login({
+        provider: AuthProviders.Anonymous,
+        method: AuthMethods.Anonymous
+      })
       .catch(error => console.log('ERROR @ AuthService#signInAnonymously() :', error));
   }
 
