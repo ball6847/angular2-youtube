@@ -7,3 +7,10 @@ nav {
   height: 32px;
   margin-left: 10px;
 }
+
+firebase-signout >>> button:before {
+  content: '\f167';
+  font-family: FontAwesome;
+  display: inline-block;
+  margin-right: 0.3em;
+}

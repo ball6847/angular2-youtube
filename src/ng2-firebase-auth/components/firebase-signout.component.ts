@@ -1,12 +1,14 @@
-import { Component, ChangeDetectionStrategy, Output, EventEmitter } from "@angular/core";
+import { Component, ChangeDetectionStrategy, Input, Output, EventEmitter } from "@angular/core";
 import { AngularFireAuth } from 'angularfire2';
 
 @Component({
   selector: "firebase-signout",
-  template: '<button (click)="signOut()" class="btn btn-block btn-danger">Signout</button>',
+  template: `<button (click)="signOut()" [ngClass]="classes">{{ text }}</button>`,
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class FirebaseSignoutComponent {
+  @Input() text = 'Sign Out';
+  @Input() classes = 'btn';
   @Output() success = new EventEmitter();
   @Output() error = new EventEmitter();
 
