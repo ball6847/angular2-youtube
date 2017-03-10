@@ -15,14 +15,25 @@ import { PlaylistActiveEntriesReorderedAction } from '../shared/stores';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class PlaylistEntriesComponent implements OnInit, AfterContentInit {
-  // currenly opening playlist, we need entries from it
+  /**
+   * currenly opening playlist, we need entries from it
+   */
   playlist$: Observable<Playlist>
 
-  // internal entries cache, need for syncing between dragula & store
+  /**
+   * internal entries cache, need for syncing between dragula & store
+   */
   entries: Video[] = [];
 
-  // currently playing video
+  /**
+   * currently playing video
+   */
   video$: Observable<Video>;
+
+  /**
+   * Dragula Bag
+   */
+  bagname = 'playlist'
 
   constructor(
     private store: Store<IApplicationState>,
@@ -31,25 +42,31 @@ export class PlaylistEntriesComponent implements OnInit, AfterContentInit {
     private elementRef: ElementRef
   ) {}
 
+  /**
+   * create property binding many service
+   *
+   * we wil use playlist$.entries as data source for ngFor
+   * dragula cannot handle Observable so we need to keep a copy
+   */
   ngOnInit() {
     this.video$ = this.store.select(state => state.playlistState.video);
-
-    // we wil use playlist$.entries as data source for ngFor
     this.playlist$ = this.playlistService.getActive();
-
-    // dragula cannot handle Observable so we need to keep a copy
     this.playlist$.subscribe(playlist => this.entries = playlist.entries);
   }
 
+
+  /**
+   * prepare dragulaService, we need this setOptions call
+   * otherwise dropModel event won't work as we expected
+   *
+   * when dragula update model
+   * dispatch the reordered action to store in the background
+   */
   ngAfterContentInit() {
-    // prepare dragulaService, we need this setOptions call
-    // otherwise dropModel event won't work as we expected
-    this.dragulaService.setOptions('playlist', {
+    this.dragulaService.setOptions(this.bagname, {
       mirrorContainer: this.elementRef.nativeElement
     });
 
-    // when dragula update model
-    // dispatch the reordered action to store in the background
     this.dragulaService.dropModel
       .subscribe(() => {
         if (this.entries.length > 1)
@@ -59,10 +76,28 @@ export class PlaylistEntriesComponent implements OnInit, AfterContentInit {
       });
   }
 
+  /**
+   * Dragular instance cannot initialize more than once
+   * So we need to destroy it when component is not using
+   */
+  ngOnDestroy() {
+    this.dragulaService.destroy(this.bagname);
+  }
+
+  /**
+   * Play the video
+   *
+   * @param video
+   */
   play(video: Video) {
     this.playlistService.play(video);
   }
 
+  /**
+   *  Remove video from the list
+   *
+   * @param video
+   */
   dequeue(video: Video) {
     this.playlistService.dequeue(video);
   }
