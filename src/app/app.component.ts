@@ -1,5 +1,4 @@
 import { Component, ChangeDetectionStrategy, ViewEncapsulation } from "@angular/core";
-import { AuthService } from '../ng2-firebase-auth';
 import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 
 @Component({

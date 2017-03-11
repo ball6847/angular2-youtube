@@ -1,4 +1,5 @@
 import { Component, ChangeDetectionStrategy } from "@angular/core";
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'not-found-page',
@@ -6,4 +7,6 @@ import { Component, ChangeDetectionStrategy } from "@angular/core";
   templateUrl: './not-found-page.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class NotFoundPageComponent {}
+export class NotFoundPageComponent {
+  constructor(protected router: Router) {}
+}

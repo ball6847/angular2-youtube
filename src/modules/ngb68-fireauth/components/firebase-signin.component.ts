@@ -1,12 +1,19 @@
-import { Component, ChangeDetectionStrategy, Input, Output, EventEmitter, Injectable } from "@angular/core";
+import { Component, Input, Output, EventEmitter, ChangeDetectionStrategy } from "@angular/core";
 import { AuthProviders, AuthMethods, AngularFireAuth, FirebaseAuthState } from 'angularfire2';
 
 @Component({
   selector: "firebase-signin",
-  changeDetection: ChangeDetectionStrategy.OnPush
+  template: `<button (click)="signInWithFacebook()" [ngClass]="classes">{{ text }}</button>`,
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class FirebaseSigninComponent {
-  constructor(protected auth$: AngularFireAuth) { }
+  /**
+   * Typescript 2.1+ cannot use DI with the parent class constructor
+   * We need to include the constructor in all child classes
+   *
+   * @param auth$
+   */
+  constructor(protected auth$: AngularFireAuth) {}
 
   /**
    * Default css classes for button

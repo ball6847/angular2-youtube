@@ -1,6 +1,16 @@
+:host {
+  display: block;
+  margin-bottom: 57px;
+}
+
 nav {
   background-color: #cc181e;
   padding: 8px 0;
+  position: fixed;
+  left: 0;
+  right: 0;
+  top: 0;
+  z-index: 9;
 }
 
 .navbar-brand > img {
@@ -9,7 +19,7 @@ nav {
 }
 
 firebase-signout >>> button:before {
-  content: '\f167';
+  content: '\f023';
   font-family: FontAwesome;
   display: inline-block;
   margin-right: 0.3em;

@@ -22,17 +22,18 @@
   "private": true,
   "dependencies": {
     "@angular/cli": "^1.0.0-rc.1",
-    "@angular/common": "~2.4.8",
-    "@angular/compiler": "^2.4.9",
-    "@angular/core": "~2.4.8",
-    "@angular/forms": "~2.4.8",
-    "@angular/http": "~2.4.8",
-    "@angular/platform-browser": "~2.4.8",
-    "@angular/platform-browser-dynamic": "~2.4.8",
+    "@angular/common": "^2.4.0",
+    "@angular/compiler": "^2.4.0",
+    "@angular/core": "^2.4.0",
+    "@angular/forms": "^2.4.0",
+    "@angular/http": "^2.4.0",
+    "@angular/platform-browser": "^2.4.0",
+    "@angular/platform-browser-dynamic": "^2.4.0",
     "@angular/router": "~3.4.8",
     "@ngrx/core": "^1.2.0",
     "@ngrx/store": "^2.2.1",
     "@ngrx/store-devtools": "^3.2.3",
+    "angular2-uuid": "^1.1.1",
     "angularfire2": "^2.0.0-beta.8",
     "bootstrap": "^4.0.0-alpha.6",
     "core-js": "^2.4.1",
@@ -49,12 +50,11 @@
     "rxjs": "5.2.0",
     "tassign": "^1.0.0",
     "ts-helpers": "^1.1.1",
-    "uuid-js": "^0.7.5",
     "zone.js": "^0.7.7"
   },
   "devDependencies": {
     "@angular/cli": "1.0.0-rc.1",
-    "@angular/compiler-cli": "^2.3.1",
+    "@angular/compiler-cli": "^2.4.0",
     "@types/firebase": "^2.4.31",
     "@types/jasmine": "^2.2.30",
     "@types/lodash": "^4.14.54",
@@ -69,8 +69,8 @@
     "karma-jasmine": "^1.0.2",
     "karma-remap-istanbul": "^0.6.0",
     "protractor": "5.1.1",
-    "ts-node": "2.1.0",
-    "tslint": "4.4.2",
-    "typescript": "~2.2.1"
+    "ts-node": "~2.0.0",
+    "tslint": "~4.4.2",
+    "typescript": "~2.1.0"
   }
 }

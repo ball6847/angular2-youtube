@@ -9,7 +9,7 @@ import { IApplicationState } from '../../../shared/interfaces';
 import { Playlist, PlaylistState } from '../interfaces';
 import * as _ from 'lodash';
 import * as moment from 'moment';
-import * as UUID from 'uuid-js';
+import { UUID } from 'angular2-uuid';
 
 // Actions comsumed by this service
 import {
@@ -113,7 +113,7 @@ export class PlaylistService {
    */
   public createPlaylist(name: string) {
     const playlist: Playlist = {
-      id: UUID.create().toString(),
+      id: UUID.UUID(),
       name: name,
       entries: []
     };
@@ -340,7 +340,7 @@ export class PlaylistService {
 
     // create copy of video
     let vdo = Object.assign({}, video);
-    vdo.uuid = UUID.create().toString();
+    vdo.uuid = UUID.UUID();
     vdo.duration = { text: '0.00', seconds: 0 };
 
     // add entry to playlist immediately
