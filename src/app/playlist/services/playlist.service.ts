@@ -1,29 +1,19 @@
+import * as _ from 'lodash';
+import * as moment from 'moment';
+
 import { Injectable } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { Observable } from 'rxjs/Observable';
-import { YoutubePlayerService } from 'ng2-youtube-player/ng2-youtube-player';
-import { tassign } from 'tassign';
-import { AppService } from "../../../app.service";
-import { Video, VideoService } from "../../../video";
-import { IApplicationState } from '../../../shared/interfaces';
-import { Playlist, PlaylistState } from '../interfaces';
-import * as _ from 'lodash';
-import * as moment from 'moment';
 import { UUID } from 'angular2-uuid';
+import { tassign } from 'tassign';
+import { YoutubePlayerService } from 'ng2-youtube-player/ng2-youtube-player';
+import { Playlist, PlaylistState } from '../interfaces';
+import { PlaylistListService, ActivePlaylistService, PlaylistStateChangedAction } from '../stores';
 
-// Actions comsumed by this service
-import {
-  PlaylistCreatedAction,
-  PlaylistUpdatedAction,
-  PlaylistDeletedAction,
-  PlaylistActivatedAction,
-  PlaylistActiveEntryAddedAction,
-  PlaylistActiveEntryUpdatedAction,
-  PlaylistActiveEntryRemovedAction,
-  PlaylistActiveEntryActivatedAction,
-  PlaylistActiveEntriesDeactivatedAction,
-  PlaylistStateChangedAction
-} from '../stores';
+// @todo find a way to separate these external services
+import { AppService } from "../../app.service";
+import { Video, VideoService } from "../../video";
+import { IApplicationState } from '../../shared/interfaces';
 
 
 @Injectable()
@@ -47,19 +37,19 @@ export class PlaylistService {
    *
    * @param store
    * @param appService
-   * @param videoService
-   * @param playerService
+   * @param video
+   * @param player
    */
   constructor(
     private store: Store<IApplicationState>,
     private appService: AppService,
-    private videoService: VideoService,
-    private playerService: YoutubePlayerService
+    private video: VideoService,
+    private player: YoutubePlayerService,
+    protected playlistList: PlaylistListService,
+    protected activePlaylist: ActivePlaylistService
   ) {
     // always start with no active video, state.playing = false
-    this.store.dispatch(
-      new PlaylistActiveEntriesDeactivatedAction()
-    );
+    this.activePlaylist.deactivate();
 
     this.store.dispatch(
       new PlaylistStateChangedAction({ playing: false, video: null })
@@ -69,13 +59,45 @@ export class PlaylistService {
     this._setupSubscriptions();
   }
 
+
+  /**
+  * Bind service's properties to ApplicationStore
+  */
+  private _provideStore() {
+    this.list$ = this.playlistList.get();
+    this.active$ = this.activePlaylist.get();
+    this.state$ = this.store.select('playlistState') as Observable<PlaylistState>;
+    this.entries$ = this.store.select(state => state.playlistActive.entries) as Observable<Video[]>;
+  }
+
   // -------------------------------------------------------------------
 
   /**
-   * Get all playlist in store as observable
+   * Setup service's internal handler
+   * Mostly subscribe to observables and do something useful in service.
    */
-  public getList(): Observable<Playlist[]> {
-    return this.list$;
+  private _setupSubscriptions() {
+    // play video as video changed, or clear playing video
+    // also skip first emit, since we are not ready yet
+    this.store.select(state => state.playlistState.video)
+      .skip(1)
+      .subscribe(video => {
+        const vdo = video ? video : { videoId: null };
+        this.player.playVideo({ id: vdo }, this.appService.player);
+      });
+
+    // we also need tracking of state inside of service
+
+    this.state$
+      .subscribe(state => this.state = Object.assign({}, state));
+
+    this.active$
+      .subscribe(playlist => {
+        this.active = playlist;
+        // load entries back to original playlist pool
+        // this will need to change to firebase implement
+        this.playlistList.update(playlist);
+      });
   }
 
   // -------------------------------------------------------------------
@@ -94,90 +116,6 @@ export class PlaylistService {
    */
   public getState(): Observable<PlaylistState> {
     return this.state$;
-  }
-
-  // -------------------------------------------------------------------
-
-  /**
-   * Get active playlist observable
-   */
-  public getActive(): Observable<Playlist> {
-    return this.active$;
-  }
-
-  // -------------------------------------------------------------------
-
-  /**
-   * Create a new playlist and giving it a name
-   * @param name
-   */
-  public createPlaylist(name: string) {
-    const playlist: Playlist = {
-      id: UUID.UUID(),
-      name: name,
-      entries: []
-    };
-
-    this.store.dispatch(
-      new PlaylistCreatedAction(playlist)
-    );
-
-    this.loadPlaylist(playlist);
-  }
-
-  // -------------------------------------------------------------------
-
-  /**
-   * Rename a given playlist to another name
-   *
-   * @param playlist
-   * @param name
-   */
-  public renamePlaylist(playlist: Playlist, name: string) {
-    const newPlaylist = tassign(playlist, { name: name });
-
-    this.store.dispatch(
-      new PlaylistUpdatedAction(newPlaylist)
-    )
-
-    this.store.dispatch(
-      new PlaylistActivatedAction(newPlaylist)
-    );
-  }
-
-  // -------------------------------------------------------------------
-
-  /**
-   * Remove a given playlist from store
-   *
-   * @param playlist
-   */
-  public deletePlaylist(playlist: Playlist): void {
-    this.store.dispatch(
-      new PlaylistDeletedAction(playlist)
-    );
-
-    this.store.dispatch(
-      new PlaylistActivatedAction(null)
-    );
-  }
-
-  // -------------------------------------------------------------------
-
-  /**
-   * Load a given playlist to workspace
-   *
-   * @param playlist
-   */
-  public loadPlaylist(playlist: Playlist) {
-    this.store.dispatch(
-      new PlaylistActivatedAction(playlist)
-    );
-
-    // this will auto activated upon playlist activation
-    // this.store.dispatch(
-    //   new PlaylistEntriesLoadedAction(playlist.entries)
-    // );
   }
 
   // -------------------------------------------------------------------
@@ -238,10 +176,6 @@ export class PlaylistService {
       return;
 
     this.store.dispatch(
-      new PlaylistActiveEntryActivatedAction(video)
-    );
-
-    this.store.dispatch(
       new PlaylistStateChangedAction({ video: video })
     );
   }
@@ -256,9 +190,6 @@ export class PlaylistService {
       return;
 
     const playingVideo = this._getPlayingVideo();
-
-    console.log('playing video:', playingVideo);
-
 
     // to do a realistic shuffle we need to remove playingVideo from the list
     // or just keep them all if there is no video playing
@@ -336,7 +267,7 @@ export class PlaylistService {
    */
   public enqueue(video: Video): void {
     if (!this.active.id)
-      this.createPlaylist('Untitled');
+      this.playlistList.create('Untitled');
 
     // create copy of video
     let vdo = Object.assign({}, video);
@@ -344,12 +275,10 @@ export class PlaylistService {
     vdo.duration = { text: '0.00', seconds: 0 };
 
     // add entry to playlist immediately
-    this.store.dispatch(
-      new PlaylistActiveEntryAddedAction(vdo)
-    );
+    this.activePlaylist.enqueue(vdo);
 
     // and update it afterward
-    this.videoService.fetchVideo(vdo.videoId)
+    this.video.fetchVideo(vdo.videoId)
       .subscribe(v => {
         let d = moment.duration(v.contentDetails.duration);
 
@@ -358,9 +287,7 @@ export class PlaylistService {
           seconds: d.asSeconds()
         };
 
-        this.store.dispatch(
-          new PlaylistActiveEntryUpdatedAction(vdo)
-        );
+        this.activePlaylist.updateEntry(vdo);
       });
   }
 
@@ -376,15 +303,11 @@ export class PlaylistService {
       if (this.state.video && this.state.video.uuid === video.uuid)
         this.next();
 
-      return this.store.dispatch(
-        new PlaylistActiveEntryRemovedAction(video)
-      );
+      return this.activePlaylist.dequeue(video);
     }
 
     if (this.active.entries.length > 0)
-      this.store.dispatch(
-        new PlaylistActiveEntryRemovedAction(video)
-      );
+      this.activePlaylist.dequeue(video);
 
     this.store.dispatch(
       new PlaylistStateChangedAction({ video: null })
@@ -421,45 +344,6 @@ export class PlaylistService {
   // PRIVATE METHOD
   // -------------------------------------------------------------------
 
-  /**
-  * Bind service's properties to ApplicationStore
-  */
-  private _provideStore() {
-    this.list$ = this.store.select('playlistList') as Observable<Playlist[]>;
-    this.active$ = this.store.select('playlistActive') as Observable<Playlist>;
-    this.state$ = this.store.select('playlistState') as Observable<PlaylistState>;
-    this.entries$ = this.store.select(state => state.playlistActive.entries) as Observable<Video[]>;
-  }
-
-  // -------------------------------------------------------------------
-
-  /**
-   * Setup service's internal handler
-   * Mostly subscribe to observables and do something useful in service.
-   */
-  private _setupSubscriptions() {
-    // play video as video changed, or clear playing video
-    // also skip first emit, since we are not ready yet
-    this.store.select(s => s.playlistState.video)
-      .skip(1)
-      .subscribe(video => {
-        const vdo = video ? video : { videoId: null };
-        this.playerService.playVideo({ id: vdo }, this.appService.player);
-      });
-
-    // we also need tracking of state inside of service
-
-    this.state$
-      .subscribe(state => this.state = Object.assign({}, state));
-
-    this.active$
-      .subscribe(playlist => {
-        this.active = playlist;
-        this.store.dispatch(
-          new PlaylistUpdatedAction(playlist)
-        );
-      });
-  }
 
   // -------------------------------------------------------------------
 

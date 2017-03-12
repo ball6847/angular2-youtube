@@ -1,7 +1,7 @@
 import { Component, ChangeDetectionStrategy } from '@angular/core';
 import { Observable } from 'rxjs/Observable';
-import { PlaylistService } from "../shared";
-import { Playlist } from "../shared";
+import { PlaylistListService, ActivePlaylistService } from "../../stores";
+import { Playlist } from "../../interfaces";
 
 @Component({
   selector: 'playlist-loader',
@@ -13,21 +13,27 @@ export class PlaylistLoaderComponent {
   list$: Observable<Playlist[]>
   active$: Observable<Playlist>;
 
-  constructor(private playlistService: PlaylistService) { }
+  constructor(
+    protected playlistList: PlaylistListService,
+    protected activePlaylist: ActivePlaylistService
+  ) { }
 
   ngOnInit() {
-    this.list$ = this.playlistService.getList();
-    this.active$ = this.playlistService.getActive()
+    this.list$ = this.playlistList.get();
+    // @todo create playlistActiveService
+    // this.active$ = this.playlistList.getActive()
   }
 
   load(playlist: Playlist) {
-    this.playlistService.loadPlaylist(playlist);
+    this.activePlaylist.activate(playlist);
   }
 
   create(name: any, popover: any) {
     if (!name.value)
       return;
-    this.playlistService.createPlaylist(name.value);
+
+    this.playlistList.create(name.value);
+
     name.value = "";
     popover.hide();
   }
@@ -38,7 +44,7 @@ export class PlaylistLoaderComponent {
       .subscribe(playlist => {
         if (!name.value)
           return;
-        this.playlistService.renamePlaylist(playlist, name.value);
+        this.playlistList.rename(playlist, name.value);
         name.value = "";
         popover.hide();
       });
@@ -48,7 +54,7 @@ export class PlaylistLoaderComponent {
     playlist$
       .take(1)
       .subscribe(playlist => {
-        this.playlistService.deletePlaylist(playlist);
+        this.playlistList.delete(playlist);
       });
   }
 }

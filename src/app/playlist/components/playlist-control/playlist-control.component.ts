@@ -1,5 +1,5 @@
 import { Component, ChangeDetectionStrategy } from '@angular/core';
-import { PlaylistService } from '../shared';
+import { PlaylistService } from '../../services';
 
 @Component({
   selector: 'playlist-control',

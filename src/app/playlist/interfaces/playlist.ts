@@ -5,10 +5,3 @@ export class Playlist {
   name: string;
   entries: Video[] = [];
 }
-
-export class PlaylistState {
-  playing = false;
-  shuffle = false;
-  loop = false;
-  video: Video;
-}

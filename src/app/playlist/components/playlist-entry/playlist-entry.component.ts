@@ -1,5 +1,7 @@
 import { Component, Input, Output, EventEmitter, ChangeDetectionStrategy } from '@angular/core';
-import { Video } from '../../video';
+
+// @todo: find a way to isolate this
+import { Video } from '../../../video';
 
 @Component({
   selector: '[playlist-entry]',

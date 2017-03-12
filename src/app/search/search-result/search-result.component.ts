@@ -12,7 +12,7 @@ import {
 import { VideoService } from "../../video/shared";
 
 // @TODO: maybe use store.dispatch and let the service subcribe for its changes, but we will need PlaylistEnqueueEntryAction instead?
-import { PlaylistService } from "../../playlist/shared"
+import { PlaylistService } from "../../playlist/services"
 
 
 @Component({

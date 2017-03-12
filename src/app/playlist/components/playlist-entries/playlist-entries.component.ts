@@ -2,10 +2,13 @@ import { Component, ElementRef, OnInit, AfterContentInit, ChangeDetectionStrateg
 import { Observable } from 'rxjs/Observable';
 import { DragulaService } from 'ng2-dragula/ng2-dragula';
 import { Store } from '@ngrx/store';
-import { IApplicationState } from '../../shared/interfaces';
-import { PlaylistService, Playlist } from '../shared';
-import { Video } from '../../video';
-import { PlaylistActiveEntriesReorderedAction } from '../shared/stores';
+import { Playlist } from '../../interfaces';
+import { PlaylistService } from '../../services';
+import { ActivePlaylistService } from '../../stores';
+
+// @todo: find a way to isolate these two dependencies
+import { IApplicationState } from '../../../shared/interfaces';
+import { Video } from '../../../video';
 
 
 @Component({
@@ -39,7 +42,8 @@ export class PlaylistEntriesComponent implements OnInit, AfterContentInit {
     private store: Store<IApplicationState>,
     private playlistService: PlaylistService,
     private dragulaService: DragulaService,
-    private elementRef: ElementRef
+    private elementRef: ElementRef,
+    private activePlaylist: ActivePlaylistService
   ) {}
 
   /**
@@ -49,9 +53,13 @@ export class PlaylistEntriesComponent implements OnInit, AfterContentInit {
    * dragula cannot handle Observable so we need to keep a copy
    */
   ngOnInit() {
+    // @todo move this liine to playlistStateService
     this.video$ = this.store.select(state => state.playlistState.video);
-    this.playlist$ = this.playlistService.getActive();
-    this.playlist$.subscribe(playlist => this.entries = playlist.entries);
+
+    this.playlist$ = this.activePlaylist.get();
+
+    this.playlist$
+      .subscribe(playlist => this.entries = playlist.entries);
   }
 
 
@@ -70,9 +78,7 @@ export class PlaylistEntriesComponent implements OnInit, AfterContentInit {
     this.dragulaService.dropModel
       .subscribe(() => {
         if (this.entries.length > 1)
-          this.store.dispatch(
-            new PlaylistActiveEntriesReorderedAction(this.entries)
-          );
+          this.activePlaylist.saveOrdering(this.entries);
       });
   }
 
