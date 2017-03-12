@@ -146,7 +146,7 @@ export class PlaylistService {
     this.entries$
       .take(1)
       .filter(entries => entries.length > 0)
-      .combineLatest(this.state$, (entries, state) => [entries, state])
+      .combineLatest(this.state$.take(1), (entries, state) => [entries, state])
       .subscribe(combined => {
         const [entries, state] = [<Video[]>combined[0], <PlaylistState>combined[1]]
 
@@ -201,7 +201,7 @@ export class PlaylistService {
     this.entries$
       .take(1)
       .filter(entries => entries.length > 0)
-      .combineLatest(this.state$, (entries, state) => [entries, state])
+      .combineLatest(this.state$.take(1), (entries, state) => [entries, state])
       .subscribe(combined => {
         const [entries, state] = [<Video[]>combined[0], <PlaylistState>combined[1]]
 
@@ -222,11 +222,14 @@ export class PlaylistService {
     this.entries$
       .take(1)
       .filter(entries => entries.length > 0)
-      .combineLatest(this.state$, (entries, state) => [entries, state])
+      .combineLatest(this.state$.take(1), (entries, state) => [entries, state])
       .subscribe(combined => {
         const [entries, state] = [<Video[]>combined[0], <PlaylistState>combined[1]]
 
-        let index = state.video ? _.findIndex(entries, { uuid: state.video.uuid })+1 : 0;
+        if (state.shuffle)
+          return this.playRandom();
+
+        let index = state.video ? _.findIndex(entries, { uuid: state.video.uuid }) + 1 : 0;
 
         if (index >= entries.length) {
           index = 0;
@@ -262,7 +265,7 @@ export class PlaylistService {
     this.entries$
       .take(1)
       .filter(entries => entries.length > 0)
-      .combineLatest(this.state$, (entries, state) => [entries, state])
+      .combineLatest(this.state$.take(1), (entries, state) => [entries, state])
       .subscribe(combined => {
         const [entries, state] = [<Video[]>combined[0], <PlaylistState>combined[1]]
 
@@ -333,7 +336,7 @@ export class PlaylistService {
   public dequeue(video: Video): void {
     this.entries$
       .take(1)
-      .combineLatest(this.state$, (entries, state) => [entries, state])
+      .combineLatest(this.state$.take(1), (entries, state) => [entries, state])
       .subscribe(combined => {
         const [entries, state] = [<Video[]>combined[0], <PlaylistState>combined[1]]
 
