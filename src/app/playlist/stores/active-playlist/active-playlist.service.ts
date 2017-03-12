@@ -56,6 +56,12 @@ export class ActivePlaylistService {
     );
   }
 
+  listEntries() {
+    this.store.dispatch(
+      new action.PlaylistActiveListEntriesAction()
+    );
+  }
+
   /**
    * Set new ordering
    *

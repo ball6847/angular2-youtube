@@ -235,25 +235,8 @@ export class PlaylistService {
           index = 0;
         }
 
-        this.playlistState.setState({ video: entries[index] });
+        this.play(entries[index]);
       });
-
-    // if (!this.active.entries.length)
-    //   return;
-
-    // if (this.state.shuffle)
-    //   return this.playRandom();
-
-    // // play video next to the currently playing video
-    // let index = this._getPlayingVideoIndex() + 1;
-
-    // if (index >= this.active.entries.length) {
-    //   // if (!this.state.loop)
-    //   //   return this.nowPlaying$.next(undefined);
-    //   index = 0;
-    // }
-
-    // this.play(this.active.entries[index]);
   }
 
   // -------------------------------------------------------------------
@@ -269,30 +252,17 @@ export class PlaylistService {
       .subscribe(combined => {
         const [entries, state] = [<Video[]>combined[0], <PlaylistState>combined[1]]
 
-        let index = state.video ? _.findIndex(entries, { uuid: state.video.uuid }) -1 : -2;
+        if (state.shuffle)
+          return this.playRandom();
 
-        if (index > 0) {
+        let index = state.video ? _.findIndex(entries, { uuid: state.video.uuid }) -1 : -1;
+
+        if (index < 0) {
           index = entries.length - 1;
         }
 
-        this.playlistState.setState({ video: entries[index] });
+        this.play(entries[index]);
       });
-
-
-    // if (!this.active.entries.length)
-    //   return;
-
-    // if (this.state.shuffle)
-    //   return this.playRandom();
-
-    // // play video right before the currently playing video
-    // let index = this._getPlayingVideoIndex() - 1;
-
-    // // or, move to last entry of the list
-    // if (index < 0)
-    //   index = this.active.entries.length - 1;
-
-    // this.play(this.active.entries[index]);
   }
 
   // -------------------------------------------------------------------

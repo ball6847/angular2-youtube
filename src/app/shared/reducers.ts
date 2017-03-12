@@ -16,6 +16,7 @@ const reducer: ActionReducer<State<IApplicationState>> = compose(
   playlistList: playlist.PlaylistListReducer,
   playlistActive: playlist.PlaylistActiveReducer,
   playlistState: playlist.PlaylistControlStateReducer,
+  playlistEntries: playlist.PlaylistEntriesReducer,
   searchResult: search.SearchResultReducer,
   searchResultPage: search.SearchResultPageReducer
 });

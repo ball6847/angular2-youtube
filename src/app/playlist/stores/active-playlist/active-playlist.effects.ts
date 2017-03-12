@@ -11,9 +11,13 @@ import { ActivePlaylistApiService } from './active-playlist.api';
 import {
   PLAYLIST_ACTIVATED,
   PLAYLIST_ACTIVE_INIT,
+  PLAYLIST_ACTIVE_LIST_ENTRIES,
   PlaylistActivatedFulfilledAction,
   PlaylistActiveInitFulfilledAction,
-  PlaylistActiveInitFailedAction
+  PlaylistActiveInitFailedAction,
+  PlaylistActiveListEntriesAction,
+  PlaylistActiveListEntriesFulfilledAction,
+  PlaylistActiveListEntriesFailedAction
 } from './active-playlist.actions';
 
 @Injectable()
@@ -40,6 +44,13 @@ export class ActivePlaylistEffects {
       .map(playlist => new PlaylistActivatedFulfilledAction(playlist))
     );
 
+  @Effect()
+  listEntries$ = this.actions$
+    .ofType(PLAYLIST_ACTIVE_LIST_ENTRIES)
+    .switchMap(() => this.activePlaylistApi.listEntries()
+      .map(playlists => new PlaylistActiveListEntriesFulfilledAction(playlists))
+      .catch(error => Observable.of(new PlaylistActiveListEntriesFailedAction(error)))
+    );
 
   // @Effect()
   // create$ = this.actions$

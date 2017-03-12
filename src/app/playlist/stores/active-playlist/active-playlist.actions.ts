@@ -9,6 +9,9 @@ export const PLAYLIST_ACTIVE_INIT_FULFILLED = 'PLAYLIST_ACTIVE_INIT_FULFILLED';
 export const PLAYLIST_ACTIVE_INIT_FAILED = 'PLAYLIST_ACTIVE_INIT_FAILED';
 export const PLAYLIST_ACTIVATED = 'PLAYLIST_ACTIVATED';
 export const PLAYLIST_ACTIVATED_FULFILLED = 'PLAYLIST_ACTIVATED_FULFILLED';
+export const PLAYLIST_ACTIVE_LIST_ENTRIES = 'PLAYLIST_ACTIVE_LIST_ENTRIES';
+export const PLAYLIST_ACTIVE_LIST_ENTRIES_FULFILLED = 'PLAYLIST_ACTIVE_LIST_ENTRIES_FULFILLED';
+export const PLAYLIST_ACTIVE_LIST_ENTRIES_FAILED = 'PLAYLIST_ACTIVE_LIST_ENTRIES_FAILED';
 export const PLAYLIST_ACTIVE_ENTRIES_REORDERED = 'PLAYLIST_ACTIVE_ENTRIES_REORDERED';
 export const PLAYLIST_ACTIVE_ENTRIES_DEACTIVATED = 'PLAYLIST_ACTIVE_ENTRIES_DEACTIVATED';
 export const PLAYLIST_ACTIVE_ENTRY_ADDED = 'PLAYLIST_ACTIVE_ENTRY_ADDED';
@@ -47,13 +50,30 @@ export class PlaylistActiveInitFailedAction extends PlaylistActiveInitAction {
   type = PLAYLIST_ACTIVE_INIT_FAILED;
 }
 
+
 export class PlaylistActivatedAction extends PlaylistActiveActionBase {
   type = PLAYLIST_ACTIVATED;
 }
-
 export class PlaylistActivatedFulfilledAction extends PlaylistActiveActionBase {
   type = PLAYLIST_ACTIVATED_FULFILLED;
 }
+
+
+export class PlaylistActiveListEntriesAction extends PlaylistActiveEntriesActionBase {
+  type = PLAYLIST_ACTIVE_LIST_ENTRIES;
+  payload: null;
+  constructor() {
+    super([]);
+  }
+}
+export class PlaylistActiveListEntriesFulfilledAction extends PlaylistActiveEntriesActionBase {
+  type = PLAYLIST_ACTIVE_LIST_ENTRIES;
+}
+export class PlaylistActiveListEntriesFailedAction extends PlaylistActiveEntriesActionBase {
+  type = PLAYLIST_ACTIVE_LIST_ENTRIES;
+}
+
+
 
 export class PlaylistActiveEntriesReorderedAction extends PlaylistActiveEntriesActionBase {
   type = PLAYLIST_ACTIVE_ENTRIES_REORDERED;
