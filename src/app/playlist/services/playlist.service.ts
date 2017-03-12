@@ -143,24 +143,37 @@ export class PlaylistService {
    * Play or pause currently playing video
    */
   public togglePlay(): void {
+    this.entries$
+      .take(1)
+      .filter(entries => entries.length > 0)
+      .combineLatest(this.state$, (entries, state) => [entries, state])
+      .subscribe(combined => {
+        const [entries, state] = [<Video[]>combined[0], <PlaylistState>combined[1]]
+
+        const video = state.video;
+
+        if (!video && entries.length) {
+          return this.next();
+        }
+
+        // toggle playig video, or set state to not play
+        // this.state.playing = video ? !this.state.playing : false;
+        state.playing = video ? !state.playing : false;
+
+        this._dispatchState(state);
+
+        if (state.playing) {
+          this.appService.player.playVideo();
+        } else {
+          this.appService.player.pauseVideo();
+        }
+      });
+
+
+
     if (!this.active.entries.length) return;
 
-    const video = this._getPlayingVideo();
 
-    if (!video && this.active.entries.length) {
-      return this.next();
-    }
-
-    // toggle playig video, or set state to not play
-    // this.state.playing = video ? !this.state.playing : false;
-    this.state.playing = video ? !this.state.playing : false;
-    this._dispatchState();
-
-    if (this.state.playing) {
-      this.appService.player.playVideo();
-    } else {
-      this.appService.player.pauseVideo();
-    }
   }
 
   // --------------------------------------------------------------------
@@ -196,7 +209,7 @@ export class PlaylistService {
         // // or just keep them all if there is no video playing
         // // @TODO: we may need to keep track a list of recently playing videos, to get more realistic result
         let newEntries = entries.filter(item => !state.video || state.video.uuid != item.uuid);
-        this.play(newEntries[Math.floor(Math.random() * newEntries.length)]);
+        this.playlistState.setState({ video: newEntries[Math.floor(Math.random() * newEntries.length)] });
       });
   }
 
@@ -206,22 +219,38 @@ export class PlaylistService {
    * Play next video
    */
   public next(): void {
-    if (!this.active.entries.length)
-      return;
+    this.entries$
+      .take(1)
+      .filter(entries => entries.length > 0)
+      .combineLatest(this.state$, (entries, state) => [entries, state])
+      .subscribe(combined => {
+        const [entries, state] = [<Video[]>combined[0], <PlaylistState>combined[1]]
 
-    if (this.state.shuffle)
-      return this.playRandom();
+        let index = state.video ? _.findIndex(entries, { uuid: state.video.uuid })+1 : 0;
 
-    // play video next to the currently playing video
-    let index = this._getPlayingVideoIndex() + 1;
+        if (index >= entries.length) {
+          index = 0;
+        }
 
-    if (index >= this.active.entries.length) {
-      // if (!this.state.loop)
-      //   return this.nowPlaying$.next(undefined);
-      index = 0;
-    }
+        this.playlistState.setState({ video: entries[index] });
+      });
 
-    this.play(this.active.entries[index]);
+    // if (!this.active.entries.length)
+    //   return;
+
+    // if (this.state.shuffle)
+    //   return this.playRandom();
+
+    // // play video next to the currently playing video
+    // let index = this._getPlayingVideoIndex() + 1;
+
+    // if (index >= this.active.entries.length) {
+    //   // if (!this.state.loop)
+    //   //   return this.nowPlaying$.next(undefined);
+    //   index = 0;
+    // }
+
+    // this.play(this.active.entries[index]);
   }
 
   // -------------------------------------------------------------------
@@ -230,20 +259,37 @@ export class PlaylistService {
    * Play the previous video
    */
   public prev(): void {
-    if (!this.active.entries.length)
-      return;
+    this.entries$
+      .take(1)
+      .filter(entries => entries.length > 0)
+      .combineLatest(this.state$, (entries, state) => [entries, state])
+      .subscribe(combined => {
+        const [entries, state] = [<Video[]>combined[0], <PlaylistState>combined[1]]
 
-    if (this.state.shuffle)
-      return this.playRandom();
+        let index = state.video ? _.findIndex(entries, { uuid: state.video.uuid }) -1 : -2;
 
-    // play video right before the currently playing video
-    let index = this._getPlayingVideoIndex() - 1;
+        if (index > 0) {
+          index = entries.length - 1;
+        }
 
-    // or, move to last entry of the list
-    if (index < 0)
-      index = this.active.entries.length - 1;
+        this.playlistState.setState({ video: entries[index] });
+      });
 
-    this.play(this.active.entries[index]);
+
+    // if (!this.active.entries.length)
+    //   return;
+
+    // if (this.state.shuffle)
+    //   return this.playRandom();
+
+    // // play video right before the currently playing video
+    // let index = this._getPlayingVideoIndex() - 1;
+
+    // // or, move to last entry of the list
+    // if (index < 0)
+    //   index = this.active.entries.length - 1;
+
+    // this.play(this.active.entries[index]);
   }
 
   // -------------------------------------------------------------------
@@ -287,9 +333,12 @@ export class PlaylistService {
   public dequeue(video: Video): void {
     this.entries$
       .take(1)
-      .subscribe(entries => {
+      .combineLatest(this.state$, (entries, state) => [entries, state])
+      .subscribe(combined => {
+        const [entries, state] = [<Video[]>combined[0], <PlaylistState>combined[1]]
+
         if (entries.length > 1) {
-          if (this.state.video && this.state.video.uuid === video.uuid)
+          if (state.video && state.video.uuid === video.uuid)
             this.next();
           return this.activePlaylist.dequeue(video);
         }
@@ -357,8 +406,8 @@ export class PlaylistService {
   /**
    * [DEPRECATED] Util function, dispatch updated state to ApplicationStore
    */
-  private _dispatchState() {
-    this.playlistState.setState(this.state)
+  private _dispatchState(state?) {
+    this.playlistState.setState(state || this.state)
   }
 
   // -------------------------------------------------------------------
