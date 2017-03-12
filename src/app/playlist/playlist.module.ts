@@ -11,7 +11,8 @@ import {
   ActivePlaylistService,
   PlaylistListService,
   PlaylistStateService,
-  PlaylistListApiService
+  PlaylistListApiService,
+  ActivePlaylistApiService
 } from './stores';
 
 const COMPONENTS = [
@@ -26,7 +27,8 @@ const SERVICES = [
   ActivePlaylistService,
   PlaylistListService,
   PlaylistStateService,
-  PlaylistListApiService
+  PlaylistListApiService,
+  ActivePlaylistApiService
 ];
 
 

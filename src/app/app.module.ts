@@ -20,7 +20,10 @@ import { LoginPageComponent, PlayerPageComponent, NotFoundPageComponent } from '
 import { AppRouterModule } from './app.router';
 import { PlaylistModule } from './playlist';
 import { EffectsModule } from '@ngrx/effects';
-import { PlaylistListEffects } from './playlist/stores/playlist-list/playlist-list.effects';
+import {
+  PlaylistListEffects,
+  ActivePlaylistEffects
+} from './playlist/stores';
 
 
 
@@ -43,6 +46,7 @@ let DEV_MODULES: ModuleWithProviders[] = environment.production ? [] : [
     YoutubePlayerModule,
     StoreModule.provideStore(AppReducer),
     EffectsModule.run(PlaylistListEffects),
+    EffectsModule.run(ActivePlaylistEffects),
     PlaylistModule,
     AppRouterModule,
     ...DEV_MODULES

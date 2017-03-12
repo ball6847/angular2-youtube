@@ -10,6 +10,10 @@ const defaultPlaylist: Playlist = {
 
 export function PlaylistActiveReducer(state = defaultPlaylist, action: ACTION.PlaylistActiveActionBase): Playlist {
   switch (action.type) {
+    case ACTION.PLAYLIST_ACTIVE_INIT_FULFILLED:
+      action.payload.entries = [];
+      return <Playlist>action.payload;
+
     case ACTION.PLAYLIST_ACTIVATED:
       return tassign(state, action.payload);
 

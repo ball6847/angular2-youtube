@@ -1,5 +1,5 @@
 import 'rxjs/add/operator/skip';
-
+import 'rxjs/add/operator/partition';
 import * as _ from 'lodash';
 import * as moment from 'moment';
 
@@ -68,7 +68,8 @@ export class PlaylistService {
     this.list$ = this.playlistList.get();
     this.active$ = this.activePlaylist.get();
     this.state$ = this.playlistState.get();
-    this.entries$ = this.store.select(state => state.playlistActive.entries) as Observable<Video[]>;
+    // this.entries$ = this.store.select(state => state.playlistActive.entries) as Observable<Video[]>;
+    this.entries$ = this.activePlaylist.activePlaylistApi.listEntries();
   }
 
   // -------------------------------------------------------------------
@@ -170,10 +171,12 @@ export class PlaylistService {
    * @param video
    */
   public play(video: Video): void {
-    if (!this.active.entries.length)
-      return;
-
-    this.playlistState.setState({ video: video });
+    this.entries$
+      .take(1)
+      .filter(entries => entries.length > 0)
+      .subscribe(() => {
+        this.playlistState.setState({ video: video });
+      });
   }
 
   // -------------------------------------------------------------------
@@ -182,17 +185,19 @@ export class PlaylistService {
    * Play random video
    */
   public playRandom(): void {
-    if (!this.active.entries.length)
-      return;
+    this.entries$
+      .take(1)
+      .filter(entries => entries.length > 0)
+      .combineLatest(this.state$, (entries, state) => [entries, state])
+      .subscribe(combined => {
+        const [entries, state] = [<Video[]>combined[0], <PlaylistState>combined[1]]
 
-    const playingVideo = this._getPlayingVideo();
-
-    // to do a realistic shuffle we need to remove playingVideo from the list
-    // or just keep them all if there is no video playing
-    // @TODO: we may need to keep track a list of recently playing videos, to get more realistic result
-    let entries = this.active.entries.filter(item => !playingVideo || playingVideo.uuid != item.uuid);
-    const video = entries[Math.floor(Math.random()*entries.length)];
-    this.play(video);
+        // // to do a realistic shuffle we need to remove playingVideo from the list
+        // // or just keep them all if there is no video playing
+        // // @TODO: we may need to keep track a list of recently playing videos, to get more realistic result
+        let newEntries = entries.filter(item => !state.video || state.video.uuid != item.uuid);
+        this.play(newEntries[Math.floor(Math.random() * newEntries.length)]);
+      });
   }
 
   // -------------------------------------------------------------------
@@ -270,19 +275,6 @@ export class PlaylistService {
 
     // add entry to playlist immediately
     this.activePlaylist.enqueue(vdo);
-
-    // and update it afterward
-    this.video.fetchVideo(vdo.videoId)
-      .subscribe(v => {
-        let d = moment.duration(v.contentDetails.duration);
-
-        vdo.duration = {
-          text: this._formatDuration(d.get('hours'),  d.get('minutes'), d.get('seconds')),
-          seconds: d.asSeconds()
-        };
-
-        this.activePlaylist.updateEntry(vdo);
-      });
   }
 
   // -------------------------------------------------------------------
@@ -293,17 +285,18 @@ export class PlaylistService {
    * @param video
    */
   public dequeue(video: Video): void {
-    if (this.active.entries.length > 1) {
-      if (this.state.video && this.state.video.uuid === video.uuid)
-        this.next();
-
-      return this.activePlaylist.dequeue(video);
-    }
-
-    if (this.active.entries.length > 0)
-      this.activePlaylist.dequeue(video);
-
-    this.playlistState.setState({ video: null });
+    this.entries$
+      .take(1)
+      .subscribe(entries => {
+        if (entries.length > 1) {
+          if (this.state.video && this.state.video.uuid === video.uuid)
+            this.next();
+          return this.activePlaylist.dequeue(video);
+        }
+        if (entries.length > 0)
+          this.activePlaylist.dequeue(video);
+        this.playlistState.setState({ video: null });
+      });
   }
 
   // -------------------------------------------------------------------
@@ -370,26 +363,5 @@ export class PlaylistService {
 
   // -------------------------------------------------------------------
 
-  /**
-   * Util function, generate video duration in readable format
-   * Example: 4:58, 1:05:15
-   *
-   * @param h hours returned from momentObject.get('hours')
-   * @param m minutes returned from momentObject.get('minutes')
-   * @param s seconds returned from momentObject.get('seconds)
-   */
-  private _formatDuration(h: number, m: number, s: number): string {
-    let duration = [];
 
-    if (h) {
-      duration.push(h);
-      duration.push(('00' + m).slice(-2));
-    } else {
-      duration.push(m)
-    }
-
-    duration.push(('00' + s).slice(-2))
-
-    return duration.join(':');
-  }
 }

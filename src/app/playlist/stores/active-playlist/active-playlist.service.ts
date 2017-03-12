@@ -5,6 +5,7 @@ import { IApplicationState } from 'app/shared/interfaces'
 import { Playlist } from '../../interfaces';
 import {  } from '../playlist-list/';
 import * as action from './active-playlist.actions';
+import { ActivePlaylistApiService } from './active-playlist.api';
 
 // @todo: find a way to separate this
 import { Video } from '../../../video';
@@ -12,7 +13,16 @@ import { Video } from '../../../video';
 
 @Injectable()
 export class ActivePlaylistService {
-  constructor(protected store: Store<IApplicationState>) {}
+  constructor(protected store: Store<IApplicationState>, public activePlaylistApi: ActivePlaylistApiService) {
+  }
+
+
+
+  init() {
+    this.store.dispatch(
+      new action.PlaylistActiveInitAction()
+    );
+  }
 
   /**
    * Get list playlist as Observable
@@ -66,10 +76,13 @@ export class ActivePlaylistService {
     this.store.dispatch(
       new action.PlaylistActiveEntryAddedAction(video)
     );
+
+    // @todo: will move to effect
+    this.activePlaylistApi.addEntry(video);
   }
 
   /**
-   * Update video in the active playlist5
+   * Update video in the active playlist, generally update video duration
    *
    * @param video
    */
@@ -77,6 +90,9 @@ export class ActivePlaylistService {
     this.store.dispatch(
       new action.PlaylistActiveEntryUpdatedAction(video)
     );
+
+    // @todo: will move to effect
+    // this.activePlaylistApi.updateEntry(video);
   }
 
 
@@ -89,5 +105,8 @@ export class ActivePlaylistService {
     this.store.dispatch(
       new action.PlaylistActiveEntryRemovedAction(video)
     );
+
+    // @todo: will move to effect
+    this.activePlaylistApi.dropEntry(video);
   }
 }

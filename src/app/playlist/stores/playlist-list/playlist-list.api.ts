@@ -32,7 +32,7 @@ export class PlaylistListApiService {
 
 
   /**
-   * Create a new playlist and giving it a name
+   * Create a new playlist
    *
    * @param name
    */

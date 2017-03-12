@@ -8,6 +8,7 @@ export class VideoDuration {
 // @TODO: remove moment and use angular2-moment directive instead
 export class Video {
   // unique id, to identify playlist items
+  $key?: string;
   uuid: string;
   playing: boolean = false;
   duration: VideoDuration;

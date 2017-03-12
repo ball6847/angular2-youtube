@@ -33,6 +33,8 @@ export class PlaylistEntriesComponent implements OnInit, AfterContentInit {
    */
   video$: Observable<Video>;
 
+  entries$: Observable<Video[]>;
+
   /**
    * Dragula Bag
    */
@@ -58,8 +60,12 @@ export class PlaylistEntriesComponent implements OnInit, AfterContentInit {
 
     this.playlist$ = this.activePlaylist.get();
 
-    this.playlist$
-      .subscribe(playlist => this.entries = playlist.entries);
+    this.entries$ = this.activePlaylist.activePlaylistApi.listEntries();
+
+    this.entries$.subscribe(entries => {
+      this.entries = entries;
+    });
+
   }
 
 
