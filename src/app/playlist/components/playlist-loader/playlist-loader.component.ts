@@ -1,3 +1,5 @@
+import 'rxjs/add/operator/take';
+
 import { Component, ChangeDetectionStrategy } from '@angular/core';
 import { Observable } from 'rxjs/Observable';
 import { PlaylistListService, ActivePlaylistService } from "../../stores";
@@ -21,7 +23,7 @@ export class PlaylistLoaderComponent {
   ngOnInit() {
     this.list$ = this.playlistList.get();
     // @todo create playlistActiveService
-    // this.active$ = this.playlistList.getActive()
+    this.active$ = this.activePlaylist.get()
   }
 
   load(playlist: Playlist) {
