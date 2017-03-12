@@ -19,6 +19,9 @@ import { SearchResultComponent, SearchResultItemComponent, SearchBoxComponent } 
 import { LoginPageComponent, PlayerPageComponent, NotFoundPageComponent } from './_pages';
 import { AppRouterModule } from './app.router';
 import { PlaylistModule } from './playlist';
+import { EffectsModule } from '@ngrx/effects';
+import { PlaylistListEffects } from './playlist/stores/playlist-list/playlist-list.effects';
+
 
 
 // -------------------------------------------------------------------
@@ -39,6 +42,7 @@ let DEV_MODULES: ModuleWithProviders[] = environment.production ? [] : [
     Ng2PaginationModule,
     YoutubePlayerModule,
     StoreModule.provideStore(AppReducer),
+    EffectsModule.run(PlaylistListEffects),
     PlaylistModule,
     AppRouterModule,
     ...DEV_MODULES

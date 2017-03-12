@@ -12,10 +12,9 @@ import { IApplicationState } from 'app/shared/interfaces'
 
 @Injectable()
 export class PlaylistListService {
-  constructor(
-    private store: Store<IApplicationState>,
-    protected activePlaylist: ActivePlaylistService
-  ) { }
+  constructor( private store: Store<IApplicationState>, protected activePlaylist: ActivePlaylistService) {
+    this.store.dispatch(new action.PlaylistLoadedAction());
+  }
 
   /**
    *

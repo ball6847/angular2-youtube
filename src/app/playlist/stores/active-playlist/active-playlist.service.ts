@@ -3,6 +3,7 @@ import { Observable } from 'rxjs/Observable';
 import { Store } from '@ngrx/store';
 import { IApplicationState } from 'app/shared/interfaces'
 import { Playlist } from '../../interfaces';
+import {  } from '../playlist-list/';
 import * as action from './active-playlist.actions';
 
 // @todo: find a way to separate this
@@ -11,7 +12,7 @@ import { Video } from '../../../video';
 
 @Injectable()
 export class ActivePlaylistService {
-  constructor(private store: Store<IApplicationState>) { }
+  constructor(protected store: Store<IApplicationState>) {}
 
   /**
    * Get list playlist as Observable

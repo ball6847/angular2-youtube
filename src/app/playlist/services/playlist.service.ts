@@ -10,7 +10,7 @@ import { UUID } from 'angular2-uuid';
 import { tassign } from 'tassign';
 import { YoutubePlayerService } from 'ng2-youtube-player/ng2-youtube-player';
 import { Playlist, PlaylistState } from '../interfaces';
-import { PlaylistListService, ActivePlaylistService, PlaylistStateChangedAction } from '../stores';
+import { PlaylistListService, ActivePlaylistService, PlaylistStateService } from '../stores';
 
 // @todo find a way to separate these external services
 import { AppService } from "../../app.service";
@@ -48,14 +48,13 @@ export class PlaylistService {
     private video: VideoService,
     private player: YoutubePlayerService,
     protected playlistList: PlaylistListService,
-    protected activePlaylist: ActivePlaylistService
+    protected activePlaylist: ActivePlaylistService,
+    protected playlistState: PlaylistStateService
   ) {
     // always start with no active video, state.playing = false
     this.activePlaylist.deactivate();
 
-    this.store.dispatch(
-      new PlaylistStateChangedAction({ playing: false, video: null })
-    );
+    this.playlistState.setState({ playing: false, video: null });
 
     this._provideStore();
     this._setupSubscriptions();
@@ -68,7 +67,7 @@ export class PlaylistService {
   private _provideStore() {
     this.list$ = this.playlistList.get();
     this.active$ = this.activePlaylist.get();
-    this.state$ = this.store.select('playlistState') as Observable<PlaylistState>;
+    this.state$ = this.playlistState.get();
     this.entries$ = this.store.select(state => state.playlistActive.entries) as Observable<Video[]>;
   }
 
@@ -96,9 +95,6 @@ export class PlaylistService {
     this.active$
       .subscribe(playlist => {
         this.active = playlist;
-        // load entries back to original playlist pool
-        // this will need to change to firebase implement
-        this.playlistList.update(playlist);
       });
   }
 
@@ -177,9 +173,7 @@ export class PlaylistService {
     if (!this.active.entries.length)
       return;
 
-    this.store.dispatch(
-      new PlaylistStateChangedAction({ video: video })
-    );
+    this.playlistState.setState({ video: video });
   }
 
   // -------------------------------------------------------------------
@@ -255,9 +249,7 @@ export class PlaylistService {
   public stop(): void {
     this.appService.player.stopVideo();
 
-    this.store.dispatch(
-      new PlaylistStateChangedAction({ playing: false })
-    );
+    this.playlistState.setState({ playing: false });
   }
 
   // -------------------------------------------------------------------
@@ -311,9 +303,7 @@ export class PlaylistService {
     if (this.active.entries.length > 0)
       this.activePlaylist.dequeue(video);
 
-    this.store.dispatch(
-      new PlaylistStateChangedAction({ video: null })
-    );
+    this.playlistState.setState({ video: null });
   }
 
   // -------------------------------------------------------------------
@@ -375,9 +365,7 @@ export class PlaylistService {
    * [DEPRECATED] Util function, dispatch updated state to ApplicationStore
    */
   private _dispatchState() {
-    this.store.dispatch(
-      new PlaylistStateChangedAction(this.state)
-    );
+    this.playlistState.setState(this.state)
   }
 
   // -------------------------------------------------------------------
