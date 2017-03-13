@@ -97,9 +97,18 @@ export class PlaylistEntriesEffects {
   delete$ = this.actions
     .ofType(ActionTypes.DELETE)
     .switchMap(({ type, payload }) => this.playlist.get()
-      .map((playlist: Playlist) => this.af.database
-        .object(this._ref(playlist, <Video>payload))
-        .remove()) // need both playlist and entry
+      .map((playlist: Playlist) => {
+        const collection = this.af.database.list(this._ref(playlist), {
+          query: {
+            orderByChild: 'uuid',
+            equalTo: payload.uuid
+          }
+        });
+        collection.subscribe(entries => {
+          collection.remove(entries[0].$key);
+        });
+        return collection;
+      })
       .map(result => new DeletePlaylistEntrySuccessAction(result))
       .catch(error => Observable.of(new DeletePlaylistEntryErrorAction(error)))
     );

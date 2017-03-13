@@ -20,7 +20,7 @@ export function PlaylistEntriesReducer(state: Video[] = [], {type, payload}: Act
 
     // filter payload out of state
     case ActionTypes.DELETE:
-      return state.filter((entry: Video) => entry.$key !== (<Video>payload).$key);
+      return state.filter((entry: Video) => entry.uuid != payload.uuid);
 
     // replace payload to object with the same $key, otherwise keep it untouched
     case ActionTypes.UPDATE:

@@ -17,7 +17,7 @@ import { AppService } from "../../app.service";
 import { Video, VideoService } from "../../video";
 import { IApplicationState } from '../../shared/interfaces';
 
-import { CreatePlaylistEntryAction } from '../stores/playlist-entries';
+import { CreatePlaylistEntryAction, DeletePlaylistEntryAction } from '../stores/playlist-entries';
 
 
 @Injectable()
@@ -315,10 +315,11 @@ export class PlaylistService {
         if (entries.length > 1) {
           if (state.video && state.video.uuid === video.uuid)
             this.next();
-          return this.activePlaylist.dequeue(video);
+          return this.store.dispatch(new DeletePlaylistEntryAction(video));
         }
         if (entries.length > 0)
-          this.activePlaylist.dequeue(video);
+          this.store.dispatch(new DeletePlaylistEntryAction(video));
+          // this.activePlaylist.dequeue(video);
         this.playlistState.setState({ video: null });
       });
   }
