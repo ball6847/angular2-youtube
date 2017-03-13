@@ -1,3 +1,8 @@
 <ul [dragula]="bagname" [dragulaModel]="entries">
-  <li playlist-entry [video]="video" (onPlay)="play($event)" (onRemove)="dequeue($event)" *ngFor="let video of (entries$ | async)" [class.playing]="(video$ | async)?.uuid == video.uuid"></li>
+  <li playlist-entry
+  *ngFor="let video of (entries$ | async)"
+  [video]="video"
+  (onPlay)="play($event)"
+  (onRemove)="dequeue($event)"
+  [class.playing]="(video$ | async)?.uuid == video.uuid"></li>
 </ul>

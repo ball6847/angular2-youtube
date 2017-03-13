@@ -1,0 +1,98 @@
+import 'rxjs/add/observable/of';
+import { Injectable } from '@angular/core';
+import { Actions, Effect } from '@ngrx/effects';
+import { AngularFire } from 'angularfire2';
+import { Observable } from 'rxjs/Observable';
+import { ActivePlaylistService } from '../active-playlist';
+import {
+  ActionTypes,
+  LoadPlaylistEntriesSuccessAction,
+  LoadPlaylistEntriesErrorAction,
+  ReorderPlaylistEntriesSuccessAction,
+  ReorderPlaylistEntriesErrorAction,
+  CreatePlaylistEntrySuccessAction,
+  CreatePlaylistEntryErrorAction,
+  DeletePlaylistEntrySuccessAction,
+  DeletePlaylistEntryErrorAction,
+  UpdatePlaylistEntrySuccessAction,
+  UpdatePlaylistEntryErrorAction
+} from './actions';
+
+import { Playlist } from '../../interfaces';
+import { Video } from 'app/video';
+
+
+@Injectable()
+export class PlaylistEntriesEffects {
+  constructor(
+    protected actions: Actions,
+    protected af: AngularFire,
+    protected playlist: ActivePlaylistService
+  ) {}
+
+  private _ref(playlist: Playlist, video?: Video): string {
+    let ref = `/dev/entries/${playlist.id}`;
+
+    if (video)
+      ref += `/${video.$key}`;
+
+    return ref;
+  }
+
+  /**
+   * @todo store only video id in /entries/{playlist.id}
+   *       and join them after list() to maintain sortability of playlist
+   */
+  @Effect()
+  load$ = this.actions
+    .ofType(ActionTypes.LOAD)
+    .switchMap(action => this.playlist.get())
+    .switchMap((playlist: Playlist) => this.af.database
+      .list(this._ref(playlist))
+      .map((entries: Video[]) => new LoadPlaylistEntriesSuccessAction(entries))
+      .catch(error => Observable.of(new LoadPlaylistEntriesErrorAction(error)))
+    );
+
+  // @Effect()
+  // reorder$ = this.actions
+  //   .ofType(ActionTypes.REORDER)
+  //   .switchMap(({ type, payload }) => this.playlist.get()
+  //     .map((playlist: Playlist) => this.af.database
+  //       .list(this._ref(playlist))
+  //   ));
+
+  @Effect()
+  create$ = this.actions
+    .ofType(ActionTypes.CREATE)
+    .switchMap(({ type, payload }) => this.playlist.get()
+      .map((playlist: Playlist) => this.af.database
+        .list(this._ref(playlist))
+        .push(<Video>payload)) // need both playlist and entry
+      .map(result => new CreatePlaylistEntrySuccessAction(result))
+      .catch(error => Observable.of(new CreatePlaylistEntryErrorAction(error)))
+    );
+
+  @Effect()
+  delete$ = this.actions
+    .ofType(ActionTypes.DELETE)
+    .switchMap(({ type, payload }) => this.playlist.get()
+      .map((playlist: Playlist) => this.af.database
+        .object(this._ref(playlist, <Video>payload))
+        .remove()) // need both playlist and entry
+      .map(result => new DeletePlaylistEntrySuccessAction(result))
+      .catch(error => Observable.of(new DeletePlaylistEntryErrorAction(error)))
+    );
+
+  @Effect()
+  update$ = this.actions
+    .ofType(ActionTypes.UPDATE)
+    .switchMap(({ type, payload }) => this.playlist.get()
+      .map((playlist: Playlist) => this.af.database
+        .object(this._ref(playlist, <Video>payload))
+        .update(<Video>payload)) // need both playlist and entry
+      .map(result => new UpdatePlaylistEntrySuccessAction(result))
+      .catch(error => Observable.of(new UpdatePlaylistEntryErrorAction(error)))
+    )
+
+
+}

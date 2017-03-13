@@ -68,8 +68,7 @@ export class PlaylistService {
     this.list$ = this.playlistList.get();
     this.active$ = this.activePlaylist.get();
     this.state$ = this.playlistState.get();
-    // this.entries$ = this.store.select(state => state.playlistActive.entries) as Observable<Video[]>;
-    this.entries$ = this.activePlaylist.activePlaylistApi.listEntries();
+    this.entries$ = this.store.select(state => state.playlistEntries) as Observable<Video[]>;
   }
 
   // -------------------------------------------------------------------

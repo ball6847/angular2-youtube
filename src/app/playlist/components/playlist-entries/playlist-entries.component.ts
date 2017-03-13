@@ -2,9 +2,7 @@ import { Component, ElementRef, OnInit, AfterContentInit, ChangeDetectionStrateg
 import { Observable } from 'rxjs/Observable';
 import { DragulaService } from 'ng2-dragula/ng2-dragula';
 import { Store } from '@ngrx/store';
-import { Playlist } from '../../interfaces';
 import { PlaylistService } from '../../services';
-import { ActivePlaylistService } from '../../stores';
 
 // @todo: find a way to isolate these two dependencies
 import { IApplicationState } from '../../../shared/interfaces';
@@ -19,9 +17,9 @@ import { Video } from '../../../video';
 })
 export class PlaylistEntriesComponent implements OnInit, AfterContentInit {
   /**
-   * currenly opening playlist, we need entries from it
+   * Observable of active entries
    */
-  playlist$: Observable<Playlist>
+  entries$: Observable<Video[]>;
 
   /**
    * internal entries cache, need for syncing between dragula & store
@@ -33,7 +31,6 @@ export class PlaylistEntriesComponent implements OnInit, AfterContentInit {
    */
   video$: Observable<Video>;
 
-  entries$: Observable<Video[]>;
 
   /**
    * Dragula Bag
@@ -44,8 +41,7 @@ export class PlaylistEntriesComponent implements OnInit, AfterContentInit {
     private store: Store<IApplicationState>,
     private playlistService: PlaylistService,
     private dragulaService: DragulaService,
-    private elementRef: ElementRef,
-    private activePlaylist: ActivePlaylistService
+    private elementRef: ElementRef
   ) {}
 
   /**
@@ -55,17 +51,15 @@ export class PlaylistEntriesComponent implements OnInit, AfterContentInit {
    * dragula cannot handle Observable so we need to keep a copy
    */
   ngOnInit() {
+    // keep track of playing video
     // @todo move this liine to playlistStateService
     this.video$ = this.store.select(state => state.playlistState.video);
 
-    this.playlist$ = this.activePlaylist.get();
-
-    this.entries$ = this.activePlaylist.activePlaylistApi.listEntries();
+    this.entries$ = this.store.select(state => state.playlistEntries);
 
     this.entries$.subscribe(entries => {
       this.entries = entries;
     });
-
   }
 
 
@@ -75,17 +69,20 @@ export class PlaylistEntriesComponent implements OnInit, AfterContentInit {
    *
    * when dragula update model
    * dispatch the reordered action to store in the background
+   *
+   * @todo implement reordering
    */
   ngAfterContentInit() {
     this.dragulaService.setOptions(this.bagname, {
       mirrorContainer: this.elementRef.nativeElement
     });
 
-    this.dragulaService.dropModel
-      .subscribe(() => {
-        if (this.entries.length > 1)
-          this.activePlaylist.saveOrdering(this.entries);
-      });
+    //
+    // this.dragulaService.dropModel
+    //   .subscribe(() => {
+    //     if (this.entries.length > 1)
+    //       this.activePlaylist.saveOrdering(this.entries);
+    //   });
   }
 
   /**

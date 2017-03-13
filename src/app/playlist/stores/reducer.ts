@@ -19,7 +19,7 @@ const reducer: ActionReducer<State<IPlaylistState>> = compose(
   localStorageSync([
     'playlistList',
     'playlistActive',
-    'playlistState'
+    'playlistState',
   ], true),
   combineReducers
 )({

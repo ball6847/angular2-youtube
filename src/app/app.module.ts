@@ -22,7 +22,8 @@ import { PlaylistModule } from './playlist';
 import { EffectsModule } from '@ngrx/effects';
 import {
   PlaylistListEffects,
-  ActivePlaylistEffects
+  ActivePlaylistEffects,
+  PlaylistEntriesEffects
 } from './playlist/stores';
 
 
@@ -47,6 +48,7 @@ let DEV_MODULES: ModuleWithProviders[] = environment.production ? [] : [
     StoreModule.provideStore(AppReducer),
     EffectsModule.run(PlaylistListEffects),
     EffectsModule.run(ActivePlaylistEffects),
+    EffectsModule.run(PlaylistEntriesEffects),
     PlaylistModule,
     AppRouterModule,
     ...DEV_MODULES
