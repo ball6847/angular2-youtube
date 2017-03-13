@@ -18,11 +18,6 @@ export class ActivePlaylistService {
 
 
 
-  init() {
-    this.store.dispatch(
-      new action.PlaylistActiveInitAction()
-    );
-  }
 
   /**
    * Get list playlist as Observable
@@ -33,6 +28,11 @@ export class ActivePlaylistService {
     return this.store.select(state => state.playlistActive);
   }
 
+  init() {
+    this.store.dispatch(
+      new action.PlaylistActiveInitAction()
+    );
+  }
 
   /**
    * Activate playlist

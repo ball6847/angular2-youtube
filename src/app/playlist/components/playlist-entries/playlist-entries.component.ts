@@ -8,6 +8,8 @@ import { PlaylistService } from '../../services';
 import { IApplicationState } from '../../../shared/interfaces';
 import { Video } from '../../../video';
 
+import { LoadPlaylistEntriesAction } from '../../stores/playlist-entries';
+
 
 @Component({
   selector: 'playlist-entries',
@@ -55,7 +57,7 @@ export class PlaylistEntriesComponent implements OnInit, AfterContentInit {
     // @todo move this liine to playlistStateService
     this.video$ = this.store.select(state => state.playlistState.video);
 
-    this.entries$ = this.store.select(state => state.playlistEntries);
+    this.entries$ = this.playlistService.getEntries();
 
     this.entries$.subscribe(entries => {
       this.entries = entries;

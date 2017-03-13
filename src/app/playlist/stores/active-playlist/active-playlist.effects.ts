@@ -6,6 +6,7 @@ import 'rxjs/add/operator/switchMap';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs/Observable';
 import { Actions, Effect } from '@ngrx/effects';
+import { Store } from '@ngrx/store';
 import { ActivePlaylistApiService } from './active-playlist.api';
 
 import {
@@ -20,10 +21,13 @@ import {
   PlaylistActiveListEntriesFailedAction
 } from './active-playlist.actions';
 
+import { LoadPlaylistEntriesAction } from '../playlist-entries'
+
 @Injectable()
 export class ActivePlaylistEffects {
   constructor(
     protected actions$: Actions,
+    protected store: Store<any>,
     protected activePlaylistApi: ActivePlaylistApiService
   ) { }
 
@@ -32,7 +36,10 @@ export class ActivePlaylistEffects {
   init$ = this.actions$
     .ofType(PLAYLIST_ACTIVE_INIT)
     .switchMap(() => this.activePlaylistApi.init()
+      // firebase will pull any update on /{user}/active/playlist automatically
+      // thus the PlaylistActiveInitFulfilledAction() will be fired anytime those update arrived
       .map(playlist => new PlaylistActiveInitFulfilledAction(playlist))
+      .do(value => this.store.dispatch(new LoadPlaylistEntriesAction()))
       .catch(error => Observable.of(new PlaylistActiveInitFailedAction()))
     );
 

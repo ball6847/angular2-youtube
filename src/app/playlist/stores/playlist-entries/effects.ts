@@ -1,7 +1,9 @@
 import 'rxjs/add/observable/of';
+import 'rxjs/add/observable/timer';
+import 'rxjs/add/observable/forkJoin';
 import { Injectable } from '@angular/core';
 import { Actions, Effect } from '@ngrx/effects';
-import { AngularFire } from 'angularfire2';
+import { AngularFire, FirebaseObjectObservable } from 'angularfire2';
 import { Observable } from 'rxjs/Observable';
 import { ActivePlaylistService } from '../active-playlist';
 import {
@@ -47,11 +49,18 @@ export class PlaylistEntriesEffects {
   load$ = this.actions
     .ofType(ActionTypes.LOAD)
     .switchMap(action => this.playlist.get())
-    .switchMap((playlist: Playlist) => this.af.database
-      .list(this._ref(playlist))
-      .map((entries: Video[]) => new LoadPlaylistEntriesSuccessAction(entries))
-      .catch(error => Observable.of(new LoadPlaylistEntriesErrorAction(error)))
-    );
+    .switchMap((playlist: Playlist) => this.af.database.list(this._ref(playlist)))
+    .switchMap(entries => {
+      return entries.length ? Observable.forkJoin(entries.map(entry => this.af.database.object(`/dev/videos/${entry.videoId}`).take(1).map(video => Object.assign({}, video, entry)))) : Observable.of([]);
+    })
+    // .do(entries => {
+
+    //   Observable.forkJoin(entries.map(entry => this.af.database.object(`/dev/videos/${entry.videoId}`).take(1).map(video => Object.assign({}, video, entry))))
+
+
+    // })
+    .map((entries) => new LoadPlaylistEntriesSuccessAction(entries))
+    .catch(error => Observable.of(new LoadPlaylistEntriesErrorAction(error)))
 
   // @Effect()
   // reorder$ = this.actions
@@ -64,13 +73,25 @@ export class PlaylistEntriesEffects {
   @Effect()
   create$ = this.actions
     .ofType(ActionTypes.CREATE)
-    .switchMap(({ type, payload }) => this.playlist.get()
-      .map((playlist: Playlist) => this.af.database
+    .switchMap(({ payload }) => this.playlist.get()
+      .map(playlist => this.af.database
         .list(this._ref(playlist))
-        .push(<Video>payload)) // need both playlist and entry
-      .map(result => new CreatePlaylistEntrySuccessAction(result))
-      .catch(error => Observable.of(new CreatePlaylistEntryErrorAction(error)))
-    );
+        .push({ uuid: payload.uuid, videoId: payload.videoId })
+      )
+      .map(() => this.af.database
+        .object(`/dev/videos/${payload.videoId}`)
+        // remove uuid from video since all playlist will share the same video pool
+        .update(Object.assign({}, payload, { uuid: null }))
+      )
+    )
+    .map(result => new CreatePlaylistEntrySuccessAction(result))
+    // .switchMap(({ type, payload }) => this.playlist.get()
+    //   .map((playlist: Playlist) => this.af.database
+    //     .list(this._ref(playlist))
+    //     .push(<Video>payload)) // need both playlist and entry
+    //   .map(result => new CreatePlaylistEntrySuccessAction(result))
+    //   .catch(error => Observable.of(new CreatePlaylistEntryErrorAction(error)))
+    // );
 
   @Effect()
   delete$ = this.actions

@@ -17,6 +17,8 @@ import { AppService } from "../../app.service";
 import { Video, VideoService } from "../../video";
 import { IApplicationState } from '../../shared/interfaces';
 
+import { CreatePlaylistEntryAction } from '../stores/playlist-entries';
+
 
 @Injectable()
 export class PlaylistService {
@@ -292,7 +294,8 @@ export class PlaylistService {
     vdo.duration = { text: '0.00', seconds: 0 };
 
     // add entry to playlist immediately
-    this.activePlaylist.enqueue(vdo);
+    // this.activePlaylist.enqueue(vdo);
+    this.store.dispatch(new CreatePlaylistEntryAction(vdo));
   }
 
   // -------------------------------------------------------------------
