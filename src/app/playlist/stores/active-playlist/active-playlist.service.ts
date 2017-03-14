@@ -14,11 +14,7 @@ import { Video } from '../../../video';
 
 @Injectable()
 export class ActivePlaylistService {
-  constructor(protected store: Store<IApplicationState>, public activePlaylistApi: ActivePlaylistApiService) {
-  }
-
-
-
+  constructor(protected store: Store<IApplicationState>, public activePlaylistApi: ActivePlaylistApiService) {}
 
   /**
    * Get list playlist as Observable

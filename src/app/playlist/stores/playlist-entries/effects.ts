@@ -3,8 +3,6 @@ import 'rxjs/add/observable/of';
 import { Injectable } from '@angular/core';
 import { Actions, Effect } from '@ngrx/effects';
 import { Observable } from 'rxjs/Observable';
-import { AngularFire } from 'angularfire2';
-import { ActivePlaylistService } from '../active-playlist';
 import { PlaylistEntriesApiService } from './api';
 import * as a from './actions';
 
@@ -16,8 +14,6 @@ import { Video } from 'app/video';
 export class PlaylistEntriesEffects {
   constructor(
     protected actions: Actions,
-    protected af: AngularFire,
-    protected playlist: ActivePlaylistService,
     protected api: PlaylistEntriesApiService
   ) {}
 

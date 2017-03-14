@@ -18,6 +18,9 @@ export function PlaylistEntriesReducer(state: Video[] = [], {type, payload}: Act
     case ActionTypes.CREATE:
       return [...state, <Video>payload];
 
+    case ActionTypes.CREATE_SUCCESS:
+      return state.map((entry: Video) => (entry.uuid == payload.uuid) ? payload : entry);
+
     // filter payload out of state
     case ActionTypes.DELETE:
       return state.filter((entry: Video) => entry.uuid != payload.uuid);

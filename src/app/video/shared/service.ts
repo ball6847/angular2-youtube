@@ -7,6 +7,7 @@ import { Injectable } from '@angular/core';
 import { Http } from "@angular/http";
 import { Observable } from 'rxjs/Observable';
 import { Video } from './model';
+import * as moment from 'moment';
 
 // @TODO: we may need to cache on firebase or localstorage to save api calls
 // @TODO: create VideoServiceConfig instead of hard code apikey
@@ -38,5 +39,30 @@ export class VideoService {
     return this.http
       .get(`${this.endpoint.videos}?id=${encodeURIComponent(videoId)}&part=contentDetails&key=${this.key}`)
       .map(response => response.json().items[0]);
+  }
+
+
+  /**
+   * Util function, generate video duration in readable format
+   * Example: 4:58, 1:05:15
+   */
+  formatDuration(vdo: any): {} {
+    let d = moment.duration(vdo.contentDetails.duration);
+    let [hours, minutes, seconds] = [d.get('hours'), d.get('minutes'), d.get('seconds')];
+    let duration = [];
+
+    if (hours) {
+      duration.push(hours);
+      duration.push(('00' + minutes).slice(-2));
+    } else {
+      duration.push(minutes)
+    }
+
+    duration.push(('00' + seconds).slice(-2))
+
+    return {
+      text: duration.join(':'),
+      seconds: d.asSeconds()
+    };
   }
 }

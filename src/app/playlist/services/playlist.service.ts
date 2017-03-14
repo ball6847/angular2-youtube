@@ -290,7 +290,6 @@ export class PlaylistService {
     vdo.duration = { text: '0.00', seconds: 0 };
 
     // add entry to playlist immediately
-    // this.activePlaylist.enqueue(vdo);
     this.store.dispatch(new CreatePlaylistEntryAction(vdo));
   }
 

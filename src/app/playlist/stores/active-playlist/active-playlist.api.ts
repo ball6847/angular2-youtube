@@ -12,7 +12,7 @@ import { tassign } from 'tassign';
 import { Playlist } from '../../interfaces';
 import { AngularFire, FirebaseListObservable } from 'angularfire2';
 
-import * as moment from 'moment';
+
 
 import { Video, VideoService } from 'app/video';
 
@@ -78,35 +78,8 @@ export class ActivePlaylistApiService {
 
   private _combiner(video) {
     return (playlist, vdo) => {
-      let d = moment.duration(vdo.contentDetails.duration);
-      video.duration = {
-        text: this._formatDuration(d.get('hours'), d.get('minutes'), d.get('seconds')),
-        seconds: d.asSeconds()
-      };
       return { playlist: playlist, video: video };
     }
   }
 
-  /**
-   * Util function, generate video duration in readable format
-   * Example: 4:58, 1:05:15
-   *
-   * @param h hours returned from momentObject.get('hours')
-   * @param m minutes returned from momentObject.get('minutes')
-   * @param s seconds returned from momentObject.get('seconds)
-   */
-  private _formatDuration(h: number, m: number, s: number): string {
-    let duration = [];
-
-    if (h) {
-      duration.push(h);
-      duration.push(('00' + m).slice(-2));
-    } else {
-      duration.push(m)
-    }
-
-    duration.push(('00' + s).slice(-2))
-
-    return duration.join(':');
-  }
 }

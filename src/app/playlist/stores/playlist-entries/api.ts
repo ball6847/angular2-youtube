@@ -5,7 +5,7 @@ import { BenchmarkService } from 'app/../modules/ngb68-utils'
 import { ActivePlaylistService } from '../active-playlist';
 import * as a from './actions';
 import { Playlist } from '../../interfaces';
-import { Video } from 'app/video';
+import { Video, VideoService } from 'app/video';
 
 
 /**
@@ -18,11 +18,6 @@ export class PlaylistEntriesApiService {
    */
   private prefix = '/dev';
 
-  /**
-   * local in-memory cache
-   */
-  public videos = [];
-
   private debug = true;
 
   /**
@@ -33,8 +28,9 @@ export class PlaylistEntriesApiService {
    */
   constructor(
     protected af: AngularFire,
+    protected benchmark: BenchmarkService,
     protected playlist: ActivePlaylistService,
-    protected benchmark: BenchmarkService
+    protected youtube: VideoService,
   ) { }
 
   /**
@@ -94,8 +90,17 @@ export class PlaylistEntriesApiService {
 
     return this.playlist.get()
       .take(1)
-      .map(playlist => this.af.database.object(this._ref(playlist, video)).update(videoRef))
-      .map(() => videoRef); // map to something useful to subscriber
+      // stream result in videoRef observable
+      .switchMap(playlist => this.youtube.fetchVideo(video.videoId)
+        // change stream to formatted video duration
+        .map(result => this.youtube.formatDuration(result))
+        // add duration to videoRef then change stream to videoRef
+        .map(duration => Object.assign({}, videoRef, { duration: duration }))
+        // add to firebase, we don't mind the result,
+        // do operator is fine here, current stream is videoRef
+        .do(videoRef => this.af.database
+          .object(this._ref(playlist, video))
+          .update(videoRef)))
   }
 
   /**
