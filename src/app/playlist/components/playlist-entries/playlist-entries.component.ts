@@ -3,13 +3,13 @@ import { Observable } from 'rxjs/Observable';
 import { DragulaService } from 'ng2-dragula/ng2-dragula';
 import { Store } from '@ngrx/store';
 import { PlaylistService } from '../../services';
-import * as _ from 'lodash';
 
 // @todo: find a way to isolate these two dependencies
 import { IApplicationState } from '../../../shared/interfaces';
 import { Video } from '../../../video';
 
-import { LoadPlaylistEntriesAction } from '../../stores/playlist-entries';
+import { LoadPlaylistEntriesAction, ReorderPlaylistEntriesAction } from '../../stores/playlist-entries';
+
 
 
 @Component({
@@ -58,8 +58,7 @@ export class PlaylistEntriesComponent implements OnInit, AfterContentInit {
     // @todo move this liine to playlistStateService
     this.video$ = this.store.select(state => state.playlistState.video);
 
-    this.entries$ = this.playlistService.getEntries()
-      .map(entries => _.orderBy(entries, ['ordering'], ['asc']))
+    this.entries$ = this.playlistService.getEntries();
 
     this.entries$.subscribe(entries => {
         this.entries = entries;
@@ -81,12 +80,15 @@ export class PlaylistEntriesComponent implements OnInit, AfterContentInit {
       mirrorContainer: this.elementRef.nativeElement
     });
 
-    //
-    // this.dragulaService.dropModel
-    //   .subscribe(() => {
-    //     if (this.entries.length > 1)
-    //       this.activePlaylist.saveOrdering(this.entries);
-    //   });
+
+    this.dragulaService.dropModel
+      .subscribe(() => {
+        let i = 1;
+        // update entries order
+        const entries = this.entries.map(entry => Object.assign({}, entry, { ordering: i++ }));
+
+        this.store.dispatch(new ReorderPlaylistEntriesAction(entries))
+      });
   }
 
   /**

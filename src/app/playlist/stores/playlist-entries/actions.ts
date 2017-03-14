@@ -49,7 +49,7 @@ export class ReorderPlaylistEntriesAction implements Action {
 
 export class ReorderPlaylistEntriesSuccessAction implements Action {
   type = ActionTypes.REORDER_SUCCESS;
-  constructor(public payload: any) { }
+  constructor(public payload: Video[]) { }
 }
 
 export class ReorderPlaylistEntriesErrorAction implements Action {

@@ -43,6 +43,14 @@ export class PlaylistEntriesEffects {
     );
 
 
+  @Effect()
+  reorder$ = this.actions
+    .ofType(a.ActionTypes.REORDER)
+    .switchMap(({ payload }) => this.api.reorder(payload)
+      .map(result => new a.ReorderPlaylistEntriesSuccessAction(result))
+      .catch(error => Observable.of(new a.ReorderPlaylistEntriesErrorAction(error)))
+    );
+
   // @Effect()
   // update$ = this.actions
   //   .ofType(a.ActionTypes.UPDATE)
@@ -54,11 +62,4 @@ export class PlaylistEntriesEffects {
   //     .catch(error => Observable.of(new a.UpdatePlaylistEntryErrorAction(error)))
   //   )
 
-  // @Effect()
-  // reorder$ = this.actions
-  //   .ofType(ActionTypes.REORDER)
-  //   .switchMap(({ type, payload }) => this.playlist.get()
-  //     .map((playlist: Playlist) => this.af.database
-  //       .list(this._ref(playlist))
-  //   ));
 }

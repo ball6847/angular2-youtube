@@ -66,7 +66,8 @@ export class PlaylistService {
     this.list$ = this.playlistList.get();
     this.active$ = this.activePlaylist.get();
     this.state$ = this.playlistState.get();
-    this.entries$ = this.store.select(state => state.playlistEntries) as Observable<Video[]>;
+    this.entries$ = this.store.select(state => state.playlistEntries)
+      .map(entries => _.orderBy(entries, ['ordering'], ['asc']));
   }
 
   // -------------------------------------------------------------------

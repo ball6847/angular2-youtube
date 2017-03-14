@@ -8,6 +8,8 @@ import * as a from './actions';
 import { Playlist, PlaylistEntry } from '../../interfaces';
 import { Video, VideoService } from 'app/video';
 
+import 'rxjs/add/operator/debounceTime';
+import 'rxjs/add/operator/distinctUntilChanged';
 
 /**
  * Service for remote api (firebase)
@@ -72,8 +74,13 @@ export class PlaylistEntriesApiService {
       .do(p => console.log("playlist loaded:", p))
       .take(1)
       .do(() => this.benchmark.start(checkpoint))
+      // .debounceTime(1000)
+      // .distinctUntilChanged()
       .switchMap(playlist => this.af.database
-        .list(this._ref(playlist)))
+        .list(this._ref(playlist))
+        // .debounceTime(1000)
+        // .distinctUntilChanged()
+      )
       .do(() => this._verbose(checkpoint, this.benchmark.stop(checkpoint)))
   }
 
@@ -90,8 +97,6 @@ export class PlaylistEntriesApiService {
       duration: video.duration,
       ordering: video.ordering
     };
-
-
 
     return this.playlist.get()
       .take(1)
@@ -121,5 +126,16 @@ export class PlaylistEntriesApiService {
         .remove())
       .do(result => this._verbose(`Deleted`, video.uuid))
       .map(() => video) // in case of error we can restore it
+  }
+
+  reorder(entries: Video[]): Observable<Video[]> {
+    return this.playlist.get()
+      .take(1)
+      // update them all
+      .map(playlist => entries.forEach(video => this.af.database
+        .object(this._ref(playlist, video))
+        .update({ ordering: video.ordering })))
+      // just return them back
+      .map(() => entries);
   }
 }
