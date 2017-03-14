@@ -27,7 +27,7 @@ export function PlaylistEntriesReducer(state: Video[] = [], {type, payload}: Act
 
     // replace payload to object with the same $key, otherwise keep it untouched
     case ActionTypes.UPDATE:
-      return state.map((entry: Video) => (entry.$key == (<Video>payload).$key) ? <Video>payload : entry);
+      return state.map((entry: Video) => (entry.uuid == (<Video>payload).uuid) ? <Video>payload : entry);
 
     default:
       return state;

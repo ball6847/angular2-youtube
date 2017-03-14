@@ -20,14 +20,14 @@ export function PlaylistActiveReducer(state = defaultPlaylist, action: ACTION.Pl
     case ACTION.PLAYLIST_ACTIVE_ENTRIES_REORDERED:
       return tassign(state, { entries: action.payload.entries });
 
-    case ACTION.PLAYLIST_ACTIVE_ENTRIES_DEACTIVATED:
-      if (!state) {
-        return state;
-      }
-      return tassign(state, {
-        entries: state.entries
-          .map(video => tassign(video, { playing: false }))
-      });
+    // case ACTION.PLAYLIST_ACTIVE_ENTRIES_DEACTIVATED:
+    //   if (!state) {
+    //     return state;
+    //   }
+    //   return tassign(state, {
+    //     entries: state.entries
+    //       .map(video => tassign(video, { playing: false }))
+    //   });
 
     case ACTION.PLAYLIST_ACTIVE_ENTRY_ADDED:
       return tassign(state, {
@@ -46,13 +46,13 @@ export function PlaylistActiveReducer(state = defaultPlaylist, action: ACTION.Pl
           .filter(video => video.uuid !== action.payload.entries[0].uuid)
       });
 
-    case ACTION.PLAYLIST_ACTIVE_ENTRY_ACTIVATED:
-      return tassign(state, {
-        entries: state.entries
-          .map(video => tassign(video, {
-            playing: (video.uuid === action.payload.entries[0].uuid)
-          }))
-      });
+    // case ACTION.PLAYLIST_ACTIVE_ENTRY_ACTIVATED:
+    //   return tassign(state, {
+    //     entries: state.entries
+    //       .map(video => tassign(video, {
+    //         playing: (video.uuid === action.payload.entries[0].uuid)
+    //       }))
+    //   });
 
     default:
       return state;
