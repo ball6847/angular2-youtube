@@ -32,14 +32,26 @@ export class ActivePlaylistEffects {
   ) { }
 
 
+  private initialized = false;
+
+
+  /**
+   *
+   * firebase will pull any update on /{user}/active/playlist automatically
+   * thus the PlaylistActiveInitFulfilledAction() will be fired anytime those update arrived
+   */
   @Effect()
   init$ = this.actions$
     .ofType(PLAYLIST_ACTIVE_INIT)
     .switchMap(() => this.activePlaylistApi.init()
-      // firebase will pull any update on /{user}/active/playlist automatically
-      // thus the PlaylistActiveInitFulfilledAction() will be fired anytime those update arrived
+      .take(1)
       .map(playlist => new PlaylistActiveInitFulfilledAction(playlist))
-      .do(value => this.store.dispatch(new LoadPlaylistEntriesAction()))
+      .do(value => {
+        if (!this.initialized) {
+          this.store.dispatch(new LoadPlaylistEntriesAction());
+          this.initialized = true;
+        }
+      })
       .catch(error => Observable.of(new PlaylistActiveInitFailedAction()))
     );
 
@@ -47,6 +59,7 @@ export class ActivePlaylistEffects {
   @Effect()
   activate$ = this.actions$
     .ofType(PLAYLIST_ACTIVATED)
+    .do(() => this.store.dispatch(new LoadPlaylistEntriesAction()))
     .switchMap(({ payload }) => this.activePlaylistApi.activate(payload)
       .map(playlist => new PlaylistActivatedFulfilledAction(playlist))
     );
