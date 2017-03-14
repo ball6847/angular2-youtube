@@ -6,7 +6,7 @@ import 'rxjs/add/operator/switchMap';
 import { Injectable } from '@angular/core';
 import { Http } from "@angular/http";
 import { Observable } from 'rxjs/Observable';
-import { Video } from './model';
+import { Video, VideoDuration } from './model';
 import * as moment from 'moment';
 
 // @TODO: we may need to cache on firebase or localstorage to save api calls
@@ -46,7 +46,7 @@ export class VideoService {
    * Util function, generate video duration in readable format
    * Example: 4:58, 1:05:15
    */
-  formatDuration(vdo: any): {} {
+  formatDuration(vdo: any): VideoDuration {
     let d = moment.duration(vdo.contentDetails.duration);
     let [hours, minutes, seconds] = [d.get('hours'), d.get('minutes'), d.get('seconds')];
     let duration = [];

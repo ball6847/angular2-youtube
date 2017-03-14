@@ -284,13 +284,25 @@ export class PlaylistService {
     if (!this.active.id)
       this.playlistList.create('Untitled');
 
-    // create copy of video
-    let vdo = Object.assign({}, video);
-    vdo.uuid = UUID.UUID();
-    vdo.duration = { text: '0.00', seconds: 0 };
+    this.entries$
+      .take(1)
+      .map(entries => {
+        const lastItem = _.maxBy(entries, 'ordering');
+
+        // create copy of video
+        let vdo = Object.assign({}, video);
+        vdo.uuid = UUID.UUID();
+        vdo.duration = { text: '0.00', seconds: 0 };
+        vdo.ordering = lastItem ? lastItem.ordering + 1 : 1;
+
+        return vdo;
+      })
+      .subscribe(video => this.store.dispatch(new CreatePlaylistEntryAction(video)));
+
+
 
     // add entry to playlist immediately
-    this.store.dispatch(new CreatePlaylistEntryAction(vdo));
+    // this.store.dispatch(new CreatePlaylistEntryAction(vdo));
   }
 
   // -------------------------------------------------------------------

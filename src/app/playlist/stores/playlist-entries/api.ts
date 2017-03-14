@@ -1,10 +1,11 @@
 import { Injectable } from '@angular/core';
+import { Store } from '@ngrx/store';
 import { AngularFire } from 'angularfire2';
 import { Observable } from 'rxjs/Observable';
 import { BenchmarkService } from 'app/../modules/ngb68-utils'
 import { ActivePlaylistService } from '../active-playlist';
 import * as a from './actions';
-import { Playlist } from '../../interfaces';
+import { Playlist, PlaylistEntry } from '../../interfaces';
 import { Video, VideoService } from 'app/video';
 
 
@@ -30,6 +31,7 @@ export class PlaylistEntriesApiService {
     protected af: AngularFire,
     protected benchmark: BenchmarkService,
     protected playlist: ActivePlaylistService,
+    protected store: Store<any>, // use any for now
     protected youtube: VideoService,
   ) { }
 
@@ -70,23 +72,26 @@ export class PlaylistEntriesApiService {
       .do(p => console.log("playlist loaded:", p))
       .take(1)
       .do(() => this.benchmark.start(checkpoint))
-      .switchMap(playlist => this.af.database.list(this._ref(playlist)).take(1))
+      .switchMap(playlist => this.af.database
+        .list(this._ref(playlist)))
       .do(() => this._verbose(checkpoint, this.benchmark.stop(checkpoint)))
   }
 
   /**
-   * Get active playlist push small video key to it
-   * then do async push of complete video to another ref
+   * Resolve video duration using youtube service then push to firebase
    *
-   * @param action
+   * @param video
    */
   create(video: Video): Observable<Video> {
-    const videoRef = {
+    const videoRef: PlaylistEntry = {
       uuid: video.uuid,
       videoId: video.videoId,
       title: video.title,
-      duration: video.duration
+      duration: video.duration,
+      ordering: video.ordering
     };
+
+
 
     return this.playlist.get()
       .take(1)
@@ -96,7 +101,7 @@ export class PlaylistEntriesApiService {
         .map(result => this.youtube.formatDuration(result))
         // add duration to videoRef then change stream to videoRef
         .map(duration => Object.assign({}, videoRef, { duration: duration }))
-        // add to firebase, we don't mind the result,
+        // add to firebase, we don't care the result for now,
         // do operator is fine here, current stream is videoRef
         .do(videoRef => this.af.database
           .object(this._ref(playlist, video))

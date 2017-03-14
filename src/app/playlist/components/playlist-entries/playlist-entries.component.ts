@@ -3,6 +3,7 @@ import { Observable } from 'rxjs/Observable';
 import { DragulaService } from 'ng2-dragula/ng2-dragula';
 import { Store } from '@ngrx/store';
 import { PlaylistService } from '../../services';
+import * as _ from 'lodash';
 
 // @todo: find a way to isolate these two dependencies
 import { IApplicationState } from '../../../shared/interfaces';
@@ -57,11 +58,12 @@ export class PlaylistEntriesComponent implements OnInit, AfterContentInit {
     // @todo move this liine to playlistStateService
     this.video$ = this.store.select(state => state.playlistState.video);
 
-    this.entries$ = this.playlistService.getEntries();
+    this.entries$ = this.playlistService.getEntries()
+      .map(entries => _.orderBy(entries, ['ordering'], ['asc']))
 
     this.entries$.subscribe(entries => {
-      this.entries = entries;
-    });
+        this.entries = entries;
+      });
   }
 
 

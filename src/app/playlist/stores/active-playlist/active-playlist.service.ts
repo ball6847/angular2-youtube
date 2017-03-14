@@ -89,9 +89,6 @@ export class ActivePlaylistService {
     this.store.dispatch(
       new action.PlaylistActiveEntryAddedAction(video)
     );
-
-    // @todo: will move to effect
-    this.activePlaylistApi.addEntry(video);
   }
 
   /**
@@ -119,7 +116,5 @@ export class ActivePlaylistService {
       new action.PlaylistActiveEntryRemovedAction(video)
     );
 
-    // @todo: will move to effect
-    this.activePlaylistApi.dropEntry(video);
   }
 }

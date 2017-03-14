@@ -5,12 +5,12 @@ export class VideoDuration {
   seconds: number = 0;
 }
 
+
 // @TODO: remove moment and use angular2-moment directive instead
 export class Video {
   // unique id, to identify playlist items
-  $key?: string;
   uuid: string;
-  playing: boolean = false;
+  ordering: number = 0;
   duration: VideoDuration;
   videoId: string;
   title: string;
@@ -19,6 +19,7 @@ export class Video {
   channelId: string;
   publishedAt: string;
   description: string;
+
 
   constructor(youtube?) {
     if (youtube) {

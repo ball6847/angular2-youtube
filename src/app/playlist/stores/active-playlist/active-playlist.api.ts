@@ -39,47 +39,4 @@ export class ActivePlaylistApiService {
       )
       .take(1); // Only first time, and no more. later will be handled by activate()
   }
-
-  private _select(takeAll = false): Observable<Playlist> {
-    let observable =  this.store
-      .select(state => state.playlistActive)
-      .filter(playlist => !!playlist);
-
-    if (!takeAll) {
-      observable = observable.take(1)
-    }
-
-    return observable;
-  }
-
-  listEntries(): Observable<Video[]> {
-    return this._select(true)
-      .switchMap(playlist => this.af.database.list(`${this.uriPrefix}/entries/${playlist.id}`))
-      // .skip(1)
-  }
-
-  addEntry(video: Video): void {
-    this._select()
-      .combineLatest(this.video.fetchVideo(video.videoId), this._combiner(video))
-      .switchMap(({ playlist, video }) => this.af.database.list(`${this.uriPrefix}/entries/${playlist.id}`).push(video))
-      .subscribe((newVideo) => {
-        console.log(newVideo);
-      });
-  }
-
-  dropEntry(video: Video) {
-    this._select()
-      .switchMap(playlist => this.af.database.object(`${this.uriPrefix}/entries/${playlist.id}/${video.$key}`).remove())
-      .switchMap(() => Observable.of(video)) // return something useful to reducer
-      .subscribe(what => {
-        // console.log(what);
-      });
-  }
-
-  private _combiner(video) {
-    return (playlist, vdo) => {
-      return { playlist: playlist, video: video };
-    }
-  }
-
 }
