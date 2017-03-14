@@ -79,19 +79,6 @@ export class PlaylistEntriesApiService {
   }
 
   /**
-   * Try to use cache first, then firebase
-   */
-  public _videoMapper(entry: Video) {
-    if (this.videos[entry.uuid])
-      return Observable.of(this.videos[entry.uuid]);
-
-    return this.af.database.object(`${this.prefix}/videos/${entry.videoId}`)
-      .take(1) // do we really need this ?
-      .map((video: Video) => Object.assign({}, video, entry)) // merge with original videoRef
-      .do((video: Video) => this.videos[video.uuid] = video) // cache locally
-  }
-
-  /**
    * Get active playlist push small video key to it
    * then do async push of complete video to another ref
    *
@@ -111,20 +98,12 @@ export class PlaylistEntriesApiService {
       .map(() => videoRef); // map to something useful to subscriber
   }
 
-
   /**
    * Remove entry from active playlist
    *
    * @param video
    */
   delete(video: Video): Observable<any> {
-    const options = {
-      query: {
-        orderByChild: 'uuid',
-        equalTo: video.uuid
-      }
-    };
-
     return this.playlist.get()
       .take(1)
       .map((playlist) => this.af.database
@@ -133,8 +112,4 @@ export class PlaylistEntriesApiService {
       .do(result => this._verbose(`Deleted`, video.uuid))
       .map(() => video) // in case of error we can restore it
   }
-
-
-
-
 }

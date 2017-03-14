@@ -7,9 +7,10 @@ import * as search from '../search/shared/reducers';
 
 const reducer: ActionReducer<State<IApplicationState>> = compose(
   localStorageSync([
-    // 'playlistList',
-    // 'playlistActive',
-    // 'playlistState'
+    'playlistList',
+    'playlistActive',
+    'playlistState',
+    'playlistEntries'
   ], true),
   combineReducers
 )({

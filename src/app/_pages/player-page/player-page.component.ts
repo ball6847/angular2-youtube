@@ -1,5 +1,4 @@
 import { Component, ChangeDetectionStrategy } from "@angular/core";
-
 import { PlaylistListService, ActivePlaylistService, PlaylistStateService } from '../../playlist'
 
 
@@ -17,6 +16,7 @@ export class PlayerPageComponent {
   ) {}
 
   ngOnInit() {
+    // player initial state from server
     this.playlistList.init();
     this.activePlaylist.deactivate();
     this.activePlaylist.init();
