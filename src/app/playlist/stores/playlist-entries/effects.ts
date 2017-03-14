@@ -1,10 +1,9 @@
 import 'rxjs/add/observable/of';
-import 'rxjs/add/observable/timer';
-import 'rxjs/add/observable/forkJoin';
+
 import { Injectable } from '@angular/core';
 import { Actions, Effect } from '@ngrx/effects';
-import { AngularFire, FirebaseObjectObservable } from 'angularfire2';
 import { Observable } from 'rxjs/Observable';
+import { AngularFire } from 'angularfire2';
 import { ActivePlaylistService } from '../active-playlist';
 import { PlaylistEntriesApiService } from './api';
 import * as a from './actions';
@@ -21,22 +20,6 @@ export class PlaylistEntriesEffects {
     protected playlist: ActivePlaylistService,
     protected api: PlaylistEntriesApiService
   ) {}
-
-
-
-  // private videos:any = [];
-
-  // private startTime;
-
-  // private _start() {
-  //   this.startTime = (new Date()).getTime();
-  // }
-
-  // private _stop() {
-  //   const elapsed = (new Date()).getTime() - this.startTime;
-  //   this.startTime = null;
-  //   return elapsed/1000+"s";
-  // }
 
 
   @Effect()
@@ -62,6 +45,7 @@ export class PlaylistEntriesEffects {
       .map(result => new a.DeletePlaylistEntrySuccessAction(result))
       .catch(error => Observable.of(new a.DeletePlaylistEntryErrorAction(error)))
     );
+
 
   // @Effect()
   // update$ = this.actions

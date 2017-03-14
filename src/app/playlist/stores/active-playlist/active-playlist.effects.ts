@@ -12,6 +12,7 @@ import { ActivePlaylistApiService } from './active-playlist.api';
 import {
   PLAYLIST_ACTIVATED,
   PLAYLIST_ACTIVE_INIT,
+  PLAYLIST_ACTIVE_INIT_FULFILLED,
   PLAYLIST_ACTIVE_LIST_ENTRIES,
   PlaylistActivatedFulfilledAction,
   PlaylistActiveInitFulfilledAction,
@@ -32,9 +33,6 @@ export class ActivePlaylistEffects {
   ) { }
 
 
-  private initialized = false;
-
-
   /**
    *
    * firebase will pull any update on /{user}/active/playlist automatically
@@ -44,18 +42,26 @@ export class ActivePlaylistEffects {
   init$ = this.actions$
     .ofType(PLAYLIST_ACTIVE_INIT)
     .switchMap(() => this.activePlaylistApi.init()
-      .take(1)
       .map(playlist => new PlaylistActiveInitFulfilledAction(playlist))
-      .do(value => {
-        if (!this.initialized) {
-          this.store.dispatch(new LoadPlaylistEntriesAction());
-          this.initialized = true;
-        }
-      })
+      // .do(() => setTimeout(() => this.store.dispatch(new LoadPlaylistEntriesAction()), 1))
       .catch(error => Observable.of(new PlaylistActiveInitFailedAction()))
     );
 
+  // @Effect()
+  // initSuccess$ = this.actions$
+  //   .ofType(PLAYLIST_ACTIVE_INIT_FULFILLED)
+  //   .do(playlist => console.log(playlist))
+  //   .map(() => new LoadPlaylistEntriesAction());
 
+
+  /**
+   * Replace active playlist stored on the server
+   *
+   * The tricky part is where we dispatch LoadPlaylistEntriesAction immediately
+   * before the active playlist occured
+   *
+   * This make UI load faster than subscribing for /active/playlist changed from the server
+   */
   @Effect()
   activate$ = this.actions$
     .ofType(PLAYLIST_ACTIVATED)
@@ -64,13 +70,6 @@ export class ActivePlaylistEffects {
       .map(playlist => new PlaylistActivatedFulfilledAction(playlist))
     );
 
-  @Effect()
-  listEntries$ = this.actions$
-    .ofType(PLAYLIST_ACTIVE_LIST_ENTRIES)
-    .switchMap(() => this.activePlaylistApi.listEntries()
-      .map(playlists => new PlaylistActiveListEntriesFulfilledAction(playlists))
-      .catch(error => Observable.of(new PlaylistActiveListEntriesFailedAction(error)))
-    );
 
   // @Effect()
   // create$ = this.actions$

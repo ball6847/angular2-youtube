@@ -31,7 +31,7 @@ import {
 // -------------------------------------------------------------------
 
 let DEV_MODULES: ModuleWithProviders[] = environment.production ? [] : [
-  StoreDevtoolsModule.instrumentOnlyWithExtension()
+  // StoreDevtoolsModule.instrumentOnlyWithExtension()
 ];
 
 // -------------------------------------------------------------------

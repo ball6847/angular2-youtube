@@ -53,11 +53,7 @@ export class PlaylistService {
     protected activePlaylist: ActivePlaylistService,
     protected playlistState: PlaylistStateService
   ) {
-    // always start with no active video, state.playing = false
-    this.activePlaylist.deactivate();
-
     this.playlistState.setState({ playing: false, video: null });
-
     this._provideStore();
     this._setupSubscriptions();
   }

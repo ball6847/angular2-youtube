@@ -6,6 +6,7 @@ import { Playlist } from '../../interfaces';
 import {  } from '../playlist-list/';
 import * as action from './active-playlist.actions';
 import { ActivePlaylistApiService } from './active-playlist.api';
+import { LoadPlaylistEntriesAction } from '../playlist-entries/actions'
 
 // @todo: find a way to separate this
 import { Video } from '../../../video';
@@ -28,10 +29,20 @@ export class ActivePlaylistService {
     return this.store.select(state => state.playlistActive);
   }
 
+  /**
+   * Initialize active playlist by dispatching PlaylistActiveInitAction
+   * to pull saved active playlist from server
+   *
+   * Also, subscribe to first valid playlist change to pull it's entries
+   * by dispatching LoadPlaylistEntriesAction
+   */
   init() {
-    this.store.dispatch(
-      new action.PlaylistActiveInitAction()
-    );
+    this.store.dispatch(new action.PlaylistActiveInitAction());
+
+    this.get()
+      .filter(playlist => !!playlist.id)
+      .take(1)
+      .subscribe(playlist => this.store.dispatch(new LoadPlaylistEntriesAction()));
   }
 
   /**

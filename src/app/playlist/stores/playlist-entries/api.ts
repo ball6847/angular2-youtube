@@ -1,12 +1,9 @@
-import 'rxjs/add/observable/of';
-import 'rxjs/add/observable/timer';
-import 'rxjs/add/observable/forkJoin';
 import { Injectable } from '@angular/core';
 import { AngularFire } from 'angularfire2';
 import { Observable } from 'rxjs/Observable';
+import { BenchmarkService } from 'app/../modules/ngb68-utils'
 import { ActivePlaylistService } from '../active-playlist';
 import * as a from './actions';
-
 import { Playlist } from '../../interfaces';
 import { Video } from 'app/video';
 
@@ -24,7 +21,9 @@ export class PlaylistEntriesApiService {
   /**
    * local in-memory cache
    */
-  private videos: Video[] = [];
+  public videos = [];
+
+  private debug = true;
 
   /**
    * constructor
@@ -32,7 +31,11 @@ export class PlaylistEntriesApiService {
    * @param af
    * @param playlist
    */
-  constructor(protected af: AngularFire, protected playlist: ActivePlaylistService) { }
+  constructor(
+    protected af: AngularFire,
+    protected playlist: ActivePlaylistService,
+    protected benchmark: BenchmarkService
+  ) { }
 
   /**
    * create url reference for firebase
@@ -45,9 +48,19 @@ export class PlaylistEntriesApiService {
     let ref = `${this.prefix}/entries/${playlist.id}`;
 
     if (video)
-      ref += `/${video.$key}`;
+      ref += `/${video.uuid}`;
 
     return ref;
+  }
+
+  private _verbose(message: string, data?: any) {
+    if (!this.debug) return;
+
+    const info = [this.constructor.name+':', message];
+
+    if (data) info.push(data)
+
+    console.info.apply(console, info);
   }
 
   /**
@@ -56,20 +69,23 @@ export class PlaylistEntriesApiService {
    * @return Observable<Video[]>
    */
   load(): Observable<Video[]> {
+    const checkpoint = 'load_playlist_entries';
     return this.playlist.get()
+      .do(p => console.log("playlist loaded:", p))
       .take(1)
+      .do(() => this.benchmark.start(checkpoint))
       .switchMap(playlist => this.af.database.list(this._ref(playlist)).take(1))
-      .switchMap(this._videoMapper);
+      .do(() => this._verbose(checkpoint, this.benchmark.stop(checkpoint)))
   }
 
   /**
    * Try to use cache first, then firebase
    */
-  private _videoMapper(entry: Video) {
+  public _videoMapper(entry: Video) {
     if (this.videos[entry.uuid])
       return Observable.of(this.videos[entry.uuid]);
 
-    return this.af.database.object(`/dev/videos/${entry.videoId}`)
+    return this.af.database.object(`${this.prefix}/videos/${entry.videoId}`)
       .take(1) // do we really need this ?
       .map((video: Video) => Object.assign({}, video, entry)) // merge with original videoRef
       .do((video: Video) => this.videos[video.uuid] = video) // cache locally
@@ -82,15 +98,17 @@ export class PlaylistEntriesApiService {
    * @param action
    */
   create(video: Video): Observable<Video> {
-    const videoRef = { uuid: video.uuid, videoId: video.videoId };
-    const videoFull = Object.assign({}, video, { uuid: null });
-    const videoUrl = `${this.prefix}/videos/${video.videoId}`;
+    const videoRef = {
+      uuid: video.uuid,
+      videoId: video.videoId,
+      title: video.title,
+      duration: video.duration
+    };
 
     return this.playlist.get()
       .take(1)
-      .map(playlist => this.af.database.list(this._ref(playlist)).push(videoRef))
-      .do(() => this.af.database.object(videoUrl).update(videoFull))
-      .map(() => video); // map to something useful to subscriber
+      .map(playlist => this.af.database.object(this._ref(playlist, video)).update(videoRef))
+      .map(() => videoRef); // map to something useful to subscriber
   }
 
 
@@ -109,9 +127,11 @@ export class PlaylistEntriesApiService {
 
     return this.playlist.get()
       .take(1)
-      .map((playlist) => this.af.database.list(this._ref(playlist), options))
-      .do(collection => collection.take(1)
-        .subscribe(entries => entries.forEach(entry => collection.remove(entry.$key))));
+      .map((playlist) => this.af.database
+        .object(this._ref(playlist, video))
+        .remove())
+      .do(result => this._verbose(`Deleted`, video.uuid))
+      .map(() => video) // in case of error we can restore it
   }
 
 

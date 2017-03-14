@@ -24,9 +24,6 @@ export class PlaylistLoaderComponent {
     this.list$ = this.playlistList.get();
     // @todo create playlistActiveService
     this.active$ = this.activePlaylist.get()
-
-    this.playlistList.init();
-    this.activePlaylist.init();
   }
 
   load(playlist: Playlist) {

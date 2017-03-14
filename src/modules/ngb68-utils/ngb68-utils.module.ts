@@ -1,11 +1,15 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { SelectMeDirective, FocusMeDirective } from './directives';
-
+import { BenchmarkService } from './services';
 
 const COMPONENTS = [
   SelectMeDirective,
   FocusMeDirective
+];
+
+const SERVICES = [
+  BenchmarkService
 ];
 
 
@@ -15,6 +19,9 @@ const COMPONENTS = [
   ],
   declarations: [
     ...COMPONENTS
+  ],
+  providers: [
+    ...SERVICES
   ],
   exports: [
     ...COMPONENTS

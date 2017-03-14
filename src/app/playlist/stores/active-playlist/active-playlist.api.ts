@@ -36,7 +36,8 @@ export class ActivePlaylistApiService {
       .filter(state => !!state)
       .switchMap(auth => this.af.database
         .object(`${this.uriPrefix}/${auth.uid}/active/playlist`)
-      );
+      )
+      .take(1); // Only first time, and no more. later will be handled by activate()
   }
 
   private _select(takeAll = false): Observable<Playlist> {
