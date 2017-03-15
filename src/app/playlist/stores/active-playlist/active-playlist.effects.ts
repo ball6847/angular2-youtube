@@ -12,14 +12,9 @@ import { ActivePlaylistApiService } from './active-playlist.api';
 import {
   PLAYLIST_ACTIVATED,
   PLAYLIST_ACTIVE_INIT,
-  PLAYLIST_ACTIVE_INIT_FULFILLED,
-  PLAYLIST_ACTIVE_LIST_ENTRIES,
   PlaylistActivatedFulfilledAction,
   PlaylistActiveInitFulfilledAction,
   PlaylistActiveInitFailedAction,
-  PlaylistActiveListEntriesAction,
-  PlaylistActiveListEntriesFulfilledAction,
-  PlaylistActiveListEntriesFailedAction
 } from './active-playlist.actions';
 
 import { LoadPlaylistEntriesAction } from '../playlist-entries'

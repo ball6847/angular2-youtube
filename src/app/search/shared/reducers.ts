@@ -1,5 +1,5 @@
 import { Action } from "@ngrx/store";
-import { ISearchResultState, ISearchResultVideo } from "./interfaces";
+import { ISearchResultVideo } from "./interfaces";
 import * as actions from "./actions";
 
 

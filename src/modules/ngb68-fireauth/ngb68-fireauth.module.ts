@@ -1,7 +1,6 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { AuthGuard, UnauthGuard } from './guards';
-import { AngularFireModule } from 'angularfire2';
 import {
   FirebaseFacebookSigninComponent,
   FirebaseGithubSigninComponent,

@@ -6,9 +6,6 @@ import { Observable } from 'rxjs/Observable';
 import { PlaylistEntriesApiService } from './api';
 import * as a from './actions';
 
-import { Playlist } from '../../interfaces';
-import { Video } from 'app/video';
-
 
 @Injectable()
 export class PlaylistEntriesEffects {

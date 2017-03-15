@@ -1,12 +1,10 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { StoreModule } from '@ngrx/store';
 import { PlaylistService } from './services';
 import { PlaylistControlComponent, PlaylistEntriesComponent, PlaylistEntryComponent, PlaylistLoaderComponent } from './components';
 import { YoutubePlayerModule } from 'ng2-youtube-player/ng2-youtube-player';
 import { DragulaModule } from 'ng2-dragula/ng2-dragula';
 import { DropdownModule, PopoverModule } from 'ng2-bootstrap';
-import { PlaylistReducer } from './stores/reducer';
 import {
   ActivePlaylistService,
   PlaylistListService,

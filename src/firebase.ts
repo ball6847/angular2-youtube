@@ -1,6 +1,4 @@
 import { AngularFireModule, AuthMethods } from 'angularfire2';
-import * as firebase from 'firebase';
-
 
 const firebaseConfig = {
   apiKey: "AIzaSyCfrpo_1Z1uPZXldSj-JyOagQPMbfq1ipk",

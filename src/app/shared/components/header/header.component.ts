@@ -1,4 +1,4 @@
-import { Component, ChangeDetectionStrategy, Input } from "@angular/core";
+import { Component, ChangeDetectionStrategy } from "@angular/core";
 import { Router } from '@angular/router';
 import { AngularFireAuth } from 'angularfire2';
 

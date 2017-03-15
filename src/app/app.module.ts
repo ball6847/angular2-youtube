@@ -1,7 +1,6 @@
 import { environment } from '../environments/environment';
 import { NgModule, ModuleWithProviders } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
-import { RouterModule, Routes } from '@angular/router';
 import { HttpModule } from '@angular/http';
 import { Ngb68FireauthModule } from '../modules/ngb68-fireauth';
 import { Ngb68UtilsModule } from '../modules/ngb68-utils';
@@ -31,7 +30,7 @@ import {
 // -------------------------------------------------------------------
 
 let DEV_MODULES: ModuleWithProviders[] = environment.production ? [] : [
-  // StoreDevtoolsModule.instrumentOnlyWithExtension()
+  StoreDevtoolsModule.instrumentOnlyWithExtension()
 ];
 
 // -------------------------------------------------------------------

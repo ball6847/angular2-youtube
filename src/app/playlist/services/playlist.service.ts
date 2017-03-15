@@ -3,20 +3,18 @@ import 'rxjs/add/operator/take';
 import 'rxjs/add/operator/filter';
 import 'rxjs/add/operator/combineLatest';
 import * as _ from 'lodash';
-import * as moment from 'moment';
 
 import { Injectable } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { Observable } from 'rxjs/Observable';
 import { UUID } from 'angular2-uuid';
-import { tassign } from 'tassign';
 import { YoutubePlayerService } from 'ng2-youtube-player/ng2-youtube-player';
 import { Playlist, PlaylistState } from '../interfaces';
 import { PlaylistListService, ActivePlaylistService, PlaylistStateService } from '../stores';
 
 // @todo find a way to separate these external services
 import { AppService } from "../../app.service";
-import { Video, VideoService } from "../../video";
+import { Video } from "../../video";
 import { IApplicationState } from '../../shared/interfaces';
 
 import { CreatePlaylistEntryAction, DeletePlaylistEntryAction } from '../stores/playlist-entries';
@@ -31,9 +29,7 @@ export class PlaylistService {
   private entries$: Observable<Video[]>;
 
   // internal data we need to work with
-  private list: Playlist[];
   private active: Playlist;
-  private entries: Video[];
   private state: PlaylistState;
 
   // -------------------------------------------------------------------
@@ -49,7 +45,6 @@ export class PlaylistService {
   constructor(
     private store: Store<IApplicationState>,
     private appService: AppService,
-    private video: VideoService,
     private player: YoutubePlayerService,
     protected playlistList: PlaylistListService,
     protected activePlaylist: ActivePlaylistService,
@@ -362,31 +357,6 @@ export class PlaylistService {
 
   // -------------------------------------------------------------------
   // PRIVATE METHOD
-  // -------------------------------------------------------------------
-
-
-  // -------------------------------------------------------------------
-
-  /**
-   * [DEPRECATED] Util function, get currently playing video
-   */
-  private _getPlayingVideo(): Video {
-    return this.state.video;
-  }
-
-  // -------------------------------------------------------------------
-
-  /**
-   * Util function, get currently playing video's index of the playlist
-   * Useful for determining which video to play next
-   */
-  private _getPlayingVideoIndex(): number {
-    if (!this.state.video)
-      return -1;
-
-    return _.findIndex(this.active.entries, { uuid: this.state.video.uuid });
-  }
-
   // -------------------------------------------------------------------
 
   /**

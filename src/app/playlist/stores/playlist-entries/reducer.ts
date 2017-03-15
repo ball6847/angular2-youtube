@@ -1,5 +1,4 @@
 import { Video } from 'app/video'
-import { tassign } from 'tassign';
 import { Actions, ActionTypes } from './actions';
 
 

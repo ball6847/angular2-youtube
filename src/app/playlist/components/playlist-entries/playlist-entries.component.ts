@@ -8,7 +8,7 @@ import { PlaylistService } from '../../services';
 import { IApplicationState } from '../../../shared/interfaces';
 import { Video } from '../../../video';
 
-import { LoadPlaylistEntriesAction, ReorderPlaylistEntriesAction } from '../../stores/playlist-entries';
+import { ReorderPlaylistEntriesAction } from '../../stores/playlist-entries';
 
 
 

@@ -1,4 +1,4 @@
-import { Video, VideoDuration } from '../../video'
+import { VideoDuration } from '../../video'
 
 export class PlaylistEntry {
   uuid: string;

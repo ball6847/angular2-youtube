@@ -3,8 +3,8 @@ import { Store } from '@ngrx/store';
 import { AngularFire } from 'angularfire2';
 import { Observable } from 'rxjs/Observable';
 import { BenchmarkService } from 'app/../modules/ngb68-utils'
+import { environment } from 'app/../environments/environment';
 import { ActivePlaylistService } from '../active-playlist';
-import * as a from './actions';
 import { Playlist, PlaylistEntry } from '../../interfaces';
 import { Video, VideoService } from 'app/video';
 
@@ -21,7 +21,7 @@ export class PlaylistEntriesApiService {
    */
   private prefix = '/dev';
 
-  private debug = true;
+  private debug = environment.production;
 
   /**
    * constructor
@@ -35,7 +35,7 @@ export class PlaylistEntriesApiService {
     protected playlist: ActivePlaylistService,
     protected store: Store<any>, // use any for now
     protected youtube: VideoService,
-  ) { }
+  ) {}
 
   /**
    * create url reference for firebase
