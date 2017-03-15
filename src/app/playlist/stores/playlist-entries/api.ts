@@ -21,7 +21,7 @@ export class PlaylistEntriesApiService {
    */
   private prefix = '/dev';
 
-  private debug = environment.production;
+  private debug = !environment.production;
 
   /**
    * constructor
@@ -71,7 +71,7 @@ export class PlaylistEntriesApiService {
   load(): Observable<Video[]> {
     const checkpoint = 'load_playlist_entries';
     return this.playlist.get()
-      .do(p => console.log("playlist loaded:", p))
+      .do(p => this._verbose("playlist loaded:", p))
       .take(1)
       .do(() => this.benchmark.start(checkpoint))
       // .debounceTime(1000)
