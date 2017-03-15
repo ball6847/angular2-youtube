@@ -1,9 +1,5 @@
-import 'rxjs/add/observable/of';
 import 'rxjs/add/operator/switchMap';
-import 'rxjs/add/operator/switch';
-import 'rxjs/add/observable/fromPromise';
-import 'rxjs/add/operator/concat';
-import 'rxjs/add/operator/combineLatest';
+import 'rxjs/add/operator/filter';
 
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs/Observable';
@@ -23,6 +19,7 @@ export class ActivePlaylistApiService {
   constructor(protected af: AngularFire, protected store: Store<any>, protected video: VideoService) { }
 
   activate(playlist): Observable<any> {
+    console.log(this.af.auth);
     return this.af.auth
       .filter(state => !!state)
       .switchMap(auth => this.af.database
@@ -32,6 +29,7 @@ export class ActivePlaylistApiService {
   }
 
   init(): Observable<any> {
+    console.log(this.af.auth);
     return this.af.auth
       .filter(state => !!state)
       .switchMap(auth => this.af.database

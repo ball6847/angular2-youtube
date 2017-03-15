@@ -1,5 +1,7 @@
 import 'rxjs/add/operator/skip';
-import 'rxjs/add/operator/partition';
+import 'rxjs/add/operator/take';
+import 'rxjs/add/operator/filter';
+import 'rxjs/add/operator/combineLatest';
 import * as _ from 'lodash';
 import * as moment from 'moment';
 
