@@ -32,7 +32,7 @@ export class ActivePlaylistService {
    * Also, subscribe to first valid playlist change to pull it's entries
    * by dispatching LoadPlaylistEntriesAction
    */
-  init() {
+  initialize() {
     this.store.dispatch(new action.PlaylistActiveInitAction());
 
     this.get()

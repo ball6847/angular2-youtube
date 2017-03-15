@@ -2,8 +2,8 @@ import { ActionReducer, State, combineReducers } from '@ngrx/store';
 import { compose } from '@ngrx/core/compose';
 import { localStorageSync } from 'ngrx-store-localstorage';
 import { IApplicationState } from '../shared/interfaces';
-import * as playlist from '../playlist/stores';
-import * as search from '../search/shared/reducers';
+import * as fromPlaylist from '../playlist/stores';
+import * as fromSearch from '../search/shared/reducers';
 
 const reducer: ActionReducer<State<IApplicationState>> = compose(
   localStorageSync([
@@ -14,12 +14,12 @@ const reducer: ActionReducer<State<IApplicationState>> = compose(
   ], true),
   combineReducers
 )({
-  playlistList: playlist.PlaylistListReducer,
-  playlistActive: playlist.PlaylistActiveReducer,
-  playlistState: playlist.PlaylistControlStateReducer,
-  playlistEntries: playlist.PlaylistEntriesReducer,
-  searchResult: search.SearchResultReducer,
-  searchResultPage: search.SearchResultPageReducer
+  playlistList: fromPlaylist.PlaylistListReducer,
+  playlistActive: fromPlaylist.PlaylistActiveReducer,
+  playlistState: fromPlaylist.PlaylistStateReducer,
+  playlistEntries: fromPlaylist.PlaylistEntriesReducer,
+  searchResult: fromSearch.SearchResultReducer,
+  searchResultPage: fromSearch.SearchResultPageReducer
 });
 
 export function AppReducer(state: any, action: any) {

@@ -8,8 +8,6 @@ import { ActivePlaylistService } from '../active-playlist';
 import { Playlist, PlaylistEntry } from '../../interfaces';
 import { Video, VideoService } from 'app/video';
 
-import 'rxjs/add/operator/debounceTime';
-import 'rxjs/add/operator/distinctUntilChanged';
 
 /**
  * Service for remote api (firebase)
@@ -21,6 +19,10 @@ export class PlaylistEntriesApiService {
    */
   private prefix = '/dev';
 
+  /**
+   * set debugging flag according to current environment
+   * @todo use config provider instead
+   */
   private debug = !environment.production;
 
   /**
@@ -55,11 +57,8 @@ export class PlaylistEntriesApiService {
 
   private _verbose(message: string, data?: any) {
     if (!this.debug) return;
-
     const info = [this.constructor.name+':', message];
-
     if (data) info.push(data)
-
     console.info.apply(console, info);
   }
 
@@ -74,13 +73,7 @@ export class PlaylistEntriesApiService {
       .do(p => this._verbose("playlist loaded:", p))
       .take(1)
       .do(() => this.benchmark.start(checkpoint))
-      // .debounceTime(1000)
-      // .distinctUntilChanged()
-      .switchMap(playlist => this.af.database
-        .list(this._ref(playlist))
-        // .debounceTime(1000)
-        // .distinctUntilChanged()
-      )
+      .switchMap(playlist => this.af.database.list(this._ref(playlist)))
       .do(() => this._verbose(checkpoint, this.benchmark.stop(checkpoint)))
   }
 
@@ -128,6 +121,13 @@ export class PlaylistEntriesApiService {
       .map(() => video) // in case of error we can restore it
   }
 
+  /**
+   * Update all entry's ordering
+   * Please note, firebase is smart enough to aware of changes
+   * and will push to remote server only the changed objects
+   *
+   * @param entries
+   */
   reorder(entries: Video[]): Observable<Video[]> {
     return this.playlist.get()
       .take(1)

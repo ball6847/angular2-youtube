@@ -1,5 +1,4 @@
 import 'rxjs/add/observable/of';
-
 import { Injectable } from '@angular/core';
 import { Actions, Effect } from '@ngrx/effects';
 import { Observable } from 'rxjs/Observable';
@@ -9,11 +8,7 @@ import * as a from './actions';
 
 @Injectable()
 export class PlaylistEntriesEffects {
-  constructor(
-    protected actions: Actions,
-    protected api: PlaylistEntriesApiService
-  ) {}
-
+  constructor(protected actions: Actions, protected api: PlaylistEntriesApiService) {}
 
   @Effect()
   load$ = this.actions
@@ -47,16 +42,5 @@ export class PlaylistEntriesEffects {
       .map(result => new a.ReorderPlaylistEntriesSuccessAction(result))
       .catch(error => Observable.of(new a.ReorderPlaylistEntriesErrorAction(error)))
     );
-
-  // @Effect()
-  // update$ = this.actions
-  //   .ofType(a.ActionTypes.UPDATE)
-  //   .switchMap(({ type, payload }) => this.playlist.get().take(1)
-  //     .map((playlist: Playlist) => this.af.database
-  //       .object(this._ref(playlist, <Video>payload))
-  //       .update(<Video>payload)) // need both playlist and entry
-  //     .map(result => new a.UpdatePlaylistEntrySuccessAction(result))
-  //     .catch(error => Observable.of(new a.UpdatePlaylistEntryErrorAction(error)))
-  //   )
 
 }
