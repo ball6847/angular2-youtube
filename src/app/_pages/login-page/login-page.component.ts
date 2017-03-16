@@ -1,5 +1,6 @@
 import { Component, ChangeDetectionStrategy } from '@angular/core';
 import { Router } from '@angular/router';
+import { AngularFireAuth } from 'angularfire2';
 
 @Component({
   selector: 'login-page',
@@ -8,9 +9,13 @@ import { Router } from '@angular/router';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class LoginPageComponent {
-  constructor(protected router: Router) {}
+  constructor(protected router: Router, protected auth$: AngularFireAuth) {}
 
   gotoPlay() {
-    this.router.navigate(['/']);
+    this.auth$
+      .take(1)
+      .do(auth => this.router.navigate([`/r/${auth.uid}`]))
+      .subscribe();
+    ;
   }
 }

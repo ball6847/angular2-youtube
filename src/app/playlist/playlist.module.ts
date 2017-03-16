@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { PlaylistService } from './services';
+import { PlaylistService, PlaylistOwnerService } from './services';
 import { PlaylistControlComponent, PlaylistEntriesComponent, PlaylistEntryComponent, PlaylistLoaderComponent } from './components';
 import { YoutubePlayerModule } from 'ng2-youtube-player/ng2-youtube-player';
 import { DragulaModule } from 'ng2-dragula/ng2-dragula';
@@ -24,6 +24,7 @@ const COMPONENTS = [
 
 const SERVICES = [
   PlaylistService,
+  PlaylistOwnerService,
   ActivePlaylistService,
   PlaylistListService,
   PlaylistListApiService,
@@ -52,6 +53,7 @@ export class PlaylistModule { }
 
 export {
   PlaylistService,
+  PlaylistOwnerService,
   ActivePlaylistService,
   PlaylistListService,
   PlaylistStateService

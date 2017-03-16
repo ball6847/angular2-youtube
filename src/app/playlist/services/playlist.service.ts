@@ -55,6 +55,7 @@ export class PlaylistService {
   }
 
 
+
   /**
   * Bind service's properties to ApplicationStore
   */

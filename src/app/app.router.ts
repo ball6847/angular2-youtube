@@ -4,8 +4,9 @@ import { LoginPageComponent, PlayerPageComponent, NotFoundPageComponent } from '
 
 
 const appRoutes: Routes = [
+  { path: 'r/:roomId', component: PlayerPageComponent, canActivate: [AuthGuard] },
   { path: 'login', component: LoginPageComponent, canActivate: [UnauthGuard] },
-  { path: '', component: PlayerPageComponent, pathMatch: 'full', canActivate: [AuthGuard] },
+  { path: '', redirectTo: '/login', pathMatch: 'full' },
   { path: '**', component: NotFoundPageComponent }
 ];
 

@@ -21,11 +21,16 @@ export class UnauthGuard implements CanActivate {
   canActivate(): Observable<boolean> {
     return this.auth$
       .take(1)
-      .map(state => !state)
-      .do(unauthenticated => {
-        if (!unauthenticated) {
-          this.router.navigate(['/']);
+      // .map(state => !state)
+      .do(auth => {
+        // if (auth.uid) {
+        //   this.router.navigate([`/r/${auth.uid}`]);
+        // }
+        if (auth) {
+          console.log(auth);
+          this.router.navigate([`/r/${auth.uid}`]);
         }
-      });
+      })
+      .map(auth => !auth);
   }
 }
