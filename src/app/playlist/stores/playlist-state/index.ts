@@ -1,3 +1,4 @@
-export * from './playlist-state.actions';
-export * from './playlist-state.reducer';
-export * from './playlist-state.service';
+export * from './reducer';
+export * from './effects';
+export * from './api';
+export * from './service';

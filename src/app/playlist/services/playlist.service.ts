@@ -11,13 +11,12 @@ import { UUID } from 'angular2-uuid';
 import { YoutubePlayerService } from 'ng2-youtube-player/ng2-youtube-player';
 import { Playlist, PlaylistState } from '../interfaces';
 import { PlaylistListService, ActivePlaylistService, PlaylistStateService } from '../stores';
+import { CreatePlaylistEntryAction, DeletePlaylistEntryAction } from '../stores/playlist-entries/actions';
 
 // @todo find a way to separate these external services
 import { AppService } from "../../shared/service";
 import { Video } from "../../video";
 import { IApplicationState } from '../../shared/interfaces';
-
-import { CreatePlaylistEntryAction, DeletePlaylistEntryAction } from '../stores/playlist-entries';
 
 
 @Injectable()
@@ -50,7 +49,7 @@ export class PlaylistService {
     protected activePlaylist: ActivePlaylistService,
     protected playlistState: PlaylistStateService
   ) {
-    this.playlistState.setState({ playing: false, video: null });
+    this._setState({ playing: false, video: null });
     this._provideStore();
     this._setupSubscriptions();
   }
@@ -62,7 +61,7 @@ export class PlaylistService {
   private _provideStore() {
     this.list$ = this.playlistList.get();
     this.active$ = this.activePlaylist.get();
-    this.state$ = this.playlistState.get();
+    this.state$ = this.store.select(state => state.playlistState);
     this.entries$ = this.store.select(state => state.playlistEntries)
       .map(entries => _.orderBy(entries, ['ordering'], ['asc']));
   }
@@ -118,8 +117,7 @@ export class PlaylistService {
    * Enable or disable shuffle play
    */
   public toggleShuffle(): void {
-    this.state.shuffle = !this.state.shuffle;
-    this._dispatchState();
+    this._setState({ shuffle: !this.state.shuffle });
   }
 
   // -------------------------------------------------------------------
@@ -128,8 +126,7 @@ export class PlaylistService {
    * Enable or disable loop play
    */
   public toggleLoop(): void {
-    this.state.loop = !this.state.loop;
-    this._dispatchState();
+    this._setState({ loop: !this.state.loop });
   }
 
   // -------------------------------------------------------------------
@@ -155,7 +152,7 @@ export class PlaylistService {
         // this.state.playing = video ? !this.state.playing : false;
         state.playing = video ? !state.playing : false;
 
-        this._dispatchState(state);
+        this._setState(state);
 
         if (state.playing) {
           this.appService.player.playVideo();
@@ -183,7 +180,7 @@ export class PlaylistService {
       .take(1)
       .filter(entries => entries.length > 0)
       .subscribe(() => {
-        this.playlistState.setState({ video: video });
+        this._setState({ video: video });
       });
   }
 
@@ -200,11 +197,13 @@ export class PlaylistService {
       .subscribe(combined => {
         const [entries, state] = [<Video[]>combined[0], <PlaylistState>combined[1]]
 
-        // // to do a realistic shuffle we need to remove playingVideo from the list
-        // // or just keep them all if there is no video playing
-        // // @TODO: we may need to keep track a list of recently playing videos, to get more realistic result
-        let newEntries = entries.filter(item => !state.video || state.video.uuid != item.uuid);
-        this.playlistState.setState({ video: newEntries[Math.floor(Math.random() * newEntries.length)] });
+        // to do a realistic shuffle we need to remove playingVideo from the list
+        // or just keep them all if there is no video playing
+        // @TODO: we may need to keep track a list of recently playing videos, to get more realistic result
+
+        const newEntries = entries.filter(item => !state.video || state.video.uuid != item.uuid);
+        const video = newEntries[Math.floor(Math.random() * newEntries.length)];
+        this._setState({ video: video });
       });
   }
 
@@ -268,7 +267,7 @@ export class PlaylistService {
   public stop(): void {
     this.appService.player.stopVideo();
 
-    this.playlistState.setState({ playing: false });
+    this._setState({ playing: false });
   }
 
   // -------------------------------------------------------------------
@@ -322,10 +321,12 @@ export class PlaylistService {
             this.next();
           return this.store.dispatch(new DeletePlaylistEntryAction(video));
         }
+
         if (entries.length > 0)
           this.store.dispatch(new DeletePlaylistEntryAction(video));
           // this.activePlaylist.dequeue(video);
-        this.playlistState.setState({ video: null });
+
+        this._setState({ video: null });
       });
   }
 
@@ -341,13 +342,11 @@ export class PlaylistService {
       case YT.PlayerState.PLAYING:
         // youtube emit play event on next video
         if (this.state.playing != true) {
-          this.state.playing = true;
-          this._dispatchState();
+          this._setState({ playing: true });
         }
         break;
       case YT.PlayerState.PAUSED:
-        this.state.playing = false;
-        this._dispatchState();
+        this._setState({ playing: false });
         break;
       case YT.PlayerState.ENDED:
         this.next();
@@ -360,10 +359,10 @@ export class PlaylistService {
   // -------------------------------------------------------------------
 
   /**
-   * [DEPRECATED] Util function, dispatch updated state to ApplicationStore
+   * Util function, dispatch updated state to ApplicationStore
    */
-  private _dispatchState(state?) {
-    this.playlistState.setState(state || this.state)
+  private _setState(playlistState: Partial<PlaylistState>) {
+    this.playlistState.setState(playlistState);
   }
 
   // -------------------------------------------------------------------

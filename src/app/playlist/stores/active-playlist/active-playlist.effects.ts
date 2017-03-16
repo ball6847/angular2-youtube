@@ -17,7 +17,7 @@ import {
   PlaylistActiveInitFailedAction,
 } from './active-playlist.actions';
 
-import { LoadPlaylistEntriesAction } from '../playlist-entries'
+import { LoadPlaylistEntriesAction } from '../playlist-entries/actions'
 
 @Injectable()
 export class ActivePlaylistEffects {

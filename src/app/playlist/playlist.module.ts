@@ -8,10 +8,11 @@ import { DropdownModule, PopoverModule } from 'ng2-bootstrap';
 import {
   ActivePlaylistService,
   PlaylistListService,
-  PlaylistStateService,
   PlaylistListApiService,
   ActivePlaylistApiService,
-  PlaylistEntriesApiService
+  PlaylistEntriesApiService,
+  PlaylistStateService,
+  PlaylistStateApiService
 } from './stores';
 
 const COMPONENTS = [
@@ -25,10 +26,11 @@ const SERVICES = [
   PlaylistService,
   ActivePlaylistService,
   PlaylistListService,
-  PlaylistStateService,
   PlaylistListApiService,
   ActivePlaylistApiService,
-  PlaylistEntriesApiService
+  PlaylistEntriesApiService,
+  PlaylistStateService,
+  PlaylistStateApiService,
 ];
 
 

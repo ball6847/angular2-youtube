@@ -16,10 +16,8 @@ export class PlaylistListService {
 
   }
 
-  init() {
-    this.store.dispatch(
-      new action.PlaylistLoadedAction()
-    );
+  initialize() {
+    this.store.dispatch(new action.PlaylistLoadedAction());
   }
 
   /**
@@ -42,10 +40,7 @@ export class PlaylistListService {
       entries: []
     };
 
-    this.store.dispatch(
-      new action.PlaylistCreatedAction(playlist)
-    );
-
+    this.store.dispatch(new action.PlaylistCreatedAction(playlist));
     this.activePlaylist.activate(playlist);
   }
 
@@ -55,9 +50,7 @@ export class PlaylistListService {
    * @param playlist
    */
   update(playlist: Playlist) {
-    this.store.dispatch(
-      new action.PlaylistUpdatedAction(playlist)
-    );
+    this.store.dispatch(new action.PlaylistUpdatedAction(playlist));
   }
 
   /**
@@ -80,10 +73,7 @@ export class PlaylistListService {
    * @param playlist
    */
   delete(playlist: Playlist): void {
-    this.store.dispatch(
-      new action.PlaylistDeletedAction(playlist)
-    );
-
+    this.store.dispatch(new action.PlaylistDeletedAction(playlist));
     this.activePlaylist.activate(null);
   }
 }

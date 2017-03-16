@@ -17,6 +17,7 @@ export function PlaylistEntriesReducer(state: Video[] = [], {type, payload}: Act
     case ActionTypes.CREATE:
       return [...state, <Video>payload];
 
+    // the CREATE_SUCCESS's payload will contain update on video duretion
     case ActionTypes.CREATE_SUCCESS:
       return state.map((entry: Video) => (entry.uuid == payload.uuid) ? payload : entry);
 
