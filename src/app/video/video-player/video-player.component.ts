@@ -1,5 +1,5 @@
 import { Component, ChangeDetectionStrategy } from "@angular/core";
-import { AppService } from '../../app.service';
+import { AppService } from '../../shared/service';
 import { PlaylistService } from '../../playlist';
 
 @Component({

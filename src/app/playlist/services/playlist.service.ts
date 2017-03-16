@@ -13,7 +13,7 @@ import { Playlist, PlaylistState } from '../interfaces';
 import { PlaylistListService, ActivePlaylistService, PlaylistStateService } from '../stores';
 
 // @todo find a way to separate these external services
-import { AppService } from "../../app.service";
+import { AppService } from "../../shared/service";
 import { Video } from "../../video";
 import { IApplicationState } from '../../shared/interfaces';
 

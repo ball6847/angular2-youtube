@@ -9,7 +9,7 @@ import { StoreDevtoolsModule } from '@ngrx/store-devtools';
 import { Ng2PaginationModule } from 'ng2-pagination';
 import { YoutubePlayerModule } from 'ng2-youtube-player/ng2-youtube-player';
 import { FirebaseConfigModule } from '../firebase';
-import { AppService } from './app.service';
+import { AppService } from './shared/service';
 import { AppComponent } from './app.component';
 import { HeaderComponent } from './shared/components';
 import { VideoComponent, VideoService } from './video';
