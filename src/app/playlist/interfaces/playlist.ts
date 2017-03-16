@@ -5,4 +5,4 @@ export class Playlist {
   uid?: string;
   name: string;
   entries: Video[] = [];
-}
+};

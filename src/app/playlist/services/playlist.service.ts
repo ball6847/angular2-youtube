@@ -29,7 +29,7 @@ export class PlaylistService {
 
   // internal data we need to work with
   private active: Playlist;
-  private state: PlaylistState;
+  private state = new PlaylistState();
 
   // -------------------------------------------------------------------
 
@@ -75,17 +75,29 @@ export class PlaylistService {
   private _setupSubscriptions() {
     // play video as video changed, or clear playing video
     // also skip first emit, since we are not ready yet
-    this.store.select(state => state.playlistState.video)
-      .skip(1)
-      .subscribe(video => {
-        const vdo = video ? video : { videoId: null };
-        this.player.playVideo({ id: vdo }, this.appService.player);
-      });
-
-    // we also need tracking of state inside of service
-
+    // this.store.select(state => state.playlistState.video)
     this.state$
-      .subscribe(state => this.state = Object.assign({}, state));
+      .skip(1)
+      .subscribe(state => {
+        // prevent prop not exists in null error
+        if (!this.state.video)
+          this.state.video = new Video();
+
+        const video = state.video ? state.video : { videoId: null, uuid: null };
+
+        // playing state changed ?
+        if (this.state.playing != state.playing)
+          state.playing
+            ? this.appService.player.playVideo()
+            : this.appService.player.pauseVideo();
+
+        // video entry changed ?
+        if (video.uuid != this.state.video.uuid)
+          this.player.playVideo({ id: video }, this.appService.player);
+
+        // clone state to keep state tracking
+        this.state = Object.assign({}, state);
+      });
 
     this.active$
       .subscribe(playlist => {
@@ -153,19 +165,9 @@ export class PlaylistService {
         state.playing = video ? !state.playing : false;
 
         this._setState(state);
-
-        if (state.playing) {
-          this.appService.player.playVideo();
-        } else {
-          this.appService.player.pauseVideo();
-        }
       });
 
-
-
     if (!this.active.entries.length) return;
-
-
   }
 
   // --------------------------------------------------------------------
