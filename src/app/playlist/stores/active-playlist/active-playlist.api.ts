@@ -22,6 +22,7 @@ export class ActivePlaylistApiService {
 
   activate(playlist): Observable<any> {
     return this.playlistOwner.get()
+      .do(console.log)
       .switchMap(ownerId => this.af.database
         .object(`${this.uriPrefix}/${ownerId}/active/playlist`)
         .update(playlist)
@@ -31,6 +32,7 @@ export class ActivePlaylistApiService {
   init(): Observable<any> {
     // this.route.params.subscribe(console.log);
     return this.playlistOwner.get()
+      .do(console.log)
       .switchMap(ownerId => this.af.database
         .object(`${this.uriPrefix}/${ownerId}/active/playlist`)
       )
