@@ -3,10 +3,11 @@ import 'rxjs/add/operator/take';
 import 'rxjs/add/operator/switchMap';
 import 'rxjs/add/observable/of';
 import { Injectable } from '@angular/core';
-import { AngularFire, FirebaseAuthState } from 'angularfire2'
+import { AngularFire } from 'angularfire2'
 import { Observable } from 'rxjs/Observable';
 import { PlaylistState } from '../../interfaces';
 import { PlaylistStateService } from './service';
+import { PlaylistOwnerService } from '../../services/playlist-owner';
 import * as objectDiff from 'object-diff';
 import * as _ from 'lodash';
 
@@ -15,19 +16,16 @@ export class PlaylistStateApiService {
 
   state: PlaylistState;
 
-  constructor(protected af: AngularFire, protected playlistState: PlaylistStateService) {
+  constructor(
+    protected af: AngularFire,
+    protected playlistState: PlaylistStateService,
+    protected playlistOwner: PlaylistOwnerService
+  ) {
     // we keep track of state
     // to determine whether to accept or ignore state update from firebase
     this.playlistState.getStore()
       .subscribe(state => this.state = new PlaylistState(state));
    }
-
-  /**
-   * Shorthand for getting auth state
-   */
-  private _getAuth(): Observable<FirebaseAuthState> {
-    return this.af.auth.take(1).filter(auth => !!auth);
-  }
 
   /**
    * Load state from server
@@ -39,9 +37,9 @@ export class PlaylistStateApiService {
    *       we need to keep subscription instance to unsubscribe it later when user signout from app
    */
   load() : Observable<PlaylistState> {
-    return this._getAuth()
-      .switchMap(auth => this.af.database
-        .object(`/dev/${auth.uid}/state/`)
+    return this.playlistOwner.get()
+      .switchMap(ownerId => this.af.database
+        .object(`/dev/${ownerId}/state/`)
         .filter((state: PlaylistState) => {
           const newState = new PlaylistState(state);
           // first, detect video changes
@@ -65,8 +63,8 @@ export class PlaylistStateApiService {
    * @param playlistState
    */
   update(playlistState: Partial<PlaylistState>): Observable<Partial<PlaylistState>> {
-    return this._getAuth()
-      .do(auth => this.af.database.object(`/dev/${auth.uid}/state/`).update(playlistState))
+    return this.playlistOwner.get()
+      .do(ownerId => this.af.database.object(`/dev/${ownerId}/state/`).update(playlistState))
       .map(() => playlistState);
   }
 }

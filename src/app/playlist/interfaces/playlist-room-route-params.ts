@@ -1,0 +1,3 @@
+class PlaylistRoomRouteParams {
+  roomId: number;
+}

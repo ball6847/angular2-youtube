@@ -7,6 +7,7 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs/Observable';
 import { Playlist } from '../../interfaces';
 import { AngularFire } from 'angularfire2';
+import { PlaylistOwnerService } from '../../services/playlist-owner';
 
 
 
@@ -14,19 +15,29 @@ import { AngularFire } from 'angularfire2';
 export class PlaylistListApiService {
   uriPrefix = '/dev';
 
-  constructor(protected af: AngularFire) { }
-
+  constructor(protected af: AngularFire, protected playlistOwner: PlaylistOwnerService) { }
 
   fetch(): Observable<any> {
-    return this.af.auth
-      .switchMap(auth => this.af.database
+    return this.playlistOwner.get()
+      .switchMap(ownerId => this.af.database
         .list(`${this.uriPrefix}/playlists`, {
           query: {
             orderByChild: 'uid',
-            equalTo: auth.uid
+            equalTo: ownerId
           }
         })
       );
+  }
+
+  /**
+   * Only allow owner to create/update playlist
+   */
+  private getAuth() {
+    return this.playlistOwner.get()
+      .switchMap(ownerId => this.af.auth
+        .map(auth => Object.assign({}, { ownerId: ownerId, auth: auth })))
+      .filter(({ ownerId, auth }) => ownerId == auth.uid)
+      .map(({ auth }) => auth);
   }
 
 
@@ -36,7 +47,7 @@ export class PlaylistListApiService {
    * @param name
    */
   create(playlist: Playlist): Observable<any> {
-    return this.af.auth
+    return this.getAuth()
       .switchMap(auth => this.af.database
         .object(`${this.uriPrefix}/playlists/${playlist.id}`)
         .update(Object.assign({}, playlist, {uid: auth.uid}))
@@ -50,11 +61,17 @@ export class PlaylistListApiService {
    * @param playlist
    */
   update(playlist: Playlist): Observable<any> {
-    return Observable.of(
-      this.af.database
+    // return Observable.of(
+    //   this.af.database
+    //     .object(`${this.uriPrefix}/playlists/${playlist.id}`)
+    //     .update(playlist)
+    // );
+    return this.getAuth()
+      .switchMap(auth => this.af.database
         .object(`${this.uriPrefix}/playlists/${playlist.id}`)
         .update(playlist)
-    );
+        .map(result => result)
+      );
   }
 
   /**
@@ -64,10 +81,16 @@ export class PlaylistListApiService {
    * @param playlist
    */
   delete(playlist: Playlist): Observable<any> {
-    return Observable.of(
-      this.af.database
+    // return Observable.of(
+    //   this.af.database
+    //     .object(`${this.uriPrefix}/playlists/${playlist.id}`)
+    //     .remove()
+    // );
+    return this.getAuth()
+      .switchMap(auth => this.af.database
         .object(`${this.uriPrefix}/playlists/${playlist.id}`)
         .remove()
-    );
+        .map(result => result)
+      );
   }
 }
